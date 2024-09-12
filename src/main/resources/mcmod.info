@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "fuguribeta",
+    "name": "FuguriBeta",
+    "description": "mixin-based injection hacked-client",
+    "version": "${version}",
+    "mcversion": "1.8.9",
+    "url": "https://fuguribeta.net",
+    "updateUrl": "",
+    "authorList": ["Deathlksr"],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
