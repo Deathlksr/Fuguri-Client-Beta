@@ -16,11 +16,6 @@ import net.ccbluex.liquidbounce.utils.timing.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
-import net.minecraft.network.play.server.S02PacketChat
-import net.minecraft.network.play.server.S40PacketDisconnect
-import net.minecraft.network.status.client.C01PacketPing
-import net.minecraft.network.handshake.client.C00Handshake
-import net.minecraft.network.status.client.C00PacketServerQuery
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 

@@ -25,7 +25,6 @@ import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.settings.KeyBinding
 import net.minecraft.entity.Entity
 import net.minecraft.item.EnumAction
-import net.minecraft.util.MovingObjectPosition
 import kotlin.random.Random.Default.nextBoolean
 
 object AutoClicker : Module("AutoClicker", Category.COMBAT, hideModule = false) {

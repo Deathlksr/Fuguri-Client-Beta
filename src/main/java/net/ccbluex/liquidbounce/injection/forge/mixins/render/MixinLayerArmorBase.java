@@ -7,7 +7,7 @@ package net.ccbluex.liquidbounce.injection.forge.mixins.render;
 
 import net.ccbluex.liquidbounce.features.module.modules.visual.CustomModel;
 import net.ccbluex.liquidbounce.features.module.modules.visual.FreeCam;
-import net.ccbluex.liquidbounce.features.module.modules.visual.Glint;
+import net.ccbluex.liquidbounce.features.module.modules.visual.CustomGlint;
 import net.minecraft.client.renderer.entity.layers.LayerArmorBase;
 import net.minecraft.entity.EntityLivingBase;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,7 +32,7 @@ public class MixinLayerArmorBase {
 
     @ModifyArgs(method="renderGlint", slice=@Slice(from=@At(value="INVOKE", target="Lnet/minecraft/client/renderer/GlStateManager;disableLighting()V", ordinal=0)), at=@At(value="INVOKE", target="Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V", ordinal=0), require=1, allow=1)
     private void renderGlint(Args args) {
-        final Glint glint = Glint.INSTANCE;
+        final CustomGlint glint = CustomGlint.INSTANCE;
 
         if (glint.getState()) {
             int n = glint.getColor().getRGB();

@@ -6,7 +6,7 @@
 package net.ccbluex.liquidbounce.injection.forge.mixins.gui;
 
 import com.google.common.collect.Lists;
-import net.ccbluex.liquidbounce.features.module.modules.client.BrandSpoofer;
+import net.ccbluex.liquidbounce.features.module.modules.client.ClientSpoofer;
 import net.ccbluex.liquidbounce.handler.payload.ClientBrandRetriever;
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils;
 import net.minecraft.client.gui.GuiOverlayDebug;
@@ -39,7 +39,7 @@ public abstract class MixinGuiOverlayDebug {
 
     @Inject(method = "call", at = @At(value = "TAIL"), cancellable = true)
     public void call(CallbackInfoReturnable<List<String>> cir) {
-        final BrandSpoofer brandSpoofer = BrandSpoofer.INSTANCE;
+        final ClientSpoofer brandSpoofer = ClientSpoofer.INSTANCE;
 
         BlockPos blockpos = new BlockPos(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().getEntityBoundingBox().minY, mc.getRenderViewEntity().posZ);
 
@@ -104,7 +104,7 @@ public abstract class MixinGuiOverlayDebug {
 
     @ModifyVariable(method = "getDebugInfoRight", at = @At(value = "STORE"), ordinal = 0)
     private List<String> modifyDebugInfo(List<String> originalList) {
-        final BrandSpoofer brandSpoofer = BrandSpoofer.INSTANCE;
+        final ClientSpoofer brandSpoofer = ClientSpoofer.INSTANCE;
 
         if (brandSpoofer.handleEvents() && brandSpoofer.getPossibleBrands().contains("LunarClient")) {
             originalList.add("");
@@ -117,7 +117,7 @@ public abstract class MixinGuiOverlayDebug {
 
     @Inject(method = "getDebugInfoRight", at = @At("RETURN"), cancellable = true)
     private void modifyDebugInfoRight(CallbackInfoReturnable<List<String>> ci) {
-        final BrandSpoofer brandSpoofer = BrandSpoofer.INSTANCE;
+        final ClientSpoofer brandSpoofer = ClientSpoofer.INSTANCE;
 
         List<String> list = ci.getReturnValue();
 

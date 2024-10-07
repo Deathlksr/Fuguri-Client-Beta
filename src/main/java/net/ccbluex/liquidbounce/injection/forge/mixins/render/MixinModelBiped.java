@@ -5,7 +5,7 @@
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.render;
 
-import net.ccbluex.liquidbounce.features.module.modules.client.Rotations;
+import net.ccbluex.liquidbounce.features.module.modules.client.RotationHandler;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -37,8 +37,8 @@ public class MixinModelBiped {
     private void revertSwordAnimation(float p_setRotationAngles_1_, float p_setRotationAngles_2_, float p_setRotationAngles_3_, float p_setRotationAngles_4_, float p_setRotationAngles_5_, float p_setRotationAngles_6_, Entity p_setRotationAngles_7_, CallbackInfo callbackInfo) {
         if (heldItemRight == 3) bipedRightArm.rotateAngleY = 0F;
 
-        if (Rotations.INSTANCE.shouldRotate() && p_setRotationAngles_7_ instanceof EntityPlayer && p_setRotationAngles_7_.equals(mc.thePlayer)) {
-            bipedHead.rotateAngleX = (float) Math.toRadians(Rotations.INSTANCE.lerp(mc.timer.renderPartialTicks, Rotations.INSTANCE.getPrevHeadPitch(), Rotations.INSTANCE.getHeadPitch()));
+        if (RotationHandler.INSTANCE.shouldRotate() && p_setRotationAngles_7_ instanceof EntityPlayer && p_setRotationAngles_7_.equals(mc.thePlayer)) {
+            bipedHead.rotateAngleX = (float) Math.toRadians(RotationHandler.INSTANCE.lerp(mc.timer.renderPartialTicks, RotationHandler.INSTANCE.getPrevHeadPitch(), RotationHandler.INSTANCE.getHeadPitch()));
         }
     }
 }

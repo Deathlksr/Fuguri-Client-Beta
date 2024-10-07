@@ -85,7 +85,7 @@ object ChestAura : Module("ChestAura", Category.OTHER) {
     private val ignoreLooted by BoolValue("IgnoreLootedChests", true)
     private val detectRefill by BoolValue("DetectChestRefill", true)
 
-    private val rotations by BoolValue("Rotations", true)
+    private val rotations by BoolValue("RotationHandler", true)
     private val silentRotation by BoolValue("SilentRotation", true) { rotations }
 
     // Turn Speed

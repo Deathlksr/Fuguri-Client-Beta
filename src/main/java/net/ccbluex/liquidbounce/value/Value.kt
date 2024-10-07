@@ -1,8 +1,3 @@
-/*
- * LiquidBounce Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge.
- * https://github.com/CCBlueX/LiquidBounce/
- */
 package net.ccbluex.liquidbounce.value
 
 import com.google.gson.JsonArray
@@ -269,7 +264,7 @@ open class MultiListValue(
     }
 
     override fun toJsonF() = JsonArray().apply {
-    //    value.forEach { add(it) }
+        //    value.forEach { add(it) }
     }
 
     override fun fromJsonF(element: JsonElement) = if (element.isJsonArray) element.asJsonArray.map { it.asString } else null

@@ -55,7 +55,7 @@ object Nuker : Module("Nuker", Category.OTHER, gameDetecting = false, hideModule
     private val throughWalls by BoolValue("ThroughWalls", false)
     private val priority by ListValue("Priority", arrayOf("Distance", "Hardness", "LightOpacity"), "Distance")
 
-    private val rotations by BoolValue("Rotations", true)
+    private val rotations by BoolValue("RotationHandler", true)
     private val strafe by ListValue("Strafe", arrayOf("Off", "Strict", "Silent"), "Off") { rotations }
 
     private val layer by BoolValue("Layer", false)

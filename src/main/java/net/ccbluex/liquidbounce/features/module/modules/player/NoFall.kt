@@ -61,7 +61,7 @@ object NoFall : Module("NoFall", Category.PLAYER, hideModule = false) {
     val minFallDistance by FloatValue("MinMLGHeight", 5f, 2f..50f, subjective = true) { mode == "MLG" }
     val retrieveDelay by IntegerValue("RetrieveDelayTicks", 5, 1..10, subjective = true) { mode == "MLG" }
 
-    val rotations by BoolValue("Rotations", true) { mode == "MLG" }
+    val rotations by BoolValue("RotationHandler", true) { mode == "MLG" }
     val autoMLG by ListValue("AutoMLG", arrayOf("Off", "Pick", "Spoof", "Switch"), "Spoof") { mode == "MLG" }
     val swing by BoolValue("Swing", true) { mode == "MLG" }
 

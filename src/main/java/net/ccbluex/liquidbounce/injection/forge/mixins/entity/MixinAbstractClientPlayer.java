@@ -5,11 +5,11 @@
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.entity;
 
-import net.ccbluex.liquidbounce.features.module.modules.client.CapeManager;
+import net.ccbluex.liquidbounce.features.module.modules.client.CustomCape;
 import net.ccbluex.liquidbounce.handler.cape.CapeAPI;
 import net.ccbluex.liquidbounce.handler.cape.CapeInfo;
 import net.ccbluex.liquidbounce.features.module.modules.visual.NameProtect;
-import net.ccbluex.liquidbounce.features.module.modules.visual.NoFOV;
+import net.ccbluex.liquidbounce.features.module.modules.visual.CustomFOV;
 import net.ccbluex.liquidbounce.utils.MinecraftInstance;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
@@ -40,8 +40,8 @@ public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer {
                 return null;
             });
         }
-        if (CapeManager.INSTANCE.getCustomCape().get() && getGameProfile().getName().equalsIgnoreCase(MinecraftInstance.mc.thePlayer.getGameProfile().getName()))
-            callbackInfoReturnable.setReturnValue(CapeManager.INSTANCE.getCapeLocation(CapeManager.INSTANCE.getStyleValue().get()));
+        if (CustomCape.INSTANCE.getCustomCape() && getGameProfile().getName().equalsIgnoreCase(MinecraftInstance.mc.thePlayer.getGameProfile().getName()))
+            callbackInfoReturnable.setReturnValue(CustomCape.INSTANCE.getCapeLocation(CustomCape.INSTANCE.getStyleValue().get()));
 
         if (capeInfo != null && capeInfo.isCapeAvailable()) {
             callbackInfoReturnable.setReturnValue(capeInfo.getResourceLocation());
@@ -50,7 +50,7 @@ public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer {
 
     @Inject(method = "getFovModifier", at = @At("HEAD"), cancellable = true)
     private void getFovModifier(CallbackInfoReturnable<Float> callbackInfoReturnable) {
-        final NoFOV fovModule = NoFOV.INSTANCE;
+        final CustomFOV fovModule = CustomFOV.INSTANCE;
 
         if (fovModule.handleEvents()) {
             float newFOV = fovModule.getFov();
@@ -72,6 +72,8 @@ public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer {
             callbackInfoReturnable.setReturnValue(newFOV);
         }
     }
+
+
 
     @Inject(method = "getLocationSkin()Lnet/minecraft/util/ResourceLocation;", at = @At("HEAD"), cancellable = true)
     private void getSkin(CallbackInfoReturnable<ResourceLocation> callbackInfoReturnable) {

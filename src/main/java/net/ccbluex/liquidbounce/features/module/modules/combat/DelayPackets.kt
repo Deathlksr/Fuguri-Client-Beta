@@ -1,65 +1,64 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce.features.module.modules.combat
 
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
-import net.ccbluex.liquidbounce.features.module.modules.other.FlagDetect
 import net.ccbluex.liquidbounce.features.module.modules.player.Blink
-import net.ccbluex.liquidbounce.injection.implementations.IMixinEntity
+import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
 import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacket
 import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
-import net.ccbluex.liquidbounce.utils.extensions.*
 import net.ccbluex.liquidbounce.utils.render.ColorUtils.rainbow
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.glColor
+import net.ccbluex.liquidbounce.utils.render.renderutilnahui
 import net.ccbluex.liquidbounce.utils.timing.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
-import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.gui.inventory.GuiInventory
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.network.Packet
 import net.minecraft.network.handshake.client.C00Handshake
 import net.minecraft.network.play.client.*
+import net.minecraft.network.play.server.S08PacketPlayerPosLook
 import net.minecraft.network.play.server.S12PacketEntityVelocity
 import net.minecraft.network.status.client.C00PacketServerQuery
 import net.minecraft.network.status.client.C01PacketPing
 import net.minecraft.network.status.server.S01PacketPong
 import net.minecraft.util.Vec3
-import okhttp3.internal.notify
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 
 object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = false, hideModule = false) {
 
-    private val delay by IntegerValue("Delay", 610, 0..1000)
-    private val distanceToPlayers by FloatValue("Allowed-Distance-To-Players", 3.0f, 0.0f..6.0f)
-    private val minticksalive by IntegerValue("Min-Ticks-Alive-To-Work", 20, 0..60)
-    private val flushoninv by BoolValue("Flush-Inventory", false)
+    private val delay by IntegerValue("Delay", 500, 0..1000)
+    private val ticksexxisted by BoolValue("Ticks-Existed", true)
+    private val minticksalive by IntegerValue("Max-Ticks-Existed", 15, 0..60) { ticksexxisted }
+    private val flushflag by BoolValue("Flush-Flag", true)
+    private val tickflag by IntegerValue("Ticks-Flag", 3, 0..60) { flushflag }
+    private val flushoninv by BoolValue("Flush-Inventory", true)
     private val flushoncontainer by BoolValue("Flush-Container", false)
-    private val flushonattack by BoolValue("Flush-Attack", false)
-    private val gotdamage by BoolValue("Flush Got-Damaged", false)
-    private val gotvelocity by BoolValue("Flush-Velocity", false)
-    private val scaffoldcheck by BoolValue("Flush-BlockPlacement", false)
-    private val useitemcheck by BoolValue("Flush-UsingItem", false)
+    private val flushonattack by BoolValue("Flush-Attack", true)
+    private val flushblock by BoolValue("Flush-Blocking", true)
+    private val flushdamage by BoolValue("Flush Got-Damaged", false)
+    private val flushvelocity by BoolValue("Flush-Velocity", false)
+    private val flushuseitem by BoolValue("Flush-UsingItem", false)
+    private val flushback by BoolValue("Flush-Back", false)
+    private val flushclickgui by BoolValue("Flush-Click-Gui", false)
 
     private val packetQueue = LinkedHashMap<Packet<*>, Long>()
     private val positions = LinkedHashMap<Vec3, Long>()
     private val resetTimer = MSTimer()
-    private var wasNearPlayer = false
     private var ignoreWholeTick = false
 
     private val line by BoolValue("Line", true, subjective = true)
+    private val thirdperson by BoolValue("Only-Third-Person", true) { line }
     private val rainbow by BoolValue("Rainbow", false, subjective = true) { line }
     private val red by IntegerValue("R", 0, 0..255, subjective = true) { !rainbow && line }
     private val green by IntegerValue("G", 255, 0..255, subjective = true) { !rainbow && line }
     private val blue by IntegerValue("B", 0, 0..255, subjective = true) { !rainbow && line }
+
+    private var ticksFlag = 0
 
     override fun onDisable() {
         if (mc.thePlayer == null) {
@@ -69,7 +68,7 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
     }
 
     @EventTarget
-    fun onPacket(event : PacketEvent) {
+    fun onPacket(event: PacketEvent) {
         val packet = event.packet
 
         if (!handleEvents())
@@ -78,7 +77,14 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
         if (mc.thePlayer == null || mc.thePlayer.isDead)
             return
 
-        if (mc.thePlayer.ticksExisted < minticksalive) {
+        if (ticksexxisted.takeIf { isActive } == true) {
+            if (mc.thePlayer.ticksExisted < minticksalive) {
+                blink()
+                return
+            }
+        }
+
+        if (ticksFlag > 0) {
             blink()
             return
         }
@@ -86,49 +92,38 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
         if (event.isCancelled)
             return
 
-        if (distanceToPlayers > 0.0 && wasNearPlayer)
-            return
-
         if (ignoreWholeTick)
             return
 
-        if (mc.thePlayer.health < mc.thePlayer.maxHealth) {
-            if (mc.thePlayer.hurtTime != 0) {
-                if (gotdamage.takeIf{isActive} == true) {
-                    blink()
-                    return
-                }
-            }
-        }
-
+        // Flush
         when (packet) {
             is C00Handshake, is C00PacketServerQuery, is C01PacketPing, is C01PacketChatMessage, is S01PacketPong -> {
                 return
             }
 
-            is C0DPacketCloseWindow, is C0EPacketClickWindow -> {
+            is C02PacketUseEntity -> {
+                if (flushonattack.takeIf { isActive } == true) {
+                    blink()
+                    return
+                }
+            }
+
+            is C0EPacketClickWindow, is C0DPacketCloseWindow -> {
                 if (flushoninv.takeIf { isActive } == true) {
                     blink()
                     return
                 }
             }
 
-            is C12PacketUpdateSign, is C02PacketUseEntity -> {
-                if (flushonattack.takeIf {isActive} == true) {
-                    blink()
+            is S08PacketPlayerPosLook -> {
+                if (flushflag.takeIf { isActive } == true) {
+                    ticksFlag = tickflag
                     return
                 }
             }
 
             is C07PacketPlayerDigging, is C08PacketPlayerBlockPlacement -> {
-                if (useitemcheck.takeIf {isActive} == true) {
-                    blink()
-                    return
-                }
-            }
-
-            is C08PacketPlayerBlockPlacement -> {
-                if (scaffoldcheck.takeIf { isActive } == true) {
+                if (flushuseitem.takeIf { isActive } == true) {
                     blink()
                     return
                 }
@@ -136,7 +131,7 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
 
             is S12PacketEntityVelocity -> {
                 if (mc.thePlayer.entityId == packet.entityID) {
-                    if (gotvelocity.takeIf{isActive} == true) {
+                    if (flushvelocity.takeIf { isActive } == true) {
                         blink()
                         return
                     }
@@ -160,6 +155,37 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
             }
         }
 
+        if (flushclickgui.takeIf { isActive } == true) {
+            if (screen is ClickGui) {
+                blink()
+                return
+            }
+        }
+
+        if (flushblock.takeIf { isActive } == true) {
+            if (mc.thePlayer.isUsingItem) {
+                blink()
+                return
+            }
+        }
+
+        if (mc.gameSettings.keyBindBack.pressed) {
+            if (flushback.takeIf { isActive } == true) {
+                blink()
+                return
+            }
+        }
+
+        if (mc.thePlayer.health < mc.thePlayer.maxHealth) {
+            if (mc.thePlayer.hurtTime != 0) {
+                if (flushdamage.takeIf { isActive } == true) {
+                    blink()
+                    return
+                }
+            }
+        }
+
+        // Passed time
         if (!resetTimer.hasTimePassed(0))
             return
 
@@ -181,46 +207,24 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
     }
 
     @EventTarget
+    fun onUpdate(event: UpdateEvent) {
+        if (ticksFlag > 0) {
+            ticksFlag--
+        }
+    }
+
+    @EventTarget
     fun onWorld(event: WorldEvent) {
         // Clear packets on disconnect only
         if (event.worldClient == null)
             blink(false)
     }
 
-    private fun getTruePositionEyes(player: EntityPlayer): Vec3 {
-        val mixinPlayer = player as? IMixinEntity
-        return Vec3(mixinPlayer!!.trueX, mixinPlayer.trueY + player.getEyeHeight().toDouble(), mixinPlayer.trueZ)
-    }
-
     @EventTarget
     fun onGameLoop(event: GameLoopEvent) {
-        val thePlayer = mc.thePlayer ?: return
+        mc.thePlayer ?: return
 
-        if (distanceToPlayers > 0) {
-            val playerPos = thePlayer.positionVector
-            val serverPos = positions.keys.firstOrNull() ?: playerPos
-
-            val otherPlayers = mc.theWorld.playerEntities.filter { it != thePlayer }
-
-            val (dx, dy, dz) = serverPos - playerPos
-            val playerBox = thePlayer.hitBox.offset(dx, dy, dz)
-
-            wasNearPlayer = false
-
-            for (otherPlayer in otherPlayers) {
-                val entityMixin = otherPlayer as? IMixinEntity
-                if (entityMixin != null) {
-                    val eyes = getTruePositionEyes(otherPlayer)
-                    if (eyes.distanceTo(getNearestPointBB(eyes, playerBox)) <= distanceToPlayers.toDouble()) {
-                        blink()
-                        wasNearPlayer = true
-                        return
-                    }
-                }
-            }
-        }
-
-        if (Blink.blinkingSend() || mc.thePlayer.isDead || thePlayer.isUsingItem) {
+        if (Blink.blinkingSend() || mc.thePlayer.isDead) {
             blink()
             return
         }
@@ -232,12 +236,12 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
         ignoreWholeTick = false
     }
 
-
-
-
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         if (!line) return
+
+        if (mc.gameSettings.thirdPersonView == 0 && thirdperson.takeIf { isActive } == true)
+            return
 
         val color = if (rainbow) rainbow() else Color(red, green, blue)
 
@@ -300,5 +304,4 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
             positions.entries.removeAll { (_, timestamp) -> timestamp <= System.currentTimeMillis() - delay }
         }
     }
-
 }

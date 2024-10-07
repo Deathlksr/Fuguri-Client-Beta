@@ -9,8 +9,8 @@ import io.netty.buffer.Unpooled
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.Listenable
 import net.ccbluex.liquidbounce.event.PacketEvent
-import net.ccbluex.liquidbounce.features.module.modules.client.BrandSpoofer.customValue
-import net.ccbluex.liquidbounce.features.module.modules.client.BrandSpoofer.possibleBrands
+import net.ccbluex.liquidbounce.features.module.modules.client.ClientSpoofer.customValue
+import net.ccbluex.liquidbounce.features.module.modules.client.ClientSpoofer.possibleBrands
 import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
 import net.minecraft.network.PacketBuffer

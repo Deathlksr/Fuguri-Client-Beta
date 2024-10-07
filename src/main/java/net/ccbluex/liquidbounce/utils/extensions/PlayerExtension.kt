@@ -100,7 +100,6 @@ fun EntityPlayer.isClientFriend(): Boolean {
     return friendsConfig.isFriend(stripColor(entityName))
 }
 
-
 val EntityLivingBase.skin: ResourceLocation
     get() = if (this is EntityPlayer) { mc.netHandler.getPlayerInfo(this.uniqueID)?.locationSkin } else { null } ?: DefaultPlayerSkin.getDefaultSkinLegacy()
 

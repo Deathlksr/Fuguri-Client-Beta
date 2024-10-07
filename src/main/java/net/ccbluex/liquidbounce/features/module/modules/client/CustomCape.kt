@@ -1,16 +1,16 @@
 package net.ccbluex.liquidbounce.features.module.modules.client
 
+import codes.som.anthony.koffee.types.boolean
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.utils.APIConnecter
-import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.util.ResourceLocation
 import java.util.*
 
-object CapeManager : Module("CapeManager", Category.CLIENT, hideModule = false) {
+object CustomCape : Module("CustomCape", Category.CLIENT, hideModule = false) {
 
-    val customCape = BoolValue("CustomCape", true)
+    var customCape = false
     val styleValue = ListValue(
         "Mode",
         arrayOf(
@@ -19,7 +19,14 @@ object CapeManager : Module("CapeManager", Category.CLIENT, hideModule = false) 
         ),
         "FuguriBeta"
     )
-    { customCape.get() }
+
+    override fun onEnable() {
+        customCape = true
+    }
+
+    override fun onDisable() {
+        customCape = false
+    }
 
     private val capeCache = hashMapOf<String, CapeStyle>()
     private var nowCape: CapeStyle? = null

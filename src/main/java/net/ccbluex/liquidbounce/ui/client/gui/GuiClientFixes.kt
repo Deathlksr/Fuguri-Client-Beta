@@ -5,7 +5,7 @@
  */
 package net.ccbluex.liquidbounce.ui.client.gui
 
-import net.ccbluex.liquidbounce.features.module.modules.client.BrandSpoofer.possibleBrands
+import net.ccbluex.liquidbounce.features.module.modules.client.ClientSpoofer.possibleBrands
 import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.handler.payload.ClientFixes.blockFML
 import net.ccbluex.liquidbounce.handler.payload.ClientFixes.blockPayloadPackets

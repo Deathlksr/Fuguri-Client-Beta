@@ -5,7 +5,7 @@
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.render;
 
-import net.ccbluex.liquidbounce.features.module.modules.visual.Glint;
+import net.ccbluex.liquidbounce.features.module.modules.visual.CustomGlint;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.resources.model.IBakedModel;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +21,7 @@ public abstract class MixinRenderItem {
 
     @Redirect(method = "renderEffect", at = @At(value="INVOKE", target="Lnet/minecraft/client/renderer/entity/RenderItem;renderModel(Lnet/minecraft/client/resources/model/IBakedModel;I)V"))
     private void renderModel(RenderItem renderItem, IBakedModel model, int color) {
-        final Glint glint = Glint.INSTANCE;
+        final CustomGlint glint = CustomGlint.INSTANCE;
 
         this.renderModel(model, glint.getState() ? glint.getColor().getRGB() : -8372020);
     }

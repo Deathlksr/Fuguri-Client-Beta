@@ -41,7 +41,7 @@ import java.awt.Color
 
 object BedDefender : Module("BedDefender", Category.OTHER, hideModule = false) {
 
-    private val rotations by BoolValue("Rotations", true)
+    private val rotations by BoolValue("RotationHandler", true)
 
     private val autoBlock by ListValue("AutoBlock", arrayOf("Off", "Pick", "Spoof", "Switch"), "Spoof")
     private val swing by BoolValue("Swing", true)

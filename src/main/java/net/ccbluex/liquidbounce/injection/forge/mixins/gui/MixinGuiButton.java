@@ -5,7 +5,7 @@
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.gui;
 
-import net.ccbluex.liquidbounce.features.module.modules.client.BrandSpoofer;
+import net.ccbluex.liquidbounce.features.module.modules.client.ClientSpoofer;
 import net.ccbluex.liquidbounce.features.module.modules.client.button.AbstractButtonRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -40,7 +40,7 @@ public abstract class MixinGuiButton extends Gui {
    @Shadow
    protected abstract void mouseDragged(Minecraft mc, int mouseX, int mouseY);
 
-   protected final AbstractButtonRenderer fDPClient$buttonRenderer = BrandSpoofer.INSTANCE.getButtonRenderer((GuiButton)(Object)this);
+   protected final AbstractButtonRenderer fDPClient$buttonRenderer = ClientSpoofer.INSTANCE.getButtonRenderer((GuiButton)(Object)this);
 
    /**
     * @author CCBlueX

@@ -108,7 +108,7 @@ public abstract class MixinEntityRenderer {
 
     @Inject(method = "hurtCameraEffect", at = @At("HEAD"), cancellable = true)
     private void injectHurtCameraEffect(CallbackInfo callbackInfo) {
-        if (HurtCam.INSTANCE.handleEvents()) {
+        if (AntiHurtCam.INSTANCE.handleEvents()) {
             callbackInfo.cancel();
         }
     }
@@ -126,7 +126,7 @@ public abstract class MixinEntityRenderer {
      */
     @Overwrite
     private void orientCamera(float partialTicks) {
-            final CameraView cameraView = CameraView.INSTANCE;
+            final CustomCamera cameraView = CustomCamera.INSTANCE;
             Entity entity = this.mc.getRenderViewEntity();
             float f = entity.getEyeHeight();
             double d0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;

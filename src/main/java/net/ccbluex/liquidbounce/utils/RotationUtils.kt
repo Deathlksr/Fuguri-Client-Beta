@@ -7,7 +7,7 @@ package net.ccbluex.liquidbounce.utils
 
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.modules.combat.FastBow
-import net.ccbluex.liquidbounce.features.module.modules.client.Rotations.debugRotations
+import net.ccbluex.liquidbounce.features.module.modules.client.RotationHandler.debugRotations
 import net.ccbluex.liquidbounce.utils.RaycastUtils.raycastEntity
 import net.ccbluex.liquidbounce.utils.extensions.*
 import net.ccbluex.liquidbounce.utils.inventory.InventoryUtils
@@ -23,6 +23,7 @@ object RotationUtils : MinecraftInstance(), Listenable {
     var targetRotation: Rotation? = null
 
     var currentRotation: Rotation? = null
+    @JvmStatic
     var serverRotation = Rotation(0f, 0f)
     var lastServerRotation = Rotation(0f, 0f)
     var secondLastRotation = Rotation(0f, 0f)

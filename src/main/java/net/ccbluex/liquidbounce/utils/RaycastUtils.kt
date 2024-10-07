@@ -26,6 +26,7 @@ import net.minecraft.util.Vec3
 import java.util.*
 
 object RaycastUtils : MinecraftInstance() {
+
     @JvmOverloads
     fun raycastEntity(
         range: Double,

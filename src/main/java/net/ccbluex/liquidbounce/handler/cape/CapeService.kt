@@ -159,7 +159,7 @@ object CapeService : Listenable, MinecraftInstance() {
                     val uuid = json.getString("uuid")
 
                     clientCapeUser = CapeSelfUser(token, enabled, uuid, capeName)
-                    LOGGER.info("Logged in successfully. Cape: $capeName")
+                    LOGGER.info("Logged in successfully. CustomCape: $capeName")
                 } else {
                     throw RuntimeException("Failed to get self cape. Status code: $statusCode")
                 }
@@ -200,7 +200,7 @@ object CapeService : Listenable, MinecraftInstance() {
 
                 // Refresh cape carriers
                 refreshCapeCarriers(force = true) {
-                    LOGGER.info("Cape state toggled successfully.")
+                    LOGGER.info("CustomCape state toggled successfully.")
                 }
 
                 capeUser.enabled = !capeUser.enabled
@@ -245,14 +245,14 @@ object CapeService : Listenable, MinecraftInstance() {
 
                 if (statusCode == HttpStatus.SC_NO_CONTENT) {
                     capeUser.uuid = uuid
-                    LOGGER.info("[Donator Cape] Successfully transferred cape to $uuid ($username)")
+                    LOGGER.info("[Donator CustomCape] Successfully transferred cape to $uuid ($username)")
                 } else {
-                    LOGGER.info("[Donator Cape] Failed to transfer cape ($statusCode)")
+                    LOGGER.info("[Donator CustomCape] Failed to transfer cape ($statusCode)")
                 }
 
                 // Refresh cape carriers
                 refreshCapeCarriers(force = true) {
-                    LOGGER.info("Cape carriers refreshed after session change.")
+                    LOGGER.info("CustomCape carriers refreshed after session change.")
                 }
             }.onFailure {
                 LOGGER.error("Failed to handle new session due to error.", it)

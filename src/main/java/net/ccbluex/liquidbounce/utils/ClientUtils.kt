@@ -33,7 +33,7 @@ object ClientUtils : MinecraftInstance() {
         } catch (ignored: NoSuchFieldException) { }
     }
 
-    val LOGGER: Logger = LogManager.getLogger("FuguriBeta")
+    val LOGGER: Logger = LogManager.getLogger("Fuguri-Beta")
 
     fun disableFastRender() {
         try {
@@ -59,7 +59,7 @@ object ClientUtils : MinecraftInstance() {
     }
 
     fun displayAlert(message: String) {
-        displayChatMessage("§a§l[$CLIENT_NAME]§c $message")
+        displayChatMessage("§7[§5$CLIENT_NAME§7] → §7$message")
     }
 
     fun displayChatMessage(message: String) {
@@ -68,7 +68,7 @@ object ClientUtils : MinecraftInstance() {
             return
         }
 
-        val prefixMessage = "§a§l[$CLIENT_NAME]§c $message"
+        val prefixMessage = "§7[§5$CLIENT_NAME§7] → §7$message"
         val jsonObject = JsonObject()
         jsonObject.addProperty("text", prefixMessage)
         mc.thePlayer.addChatMessage(IChatComponent.Serializer.jsonToComponent(jsonObject.toString()))

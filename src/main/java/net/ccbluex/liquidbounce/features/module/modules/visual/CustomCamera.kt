@@ -10,7 +10,7 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 
-object CameraView : Module("CameraView", Category.VISUAL, hideModule = false) {
+object CustomCamera : Module("CustomCamera", Category.VISUAL, hideModule = false) {
 
     val fovValue by FloatValue("FOV", 1f, 0f.. 30f)
     val clipValue by BoolValue("CameraClip", false)

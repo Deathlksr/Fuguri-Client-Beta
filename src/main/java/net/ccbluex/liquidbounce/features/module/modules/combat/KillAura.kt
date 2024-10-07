@@ -1,8 +1,3 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce.features.module.modules.combat
 
 import net.ccbluex.liquidbounce.event.*
@@ -71,6 +66,7 @@ import java.awt.Color
 import kotlin.math.max
 
 object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule = false) {
+
     /**
      * OPTIONS
      */
@@ -161,7 +157,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
     ) { autoBlock != "Off" }
     private val releaseAutoBlock by BoolValue("ReleaseAutoBlock", true)
     { autoBlock !in arrayOf("Off", "Fake") }
-    val forceBlockRender by BoolValue("ForceBlockRender", true)
+    var forceBlockRender by BoolValue("ForceBlockRender", true)
     { autoBlock !in arrayOf("Off", "Fake") && releaseAutoBlock }
     private val ignoreTickRule by BoolValue("IgnoreTickRule", false)
     { autoBlock !in arrayOf("Off", "Fake") && releaseAutoBlock }
@@ -250,7 +246,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
     private val useHitDelay by BoolValue("UseHitDelay", false)
     private val hitDelayTicks by IntegerValue("HitDelayTicks", 1, 1..5) { useHitDelay }
 
-    // Rotations
+    // RotationHandler
     private val keepRotationTicks by object : IntegerValue("KeepRotationTicks", 5, 1..20) {
         override fun onChange(oldValue: Int, newValue: Int) = newValue.coerceAtLeast(minimum)
         override fun isSupported() = !noRotation
@@ -1268,7 +1264,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
      * HUD Tag
      */
     override val tag
-        get() = targetMode
+        get() = target?.name
 
     val isBlockingChestAura
         get() = handleEvents() && target != null

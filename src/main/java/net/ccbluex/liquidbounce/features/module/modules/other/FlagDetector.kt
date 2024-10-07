@@ -23,16 +23,16 @@ import net.minecraft.network.play.server.S01PacketJoinGame
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
 import net.minecraft.util.BlockPos
 import kotlin.math.abs
-import kotlin.math.roundToLong
 import kotlin.math.sqrt
 
-object FlagDetect : Module("FlagDetect", Category.OTHER, gameDetecting = true, hideModule = false) {
+object FlagDetector : Module("FlagDetector", Category.OTHER, gameDetecting = true, hideModule = false) {
 
     private val resetFlagCounterTicks by IntegerValue("ResetCounterTicks", 600, 100..1000)
     private val rubberbandCheck by BoolValue("RubberbandCheck", false)
     private val rubberbandThreshold by FloatValue("RubberBandThreshold", 5.0f, 0.05f..10.0f) { rubberbandCheck }
+    private val clearflagcheck by BoolValue("ClearFlags", false)
 
-    private var flagCount = 0
+    var flagCount = 0
     private var lastYaw = 0F
     private var lastPitch = 0F
 
@@ -78,7 +78,7 @@ object FlagDetect : Module("FlagDetect", Category.OTHER, gameDetecting = true, h
             if (deltaYaw > 90 || deltaPitch > 90) {
                 forceRotateDetected = true
                 flagCount++
-                Chat.print("§dDetected §3Force-Rotate §e(${deltaYaw.roundToLong()}° | ${deltaPitch.roundToLong()}°) §b(§c${flagCount}x§b)")
+                Chat.print("§cFlag Detected: §7${flagCount}")
             } else {
                 forceRotateDetected = false
             }
@@ -86,7 +86,7 @@ object FlagDetect : Module("FlagDetect", Category.OTHER, gameDetecting = true, h
             if (!forceRotateDetected) {
                 lagbackDetected = true
                 flagCount++
-                Chat.print("§dDetected §3Lagback §b(§c${flagCount}x§b)")
+                Chat.print("§cFlag Detected: §7${flagCount}")
             }
 
             if (mc.thePlayer.ticksExisted % 3 == 0) {
@@ -105,7 +105,9 @@ object FlagDetect : Module("FlagDetect", Category.OTHER, gameDetecting = true, h
 
         when (packet) {
             is S01PacketJoinGame, is S00PacketDisconnect -> {
-                clearFlags()
+                if (clearflagcheck.takeIf { isActive } == true) {
+                    clearFlags()
+                }
             }
         }
     }
@@ -143,7 +145,7 @@ object FlagDetect : Module("FlagDetect", Category.OTHER, gameDetecting = true, h
                 if (block == Blocks.air && player.swingProgressInt > 2 && successfulPlacements != blockPos && isNotUsing) {
                     successfulPlacements.remove(blockPos)
                     flagCount++
-                    Chat.print("§dDetected §3GhostBlock §b(§c${flagCount}x§b)")
+                    Chat.print("§cFlag Detected: §7${flagCount}")
                 }
 
                 blockPlacementAttempts.remove(blockPos)
@@ -158,7 +160,7 @@ object FlagDetect : Module("FlagDetect", Category.OTHER, gameDetecting = true, h
         if (invalidReason.isNotEmpty()) {
             flagCount++
             val reasonString = invalidReason.joinToString(" §8|§e ")
-            Chat.print("§dDetected §3Invalid §e$reasonString §b(§c${flagCount}x§b)")
+            Chat.print("§cFlag Detected: §7${flagCount}")
             invalidReason.clear()
         }
 
@@ -191,7 +193,7 @@ object FlagDetect : Module("FlagDetect", Category.OTHER, gameDetecting = true, h
         if (rubberbandReason.isNotEmpty()) {
             flagCount++
             val reasonString = rubberbandReason.joinToString(" §8|§e ")
-            Chat.print("§7(§9FlagCheck§7) §dDetected §3Rubberband §8(§e$reasonString§8) §b(§c${flagCount}x§b)")
+            Chat.print("§cFlag Detected: §7${flagCount}")
             rubberbandReason.clear()
         }
 
@@ -206,12 +208,16 @@ object FlagDetect : Module("FlagDetect", Category.OTHER, gameDetecting = true, h
 
         // Automatically clear flags (Default: 10 minutes)
         if (player.ticksExisted % (resetFlagCounterTicks * 20) == 0) {
-            clearFlags()
+            if (clearflagcheck.takeIf { isActive } == true) {
+                clearFlags()
+            }
         }
     }
 
     @EventTarget
     fun onWorld(event: WorldEvent) {
-        clearFlags()
+        if (clearflagcheck.takeIf { isActive } == true) {
+            clearFlags()
+        }
     }
 }

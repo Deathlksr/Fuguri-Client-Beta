@@ -1,8 +1,3 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce.features.module.modules.visual
 
 import net.ccbluex.liquidbounce.features.module.Category
@@ -44,7 +39,8 @@ object Animations : Module("Animations", Category.VISUAL, gameDetecting = false,
 
     private val animations = arrayOf(
         OneSevenAnimation(),
-        PushdownAnimation(),
+        OldPushdownAnimation(),
+        NewPushdownAnimation(),
         OldAnimation(),
         HeliumAnimation(),
         ArgonAnimation(),
@@ -120,6 +116,7 @@ class OneSevenAnimation : Animation("OneSeven") {
         doBlockTransformations()
         translate(-0.5f, 0.2f, 0f)
     }
+
 }
 
 class OldAnimation : Animation("Old") {
@@ -130,9 +127,9 @@ class OldAnimation : Animation("Old") {
 }
 
 /**
- * Pushdown animation
+ * Old Pushdown animation.
  */
-class PushdownAnimation : Animation("Pushdown") {
+class OldPushdownAnimation : Animation("OldPushdown") {
 
     /**
      * @author CzechHek. Taken from Animations script.
@@ -156,6 +153,34 @@ class PushdownAnimation : Animation("Pushdown") {
         rotate(60f, 0f, 1f, 0f)
         glTranslated(1.05, 0.35, 0.4)
         glTranslatef(-1f, 0f, 0f)
+    }
+
+}
+
+/**
+ * New Pushdown animation.
+ * @author EclipsesDev
+ *
+ * Taken from NightX Moon Animation (I made it smoother here xd)
+ */
+class NewPushdownAnimation : Animation("NewPushdown") {
+
+    override fun transform(f1: Float, f: Float, clientPlayer: AbstractClientPlayer) {
+        val x = Animations.handPosX - 0.08
+        val y = Animations.handPosY + 0.12
+        val z = Animations.handPosZ.toDouble()
+        translate(x, y, z)
+
+        val var9 = MathHelper.sin(MathHelper.sqrt_float(f1) * 3.1415927f)
+        translate(0.0, 0.0, 0.0)
+
+        transformFirstPersonItem(f / 1.4f, 0.0f)
+
+        rotate(-var9 * 65.0f / 2.0f, var9 / 2.0f, 1.0f, 4.0f)
+        rotate(-var9 * 60.0f, 1.0f, var9 / 3.0f, -0.0f)
+        doBlockTransformations()
+
+        scale(1.0, 1.0, 1.0)
     }
 
 }

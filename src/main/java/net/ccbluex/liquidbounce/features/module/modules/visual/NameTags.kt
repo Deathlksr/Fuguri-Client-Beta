@@ -161,30 +161,32 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         scale /= 200f
         tag = entity.displayName.formattedText
 
-        var bot = ""
-        bot = if (isBot(entity)) {
-            "§7[Bot] "
-        } else {
-            ""
-        }
-
-        val healthText = if (health) " §a" + entity.health.toInt() + "" else ""
-        val distanceText = if (distance) "§a[§f" + mc.thePlayer.getDistanceToEntity(entity).toInt() + "§a] " else ""
-        val HEALTH: Int = entity.health.toInt()
-        val COLOR1: String = when {
-            HEALTH > 20 -> "§9"
-            HEALTH >= 11 -> "§a"
-            HEALTH >= 4 -> "§e"
-            else -> "§4"
-        }
-
-        val hp = " [$COLOR1$HEALTH §c❤§f]"
         glPushMatrix()
         glTranslatef(
             (entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * mc.timer.renderPartialTicks - mc.renderManager.renderPosX).toFloat(),
             (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * mc.timer.renderPartialTicks - mc.renderManager.renderPosY + entity.eyeHeight + 0.6).toFloat(),
             (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * mc.timer.renderPartialTicks - mc.renderManager.renderPosZ).toFloat()
         )
+
+        var friendtext = "§2[Friend]§2 "
+        if (entity is EntityPlayer) {
+            val entityPlayer: EntityPlayer = entity
+            if (!entityPlayer.isClientFriend()) {
+                friendtext = ""
+            }
+        } else {
+            friendtext = ""
+        }
+
+        var colorfriend = tag
+        if (entity is EntityPlayer) {
+            val entityPlayer: EntityPlayer = entity
+            if (!entityPlayer.isClientFriend()) {
+                colorfriend = tag
+            }
+        } else {
+            colorfriend = "§2$tag"
+        }
 
         glNormal3f(0.0f, 1.0f, 0.0f)
         glRotatef(-mc.renderManager.playerViewY, 0.0f, 1.0f, 0.0f)
@@ -194,7 +196,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         RenderUtils.setGLCap(GL_DEPTH_TEST, false)
         RenderUtils.setGLCap(GL_BLEND, true)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        val text = distanceText + bot + tag + healthText + hp
+        val text = friendtext + colorfriend
         val stringWidth = fontRenderer.getStringWidth(text) / 2
         if (background) {
             Gui.drawRect((-stringWidth - 1), -14, (stringWidth + 1), -4, Integer.MIN_VALUE)

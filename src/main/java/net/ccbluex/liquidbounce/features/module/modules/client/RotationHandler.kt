@@ -14,7 +14,7 @@ import net.ccbluex.liquidbounce.utils.RotationUtils.serverRotation
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 
-object Rotations : Module("Rotations", Category.CLIENT, gameDetecting = false, hideModule = false) {
+object RotationHandler : Module("RotationHandler", Category.CLIENT, gameDetecting = false, hideModule = false) {
 
     private val realistic by BoolValue("Realistic", false)
     private val body by BoolValue("Body", true) { !realistic }

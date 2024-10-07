@@ -60,7 +60,7 @@ object Fucker : Module("Fucker", Category.OTHER, hideModule = false) {
     private val swing by BoolValue("Swing", true)
     val noHit by BoolValue("NoHit", false)
 
-    private val rotations by BoolValue("Rotations", true)
+    private val rotations by BoolValue("RotationHandler", true)
     private val strafe by ListValue("Strafe", arrayOf("Off", "Strict", "Silent"), "Off") { rotations }
     private val smootherMode by ListValue("SmootherMode", arrayOf("Linear", "Relative"), "Relative") { rotations }
 

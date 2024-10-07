@@ -10,6 +10,7 @@ import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME
 import net.ccbluex.liquidbounce.FuguriBeta.clientCommit
 import net.ccbluex.liquidbounce.FuguriBeta.clientVersionText
 import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura.blockStatus
+import net.ccbluex.liquidbounce.features.module.modules.other.FlagDetector
 import net.ccbluex.liquidbounce.ui.client.hud.designer.GuiHudDesigner
 import net.ccbluex.liquidbounce.ui.client.hud.element.Border
 import net.ccbluex.liquidbounce.ui.client.hud.element.Element
@@ -179,6 +180,7 @@ class Text(x: Double = 10.0, y: Double = 10.0, scale: Float = 1F, side: Side = S
             "rcps" -> return CPSCounter.getCPS(CPSCounter.MouseButton.RIGHT)
             "pps_sent" -> return PPSCounter.getPPS(PPSCounter.PacketType.SEND)
             "pps_received" -> return PPSCounter.getPPS(PPSCounter.PacketType.RECEIVED)
+            "flagc" -> return FlagDetector.flagCount
             else -> null // Null = don't replace
         }
     }

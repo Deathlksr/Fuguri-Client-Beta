@@ -12,18 +12,24 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
 import net.ccbluex.liquidbounce.ui.client.clickgui.style.styles.BlackStyle
+import net.ccbluex.liquidbounce.ui.client.clickgui.style.styles.LiquidBounceStyle
+import net.ccbluex.liquidbounce.ui.client.clickgui.style.styles.NullStyle
+import net.ccbluex.liquidbounce.ui.client.clickgui.style.styles.SlowlyStyle
+import net.ccbluex.liquidbounce.utils.render.ColorUtils
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.network.play.server.S2EPacketCloseWindow
 import org.lwjgl.input.Keyboard
+import java.awt.Color
 
 object ClickGUIModule : Module("ClickGUI", Category.CLIENT, Keyboard.KEY_RSHIFT, canBeEnabled = false) {
     private val style by
-        object : ListValue("Style", arrayOf("Black"), "Black") {
+        object : ListValue("Style", arrayOf("Black", "Null", "Slowly", "LiquidBounce"), "Black") {
             override fun onChanged(oldValue: String, newValue: String) = updateStyle()
         }
+
     var scale by FloatValue("Scale", 0.8f, 0.5f..1.5f)
     val maxElements by IntegerValue("MaxElements", 15, 1..30)
     val fadeSpeed by FloatValue("FadeSpeed", 1f, 0.5f..4f)
@@ -31,6 +37,14 @@ object ClickGUIModule : Module("ClickGUI", Category.CLIENT, Keyboard.KEY_RSHIFT,
     val spacedModules by BoolValue("SpacedModules", false)
     val panelsForcedInBoundaries by BoolValue("PanelsForcedInBoundaries", false)
 
+    private val colorRainbowValue = BoolValue("Rainbow", false)
+    private val colorRed by IntegerValue("R", 0, 0..255)
+    private val colorGreen by IntegerValue("G", 160, 0..255)
+    private val colorBlue by IntegerValue("B", 255, 0..255)
+
+    val guiColor
+        get() = if (colorRainbowValue.get()) ColorUtils.rainbow().rgb
+        else Color(colorRed, colorGreen, colorBlue).rgb
 
     override fun onEnable() {
         updateStyle()
@@ -40,6 +54,9 @@ object ClickGUIModule : Module("ClickGUI", Category.CLIENT, Keyboard.KEY_RSHIFT,
     private fun updateStyle() {
         clickGui.style = when (style) {
             "Black" -> BlackStyle
+            "Null" -> NullStyle
+            "Slowly" -> SlowlyStyle
+            "LiquidBounce" -> LiquidBounceStyle
             else -> return
         }
     }

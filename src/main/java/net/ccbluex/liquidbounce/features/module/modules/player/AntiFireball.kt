@@ -28,7 +28,7 @@ object AntiFireball : Module("AntiFireball", Category.PLAYER, hideModule = false
     private val range by FloatValue("Range", 4.5f, 3f..8f)
     private val swing by ListValue("Swing", arrayOf("Normal", "Packet", "None"), "Normal")
 
-    private val rotations by BoolValue("Rotations", true)
+    private val rotations by BoolValue("RotationHandler", true)
     private val smootherMode by ListValue("SmootherMode", arrayOf("Linear", "Relative"), "Relative") { rotations }
     private val strafe by BoolValue("Strafe", false) { rotations }
 

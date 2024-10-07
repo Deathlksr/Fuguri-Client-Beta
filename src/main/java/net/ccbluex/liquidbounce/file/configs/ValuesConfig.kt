@@ -11,7 +11,7 @@ import com.google.gson.JsonParser
 import net.ccbluex.liquidbounce.FuguriBeta.commandManager
 import net.ccbluex.liquidbounce.FuguriBeta.moduleManager
 import net.ccbluex.liquidbounce.handler.cape.CapeService
-import net.ccbluex.liquidbounce.features.module.modules.client.BrandSpoofer.possibleBrands
+import net.ccbluex.liquidbounce.features.module.modules.client.ClientSpoofer.possibleBrands
 import net.ccbluex.liquidbounce.features.module.modules.client.IRCModule.jwtToken
 import net.ccbluex.liquidbounce.features.module.modules.client.TargetModule.animalValue
 import net.ccbluex.liquidbounce.features.module.modules.client.TargetModule.deadValue

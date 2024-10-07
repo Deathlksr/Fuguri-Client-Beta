@@ -17,7 +17,7 @@ import net.minecraft.util.Vec3
 import kotlin.math.*
 
 /**
- * Rotations
+ * RotationHandler
  */
 data class Rotation(var yaw: Float, var pitch: Float) : MinecraftInstance() {
 

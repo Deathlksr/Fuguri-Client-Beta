@@ -5,6 +5,7 @@
  */
 package net.ccbluex.liquidbounce.utils.render
 
+import codes.som.anthony.koffee.types.double
 import com.jhlabs.image.GaussianFilter
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.DOUBLE_PI
@@ -15,12 +16,13 @@ import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorGr
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorRedTwoValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorRedValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloBlueValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloBlueValueTwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloGreenValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloGreenValueTwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloRedValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloRedValueTwo
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloalpha
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesalpha
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesalphatwo
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorBlue
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorGreen
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRed
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.start
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.ClientThemesUtils.getColor
@@ -52,6 +54,7 @@ import net.minecraft.util.ResourceLocation
 import net.minecraft.util.Vec3
 import org.lwjgl.opengl.EXTFramebufferObject
 import org.lwjgl.opengl.EXTPackedDepthStencil
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL14
 import org.lwjgl.util.glu.Cylinder
@@ -530,14 +533,14 @@ object RenderUtils : MinecraftInstance() {
             var moveFace = (height / 60F) * i * baseMove
             if (drawMode) moveFace = -moveFace
             val firstPoint = points[0]
+            glColor4f(jelloRedValue, jelloGreenValue, jelloBlueValue, 0F)
             glVertex3d(
                 firstPoint.xCoord - mc.renderManager.viewerPosX,
                 firstPoint.yCoord - moveFace - min - mc.renderManager.viewerPosY,
                 firstPoint.zCoord - mc.renderManager.viewerPosZ
             )
             for (vec3 in points) {
-                glColor(ColorUtils.getGradientOffset(Color(jelloRedValue, jelloGreenValue, jelloBlueValue), Color(
-                    jelloRedValueTwo, jelloGreenValueTwo, jelloBlueValueTwo, jelloalpha), abs((System.currentTimeMillis() / 10L).toDouble()) / 100.0 + posX))
+                glColor4f(jelloRedValue, jelloGreenValue, jelloBlueValue, 150F)
                 glVertex3d(
                     vec3.xCoord - mc.renderManager.viewerPosX,
                     vec3.yCoord - moveFace - min - mc.renderManager.viewerPosY,
@@ -604,8 +607,6 @@ object RenderUtils : MinecraftInstance() {
 
     fun drawLies(entity: EntityLivingBase, event: Render3DEvent) {
 
-        val themeTextColor = getColor(1)
-
         val everyTime = 3000
         val drawTime = (System.currentTimeMillis() % everyTime).toInt()
         val drawMode = drawTime > (everyTime / 2)
@@ -653,10 +654,10 @@ object RenderUtils : MinecraftInstance() {
             val x2 = x - sin((i - 5) * Math.PI / 180F) * radius
             val z2 = z + cos((i - 5) * Math.PI / 180F) * radius
             glBegin(GL_QUADS)
-            glFloatColor(themeTextColor, 0f)
+            glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
             glVertex3d(x1, y + eased, z1)
             glVertex3d(x2, y + eased, z2)
-            glFloatColor(themeTextColor, 150f)
+            glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalphatwo)
             glVertex3d(x2, y, z2)
             glVertex3d(x1, y, z1)
             glEnd()
@@ -937,6 +938,17 @@ object RenderUtils : MinecraftInstance() {
         glEnable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
         glDisable(GL_LINE_SMOOTH)
+    }
+
+    fun drawRoundedRectz(x1 : Float, y1 : Float, x2 : Float, y2 : Float, radius : Float, color : Int) {
+        val alpha = (color ushr 24 and 0xFF) / 255.0f
+        val red = (color ushr 16 and 0xFF) / 255.0f
+        val green = (color ushr 8 and 0xFF) / 255.0f
+        val blue = (color and 0xFF) / 255.0f
+
+        val (newX1, newY1, newX2, newY2) = orderPoints(x1, y1, x2, y2)
+
+        drawRoundedRectangle(newX1, newY1, newX2, newY2, red, green, blue, alpha, radius)
     }
 
     fun drawRected(left: Float, top: Float, right: Float, bottom: Float, color: Int) {

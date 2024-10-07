@@ -5,7 +5,7 @@
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.render;
 
-import net.ccbluex.liquidbounce.features.module.modules.client.Rotations;
+import net.ccbluex.liquidbounce.features.module.modules.client.RotationHandler;
 import net.ccbluex.liquidbounce.features.module.modules.visual.*;
 import net.ccbluex.liquidbounce.utils.ClientUtils;
 import net.ccbluex.liquidbounce.utils.EntityUtils;
@@ -232,10 +232,10 @@ public abstract class MixinRendererLivingEntity extends MixinRender {
             }
 
 
-            final Rotations rotations = Rotations.INSTANCE;
+            final RotationHandler rotations = RotationHandler.INSTANCE;
             float renderpitch = (mc.gameSettings.thirdPersonView != 0 && rotations.getState() && rotations.getGhost() && entity == mc.thePlayer) ? (entity.prevRotationPitch + (((RotationUtils.INSTANCE.getServerRotation().getPitch() != 0.0f) ? RotationUtils.INSTANCE.getServerRotation().getPitch() : entity.rotationPitch) - entity.prevRotationPitch)) : (entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks);
             float renderyaw = (mc.gameSettings.thirdPersonView != 0 && rotations.getState() && rotations.getGhost() && entity == mc.thePlayer) ? (entity.prevRotationYaw + (((RotationUtils.INSTANCE.getServerRotation().getYaw() != 0.0f) ? RotationUtils.INSTANCE.getServerRotation().getYaw() : entity.rotationYaw) - entity.prevRotationYaw)) : (entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks);
-            if(rotations.getState() && rotations.getGhost() && entity.equals(mc.thePlayer) && Rotations.INSTANCE.shouldRotate()) {
+            if(rotations.getState() && rotations.getGhost() && entity.equals(mc.thePlayer) && RotationHandler.INSTANCE.shouldRotate()) {
                 glPushMatrix();
                 glPushAttrib(1048575);
                 glDisable(2929);

@@ -5,9 +5,12 @@
  */
 package net.ccbluex.liquidbounce.utils.timing
 
+import kotlinx.coroutines.launch
 import net.ccbluex.liquidbounce.utils.extensions.safeDiv
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
 import kotlin.math.roundToInt
+import kotlinx.coroutines.*
+import net.ccbluex.liquidbounce.value.IntegerValue
 
 object TimeUtils {
     private var last = System.currentTimeMillis()
@@ -19,7 +22,6 @@ object TimeUtils {
         val maxDelay = 1000 safeDiv maxCPS
         return (Math.random() * (minDelay - maxDelay) + maxDelay).roundToInt()
     }
-
 
     fun hasReached(time: Double, reset: Boolean): Boolean {
         if ((System.currentTimeMillis() - time) > time) {

@@ -86,7 +86,7 @@ object Flight : Module("Fly", Category.MOVEMENT, Keyboard.KEY_F, hideModule = fa
 
     val vanillaSpeed by FloatValue("VanillaSpeed", 2f, 0f..10f, subjective = true)
         { mode in arrayOf("Vanilla", "KeepAlive", "MineSecure", "BugSpartan") }
-    val flyspeed by FloatValue("VanillaSpeed", 0.6F, 0.2F..1F) { mode in arrayOf("SmoothVanilla") }
+    val flyspeed by FloatValue(" SmoothVanillaSpeed", 0.6F, 0.2F..1F) { mode in arrayOf("SmoothVanilla") }
     private val vanillaKickBypass by BoolValue("VanillaKickBypass", false, subjective = true)
         { mode in arrayOf("Vanilla", "SmoothVanilla") }
     val ncpMotion by FloatValue("NCPMotion", 0f, 0f..1f) { mode == "NCP" }
@@ -124,7 +124,7 @@ object Flight : Module("Fly", Category.MOVEMENT, Keyboard.KEY_F, hideModule = fa
     val debugFly by BoolValue("Debug", false) { mode == "BlocksMC" || mode == "BlocksMC2" }
 
     // Fireball
-    val rotations by BoolValue("Rotations", true) { mode == "Fireball" }
+    val rotations by BoolValue("RotationHandler", true) { mode == "Fireball" }
     val pitchMode by ListValue("PitchMode", arrayOf("Custom", "Smart"), "Custom") { mode == "Fireball" }
     val rotationPitch by FloatValue("Pitch", 90f,0f..90f) { pitchMode != "Smart" && mode == "Fireball" }
     val invertYaw by BoolValue("InvertYaw", true) { pitchMode != "Smart" && mode == "Fireball" }

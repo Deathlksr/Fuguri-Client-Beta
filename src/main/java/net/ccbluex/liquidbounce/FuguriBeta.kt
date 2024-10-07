@@ -5,10 +5,6 @@
  */
 package net.ccbluex.liquidbounce
 
-import net.ccbluex.liquidbounce.handler.api.ClientUpdate.gitInfo
-import net.ccbluex.liquidbounce.handler.api.loadSettings
-import net.ccbluex.liquidbounce.handler.api.messageOfTheDay
-import net.ccbluex.liquidbounce.handler.cape.CapeService
 import net.ccbluex.liquidbounce.event.ClientShutdownEvent
 import net.ccbluex.liquidbounce.event.EventManager
 import net.ccbluex.liquidbounce.event.EventManager.callEvent
@@ -19,26 +15,30 @@ import net.ccbluex.liquidbounce.features.command.CommandManager.registerCommands
 import net.ccbluex.liquidbounce.features.module.ModuleManager
 import net.ccbluex.liquidbounce.features.module.ModuleManager.registerModules
 import net.ccbluex.liquidbounce.features.module.modules.player.scaffolds.Tower
-import net.ccbluex.liquidbounce.handler.payload.ClientFixes
-import net.ccbluex.liquidbounce.handler.discord.DiscordRPC
 import net.ccbluex.liquidbounce.file.FileManager
 import net.ccbluex.liquidbounce.file.FileManager.loadAllConfigs
 import net.ccbluex.liquidbounce.file.FileManager.saveAllConfigs
+import net.ccbluex.liquidbounce.handler.api.ClientUpdate.gitInfo
+import net.ccbluex.liquidbounce.handler.api.loadSettings
+import net.ccbluex.liquidbounce.handler.api.messageOfTheDay
+import net.ccbluex.liquidbounce.handler.cape.CapeService
 import net.ccbluex.liquidbounce.handler.combat.CombatManager
-import net.ccbluex.liquidbounce.handler.discord.DiscordRPC.clientrpcstarted
+import net.ccbluex.liquidbounce.handler.discord.DiscordRPC
+import net.ccbluex.liquidbounce.handler.discord.DiscordRPC.ClientRPCStarted
 import net.ccbluex.liquidbounce.handler.lang.LanguageManager.loadLanguages
 import net.ccbluex.liquidbounce.handler.macro.MacroManager
+import net.ccbluex.liquidbounce.handler.payload.ClientFixes
+import net.ccbluex.liquidbounce.handler.tabs.BlocksTab
+import net.ccbluex.liquidbounce.handler.tabs.ExploitsTab
+import net.ccbluex.liquidbounce.handler.tabs.HeadsTab
 import net.ccbluex.liquidbounce.script.ScriptManager
 import net.ccbluex.liquidbounce.script.ScriptManager.enableScripts
 import net.ccbluex.liquidbounce.script.ScriptManager.loadScripts
 import net.ccbluex.liquidbounce.script.remapper.Remapper
 import net.ccbluex.liquidbounce.script.remapper.Remapper.loadSrg
-import net.ccbluex.liquidbounce.handler.tabs.BlocksTab
-import net.ccbluex.liquidbounce.handler.tabs.ExploitsTab
-import net.ccbluex.liquidbounce.handler.tabs.HeadsTab
-import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration.Companion.updateClientWindow
 import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager.Companion.loadActiveGenerators
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
+import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration.Companion.updateClientWindow
 import net.ccbluex.liquidbounce.ui.client.hud.HUD
 import net.ccbluex.liquidbounce.ui.client.keybind.KeyBindManager
 import net.ccbluex.liquidbounce.ui.font.Fonts.loadFonts
@@ -46,11 +46,16 @@ import net.ccbluex.liquidbounce.utils.*
 import net.ccbluex.liquidbounce.utils.ClassUtils.hasForge
 import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.ClientUtils.disableFastRender
+import net.ccbluex.liquidbounce.utils.MinecraftInstance.Companion.mc
 import net.ccbluex.liquidbounce.utils.inventory.InventoryUtils
 import net.ccbluex.liquidbounce.utils.render.MiniMapRegister
 import net.ccbluex.liquidbounce.utils.timing.TickedActions
 import net.ccbluex.liquidbounce.utils.timing.WaitTickUtils
+import net.minecraft.client.audio.PositionedSoundRecord
+import net.minecraft.client.audio.SoundHandler
+import net.minecraft.util.ResourceLocation
 import kotlin.concurrent.thread
+
 
 object FuguriBeta {
 
@@ -64,8 +69,8 @@ object FuguriBeta {
     const val CLIENT_NAME2 = "FDPClient"
     const val CLIENT_AUTHOR = "Deathlksr"
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
-    const val CLIENT_WEBSITE = "fuguribeta.net"
-    const val CLIENT_VERSION = "Betab1.0"
+    const val CLIENT_WEBSITE = "fdpclient.net"
+    const val CLIENT_VERSION = "B1.5"
     
     val clientVersionText = gitInfo["git.build.version"]?.toString() ?: "unknown"
     val clientVersionNumber = clientVersionText.substring(1).toIntOrNull() ?: 0 // version format: "b<VERSION>" on legacy
@@ -78,7 +83,7 @@ object FuguriBeta {
      */
     const val IN_DEV = false
 
-    val clientTitle = "Fuguri Beta $CLIENT_VERSION"
+    const val clientTitle = "Fuguri Beta $CLIENT_VERSION"
 
     var isStarting = true
     var isLoadingConfig = true
@@ -194,7 +199,7 @@ object FuguriBeta {
                     messageOfTheDay?.message?.let { LOGGER.info("Message of the day: $it") }
 
                     // Setup Discord RPC
-                    if (clientrpcstarted) {
+                    if (ClientRPCStarted) {
                         thread {
                             try {
                             DiscordRPC.setup()

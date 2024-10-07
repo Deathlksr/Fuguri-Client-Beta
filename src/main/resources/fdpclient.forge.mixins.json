@@ -18,6 +18,7 @@
     "entity.MixinAbstractClientPlayer",
     "entity.MixinEntity",
     "entity.MixinEntityLivingBase",
+    "entity.MixinEntityOtherPlayerMP",
     "entity.MixinEntityPlayer",
     "entity.MixinEntityPlayerSP",
     "entity.MixinPlayerControllerMP",
@@ -65,17 +66,20 @@
     "render.MixinTileEntityMobSpawnerRenderer",
     "render.MixinTileEntityRendererDispatcher",
     "render.MixinVisGraph",
+    "render.ShaderGroupMixin",
     "resources.MixinSkinManager",
     "tweaks.MixinAnvilChunkLoader",
     "tweaks.MixinMinecraftServer",
     "world.MixinChunk",
     "world.MixinWorld",
+    "packets.MixinTimer",
     "world.MixinWorldClient"
   ],
   "client": [
     "block.MixinBlockSlime",
     "gui.MixinGuiAchievement",
     "gui.MixinGuiContainer",
+    "packets.MixinTimer",
     "tweaks.MixinEntityFX"
   ]
 }

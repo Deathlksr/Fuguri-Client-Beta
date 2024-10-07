@@ -1,11 +1,17 @@
 /*
- * FDPClient Hacked Client
+ * FuguriBeta Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
+ * https://github.com/SkidderMC/FuguriBeta/
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.client;
 
 import net.ccbluex.liquidbounce.FuguriBeta;
+import net.ccbluex.liquidbounce.features.module.modules.combat.TimerRange;
+import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.entity.Entity;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.util.Timer;
 import net.ccbluex.liquidbounce.handler.api.ClientUpdate;
 import net.ccbluex.liquidbounce.event.*;
 import net.ccbluex.liquidbounce.features.module.modules.combat.AutoClicker;
@@ -45,13 +51,12 @@ import org.lwjgl.opengl.Display;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import static net.ccbluex.liquidbounce.utils.MinecraftInstance.mc;
@@ -67,7 +72,22 @@ public abstract class MixinMinecraft {
     public boolean skipRenderWorld;
 
     @Shadow
+    public RenderGlobal renderGlobal;
+
+    @Shadow
+    public abstract void runTick();
+
+    @Shadow
+    public final Timer timer = new Timer(20.0F);
+
+    @Shadow
     public int leftClickCounter;
+
+    @Shadow
+    private Profiler mcProfiler;
+
+    @Shadow
+    private boolean isGamePaused;
 
     @Shadow
     public MovingObjectPosition objectMouseOver;
@@ -87,8 +107,16 @@ public abstract class MixinMinecraft {
     @Shadow
     public int displayWidth;
 
+    @Shadow public EntityRenderer entityRenderer;
+
+    @Shadow
+    public abstract Entity getRenderViewEntity();
+
     @Shadow
     public int displayHeight;
+
+    @Shadow
+    private int joinPlayerCounter;
 
     @Shadow
     public int rightClickDelayTimer;
@@ -130,8 +158,15 @@ public abstract class MixinMinecraft {
             }
         }
     }
+    @Redirect(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;runTick()V"))
+    private void skipTicksCheck(Minecraft instance) {
+        FuguriBeta.INSTANCE.getModuleManager().getModule(TimerRange.class);
+        if (TimerRange.handleTick()) return;
+        this.runTick();
+    }
 
-    @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;displayGuiScreen(Lnet/minecraft/client/gui/GuiScreen;)V", shift = At.Shift.AFTER))
+
+        @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;displayGuiScreen(Lnet/minecraft/client/gui/GuiScreen;)V", shift = At.Shift.AFTER))
     private void afterMainScreen(CallbackInfo callbackInfo) {
         if (ClientUpdate.INSTANCE.hasUpdate()) {
             displayGuiScreen(new GuiUpdate());
@@ -141,7 +176,7 @@ public abstract class MixinMinecraft {
     @Inject(method = "createDisplay", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V", shift = At.Shift.AFTER))
     private void createDisplay(CallbackInfo callbackInfo) {
         if (GuiClientConfiguration.Companion.getEnabledClientTitle()) {
-            Display.setTitle(FuguriBeta.INSTANCE.getClientTitle());
+            Display.setTitle(FuguriBeta.clientTitle);
         }
     }
 
@@ -209,7 +244,7 @@ public abstract class MixinMinecraft {
         }
     }
 
-    @Inject(method = "shutdown", at = @At("HEAD"))
+        @Inject(method = "shutdown", at = @At("HEAD"))
     private void shutdown(CallbackInfo callbackInfo) {
         FuguriBeta.INSTANCE.stopClient();
     }

@@ -4,16 +4,17 @@ import com.jagrosh.discordipc.IPCClient
 import com.jagrosh.discordipc.IPCListener
 import com.jagrosh.discordipc.entities.RichPresence
 import com.jagrosh.discordipc.entities.pipe.PipeStatus
-import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_AUTHOR
+import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_VERSION
 import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
 import net.ccbluex.liquidbounce.utils.ServerUtils
+import net.minecraft.client.gui.GuiMultiplayer
 import java.time.OffsetDateTime
 import kotlin.concurrent.thread
 
 object DiscordRPC : MinecraftInstance() {
 
-    var clientrpcstarted = true
+    var ClientRPCStarted = false
 
     // IPC Client
     private var ipcClient : IPCClient? = null
@@ -57,15 +58,27 @@ object DiscordRPC : MinecraftInstance() {
             setStartTimestamp(timestamp)
 
             // Set logo
-            setLargeImage("logo","Fuguri-Beta, Created by $CLIENT_AUTHOR.")
+            setLargeImage("logo", "Fuguri-Beta $CLIENT_VERSION")
 
             // Check user is in-game
             mc.thePlayer?.let {
                 val serverData = mc.currentServerData
 
                 // Set display info
-                setDetails("Maybe cheating on ${if (mc.isIntegratedServerRunning || serverData == null) "Singleplayer" else ServerUtils.hideSensitiveInformation(serverData.serverIP)}")
-                setState("Cheating")
+                if (mc.isIntegratedServerRunning || serverData == null) {
+                    setDetails("Playing lonely in singleplayer")
+                    setState("Ingame")
+                } else {
+                    setDetails("Maybe cheating on ${ServerUtils.hideSensitiveInformation(serverData.serverIP)}")
+                    setState("Cheating")
+                }
+
+                val screen = mc.currentScreen
+
+                if (screen is GuiMultiplayer) {
+                    setDetails("Idle")
+                    setState("Multiplayer menu")
+                }
             }
         }
 

@@ -1,19 +1,10 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce.features.module.modules.visual
 
-import net.ccbluex.liquidbounce.event.AttackEvent
-import net.ccbluex.liquidbounce.event.EventTarget
-import net.ccbluex.liquidbounce.event.Render3DEvent
-import net.ccbluex.liquidbounce.event.WorldEvent
+import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.modules.combat.Criticals
 import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura
-import net.ccbluex.liquidbounce.features.module.modules.visual.ESP.mode
 import net.ccbluex.liquidbounce.handler.combat.CombatManager
 import net.ccbluex.liquidbounce.utils.render.ColorUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawCrystal
@@ -47,28 +38,29 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     }
 
     // Mark - TargetESP
-    private val markValue by ListValue("MarkMode", arrayOf("None", "Zavz", "Jello", "Lies", "FDP", "Sims", "Box", "RoundBox", "Head", "Mark"), "Zavz")
+    private val markValue by ListValue("MarkMode", arrayOf("None", "Zavz", "Jello", "Lies", "FDP", "Sims", "Box", "RoundBox", "Head", "Mark"), "Lies")
     private val isMarkMode: Boolean
         get() = markValue != "None" && markValue != "Sims" && markValue != "FDP"  && markValue != "Lies" && markValue != "Jello"
 
     override val tag
-        get() = mode
+        get() = markValue
 
-    val onlykillauratargetesp by BoolValue("Only-KillAura", false)
+    private val onlykillauratargetesp by BoolValue("Only-KillAura", false)
     val colorRedValue by IntegerValue("Mark-Red", 0, 0.. 255) { isMarkMode }
     val colorGreenValue by IntegerValue("Mark-Green", 160, 0..255) { isMarkMode }
     val colorBlueValue by IntegerValue("Mark-Blue", 255, 0.. 255) { isMarkMode }
+    private val zavzdouble by BoolValue("Zavz-Dual", false) { markValue in arrayOf("Zavz") }
 
-    val jelloRedValue by FloatValue("Jello-Red", 1F, 0F..1F)
-    val jelloGreenValue by FloatValue("Jello-Green", 1F, 0F..1F)
-    val jelloBlueValue by FloatValue("Jello-Blue", 1F, 0F..1F)
-    val jelloRedValueTwo by FloatValue("Jello-Red2", 1F, 0F..1F)
-    val jelloGreenValueTwo by FloatValue("Jello-Green2", 1F, 0F..1F)
-    val jelloBlueValueTwo by FloatValue("Jello-Blue2", 1F, 0F..1F)
+    val jelloRedValue by FloatValue("Jello-Red", 1F, 0F..1F) { markValue in arrayOf("Jello") }
+    val jelloGreenValue by FloatValue("Jello-Green", 1F, 0F..1F) { markValue in arrayOf("Jello") }
+    val jelloBlueValue by FloatValue("Jello-Blue", 1F, 0F..1F) { markValue in arrayOf("Jello") }
+    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies") }
+    val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies") }
+    val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies") }
+    val liesalpha by FloatValue("Lies-Alpha", 150F, 0F..255F) { markValue in arrayOf("Lies") }
+    val liesalphatwo by FloatValue("Lies-Alpha2", 150F, 0F..255F) { markValue in arrayOf("Lies") }
 
-    val jelloalpha by FloatValue("Jello-Alpha", 0.7F, 0F..1F)
-
-    val alphaValue by IntegerValue("Alpha", 255, 0..255) { isMarkMode && markValue == "Zavz"}
+    private val alphaValue by IntegerValue("Alpha", 255, 0..255) { isMarkMode && markValue == "Zavz"}
 
     val colorRedTwoValue by IntegerValue("Mark-Red 2", 0, 0.. 255) { isMarkMode && markValue == "Zavz" }
     val colorGreenTwoValue by IntegerValue("Mark-Green 2", 160, 0..255) { isMarkMode && markValue == "Zavz" }
@@ -86,7 +78,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
 
     private val amount by IntegerValue("ParticleAmount", 5, 1..20) { particle != "None" }
 
-    //Sound
+    // Sound
     private val sound by ListValue("Sound", arrayOf("None", "Hit", "Explode", "Orb", "Pop", "Splash", "Lightning"), "Pop")
 
     private val volume by FloatValue("Volume", 1f, 0.1f.. 5f) { sound != "None" }
@@ -95,6 +87,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     // variables
     private val targetList = HashMap<EntityLivingBase, Long>()
     private val combat = CombatManager
+    private val killaura = KillAura
     var random = Random()
     const val DOUBLE_PI = Math.PI * 2
     var start = 0.0
@@ -114,9 +107,9 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
         )
         val renderManager = mc.renderManager
         val entityLivingBase = if (onlykillauratargetesp.takeIf { isActive } == true) {
-            KillAura.target ?: return
+            killaura.target ?: return
         } else {
-            CombatManager.target ?: return
+            combat.target ?: return
         }
         (entityLivingBase.lastTickPosX + (entityLivingBase.posX - entityLivingBase.lastTickPosX) * mc.timer.renderPartialTicks
                 - renderManager.renderPosX)
@@ -158,7 +151,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
             "zavz" -> drawZavz(
                 entityLivingBase,
                 event,
-                dual = true, // or false based on your requirement
+                dual = zavzdouble, // or false based on your requirement
             )
 
             "jello" -> drawJello(

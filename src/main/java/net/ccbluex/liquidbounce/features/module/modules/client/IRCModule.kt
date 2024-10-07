@@ -95,8 +95,8 @@ object IRCModule : Module("IRC", Category.CLIENT, subjective = true, gameDetecti
                     val message = when (packet.message) {
                         "NotSupported" -> "This method is not supported!"
                         "LoginFailed" -> "Login Failed!"
-                        "NotLoggedIn" -> "You must be logged in to use the chat! Enable LiquidChat."
                         "AlreadyLoggedIn" -> "You are already logged in!"
+                        "NotLoggedIn" -> "You must be logged in to use the chat! Enable LiquidChat."
                         "MojangRequestMissing" -> "Mojang request missing!"
                         "NotPermitted" -> "You are missing the required permissions!"
                         "NotBanned" -> "You are not banned!"
