@@ -86,7 +86,7 @@ object Flight : Module("Fly", Category.MOVEMENT, Keyboard.KEY_F, hideModule = fa
 
     val vanillaSpeed by FloatValue("VanillaSpeed", 2f, 0f..10f, subjective = true)
         { mode in arrayOf("Vanilla", "KeepAlive", "MineSecure", "BugSpartan") }
-    val flyspeed by FloatValue(" SmoothVanillaSpeed", 0.6F, 0.2F..1F) { mode in arrayOf("SmoothVanilla") }
+    val flyspeed by FloatValue(" SmoothVanillaSpeed", 0.6F, 0F..1F) { mode in arrayOf("SmoothVanilla") }
     private val vanillaKickBypass by BoolValue("VanillaKickBypass", false, subjective = true)
         { mode in arrayOf("Vanilla", "SmoothVanilla") }
     val ncpMotion by FloatValue("NCPMotion", 0f, 0f..1f) { mode == "NCP" }

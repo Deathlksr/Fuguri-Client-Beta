@@ -1,8 +1,3 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce.ui.client.gui
 
 import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME
@@ -50,9 +45,9 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val buttonWidth = 133
         val buttonHeight = 20
 
-        btnSinglePlayer = GuiButton(0, width / 2 - 66, height / 2 - 80 + 70, buttonWidth, buttonHeight, "SINGLE PLAYER")
-        btnMultiplayer = GuiButton(1, width / 2 - 66, height / 2 - 80 + 95 - 2, buttonWidth, buttonHeight, "MULTI PLAYER")
-        btnClientOptions = GuiButton(2, width / 2 - 66, height / 2 - 80 + 120 - 4, buttonWidth, buttonHeight, "SETTINGS")
+        btnSinglePlayer = GuiButton(0, width / 2 - 66, height / 2 - 80 + 70, buttonWidth, buttonHeight, "Single Player")
+        btnMultiplayer = GuiButton(1, width / 2 - 66, height / 2 - 80 + 95 - 2, buttonWidth, buttonHeight, "Multi Player")
+        btnClientOptions = GuiButton(2, width / 2 - 66, height / 2 - 80 + 120 - 4, buttonWidth, buttonHeight, "Settings")
 
         btnCommitInfo = ImageButton(
             "COMMIT INFO",
@@ -151,29 +146,19 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         GlStateManager.enableBlend()
         GlStateManager.color(1.0f, 1.0f, 1.0f)
         mc.textureManager.bindTexture(logo)
-        drawModalRectWithCustomSizedTexture(width / 2 - 25, height / 2 - 68, 0f, 0f, 49, 49, 49f, 49f)
+        drawModalRectWithCustomSizedTexture(width / 2 - 77, height / 2 - 120, 150f, 150f, 150, 150, 150f, 150f)
 
-        val apiMessage = if (canConnect) "§eOK" else "§cNo"
-        minecraftFont.drawStringWithShadow(
-            "Created by Deathlksr.",
-            ((width - 10f - minecraftFont.getStringWidth("Created by Deathlksr.")).toDouble().toFloat()),
-            32.0F,
-            Color(255, 255, 255, 100).rgb
-        )
         minecraftFont.drawStringWithShadow(
             CLIENT_NAME,
             ((width - 4f - minecraftFont.getStringWidth(CLIENT_NAME)).toDouble().toFloat()),
             ((height - 23f).toDouble().toFloat()),
-            Color(255, 255, 255, 100).rgb
+            Color(93, 226, 231, 255).rgb
         )
         minecraftFont.drawStringWithShadow(
             "Your currently build is $clientVersionText",
             ((width - 4f - minecraftFont.getStringWidth("Your currently build is $clientVersionText")).toDouble().toFloat()),
             ((height - 12f).toDouble().toFloat()),
-            Color(255, 255, 255, 100).rgb
-        )
-        Fonts.font35.drawString(
-            ((CLIENT_NAME + " | Minecraft 1.8.9")), 7, (this.height - 11).toFloat().toInt(), Color(255, 255, 255, 100).rgb
+            Color(93, 226, 231, 255).rgb
         )
 
         drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))

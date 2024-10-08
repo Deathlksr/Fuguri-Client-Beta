@@ -1,16 +1,11 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce.utils.timing
 
-import kotlinx.coroutines.launch
 import net.ccbluex.liquidbounce.utils.extensions.safeDiv
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
+import java.util.concurrent.atomic.AtomicInteger
+import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import kotlin.math.roundToInt
-import kotlinx.coroutines.*
-import net.ccbluex.liquidbounce.value.IntegerValue
 
 object TimeUtils {
     private var last = System.currentTimeMillis()
@@ -32,6 +27,35 @@ object TimeUtils {
             return true
         } else {
             return false
+        }
+    }
+
+    private val tickCount = AtomicInteger(0)
+    private val scheduledActions = mutableListOf<Pair<Int, () -> Unit>>()
+
+    init {
+        MinecraftForge.EVENT_BUS.register(this)
+    }
+
+    fun delay(ticks: Int, action: () -> Unit) {
+        val targetTick = tickCount.get() + ticks
+        scheduledActions.add(Pair(targetTick, action))
+    }
+
+    @SubscribeEvent
+    fun onTick(event: net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent) {
+        if (event.phase == net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END) {
+            val currentTick = tickCount.incrementAndGet()
+
+            scheduledActions.removeAll {
+                val (targetTick, action) = it
+                if (targetTick <= currentTick) {
+                    action()
+                    true
+                } else {
+                    false
+                }
+            }
         }
     }
 

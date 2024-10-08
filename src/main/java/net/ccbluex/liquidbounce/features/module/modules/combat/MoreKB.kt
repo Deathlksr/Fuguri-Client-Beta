@@ -1,6 +1,5 @@
 package net.ccbluex.liquidbounce.features.module.modules.combat
 
-import kotlinx.coroutines.delay
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
@@ -11,33 +10,36 @@ import net.ccbluex.liquidbounce.utils.RotationUtils.getAngleDifference
 import net.ccbluex.liquidbounce.utils.RotationUtils.toRotation
 import net.ccbluex.liquidbounce.utils.extensions.*
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
+import net.ccbluex.liquidbounce.utils.timing.TimeUtils
 import net.ccbluex.liquidbounce.utils.timing.TimeUtils.randomDelay
-import net.ccbluex.liquidbounce.value.BoolValue
-import net.ccbluex.liquidbounce.value.FloatValue
-import net.ccbluex.liquidbounce.value.IntegerValue
-import net.ccbluex.liquidbounce.value.ListValue
+import net.ccbluex.liquidbounce.value.*
 import net.minecraft.entity.EntityLivingBase
 import kotlin.math.abs
 
 object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
 
+    // Modes of operation
     private val mode by ListValue(
         "Mode",
         arrayOf("WTap", "PacketFast", "LegitFast", "Legit"),
         "LegitFast"
     )
 
+    // Timing and tick controls
     private val delay by IntegerValue("Delay", 0, -50..50) { mode in arrayOf("WTap") }
     private val hurtTime by IntegerValue("Tick", 0, 0..10) { mode in arrayOf("WTap") }
     private val mindelay by IntegerValue("MinTiming", 2, 0..10) { mode in arrayOf("LegitFast", "Legit") }
     private val maxdelay by IntegerValue("MaxTiming", 2, 0..10) { mode in arrayOf("LegitFast", "Legit") }
     private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast", "Legit") }
     private val maxlfticks by IntegerValue("MaxTicks", 2, 1..10) { mode in arrayOf("LegitFast", "Legit") }
+
+    // KillAura and misc settings
     private val onlyKillaura by BoolValue("OnlyKillAura", false) { mode in arrayOf("LegitFast", "Legit") }
     private val fixlf by BoolValue("Fix1", true) { mode in arrayOf("LegitFast", "Legit") }
     private val fix2lf by BoolValue("Fix2", true) { mode in arrayOf("LegitFast", "Legit") }
     private val debuglf by BoolValue("Debug", false) { mode in arrayOf("LegitFast", "Legit") }
 
+    // WTap specific settings
     private val maxTicksUntilBlock: IntegerValue = object : IntegerValue("MaxTicksUntilBlock", 2, 0..5) {
         override fun isSupported() = mode == "WTap"
 
@@ -63,28 +65,24 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     }
 
     private val targetDistance by IntegerValue("TargetDistance", 3, 1..5) { mode == "WTap" }
-
     private val minEnemyRotDiffToIgnore by FloatValue("MinRotationDiffFromEnemyToIgnore", 180f, 0f..180f)
 
+    // Movement-related options
     val onlyMove by BoolValue("OnlyMove", true)
-    val onlyMoveForward by BoolValue("OnlyMoveForward", false) { onlyMove }
+    val  onlyMoveForward by BoolValue("OnlyMoveForward", false) { onlyMove }
 
-    // WTap
+    // Internal timing variables for WTap and LegitFast modes
     private var blockInputTicks = randomDelay(minTicksUntilBlock.get(), maxTicksUntilBlock.get())
     private var blockTicksElapsed = 0
     private var startWaiting = false
     private var blockInput = false
     private var allowInputTicks = randomDelay(reSprintMinTicks.get(), reSprintMaxTicks.get())
     private var ticksElapsed = 0
-
-    // LegitFast
     private var legitfastTicks = 0
-
-    // Legit
     private var legitticks = 0
 
+    // Resets on module toggle
     override fun onToggle(state: Boolean) {
-        // Make sure the user won't have their input forever blocked
         blockInput = false
         startWaiting = false
         blockTicksElapsed = 0
@@ -103,12 +101,10 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
 
         if (onlyMove && (!isMoving || onlyMoveForward && player.movementInput.moveStrafe != 0f)) return
 
-        // Is the enemy facing his back on us?
         if (angleDifferenceToPlayer > minEnemyRotDiffToIgnore && !target.hitBox.isVecInside(player.eyes)) return
 
         when (mode) {
             "WTap" -> {
-                // We want the player to be sprinting before we block inputs
                 if (player.isSprinting && player.serverSprintState && !blockInput && !startWaiting) {
                     val delayMultiplier = 1.0 / (abs(targetDistance - distance) + 1)
 
@@ -118,7 +114,6 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
                     ) * delayMultiplier).toInt()
 
                     blockInput = blockInputTicks == 0
-
                     if (!blockInput) {
                         startWaiting = true
                     }
@@ -132,101 +127,89 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
         }
     }
 
-        @EventTarget
-        fun onSprint(event: PostSprintUpdateEvent) {
-            if (mode == "LegitFast") {
+    @EventTarget
+    fun onSprint(event: PostSprintUpdateEvent) {
+        when (mode) {
+            "LegitFast" -> {
                 if (legitfastTicks > 0 && mc.thePlayer.isSprinting) {
                     mc.thePlayer.isSprinting = false
                     mc.thePlayer.serverSprintState = false
-                    if (fixlf.takeIf { isActive } == true) {
-                        mc.gameSettings.keyBindSprint.pressed = false
-                    }
-                    if (fix2lf.takeIf { isActive } == true) {
-                        mc.gameSettings.keyBindForward.pressed = false
-                    }
-                    if (debuglf.takeIf { isActive } == true) {
-                        displayChatMessage("Sprinting")
-                    }
+                    if (fixlf) mc.gameSettings.keyBindSprint.pressed = false
+                    if (fix2lf) mc.gameSettings.keyBindForward.pressed = false
+                    if (debuglf) displayChatMessage("Sprinting")
                     legitfastTicks--
                 }
             }
 
-            if (mode == "Legit") {
+            "Legit" -> {
                 if (legitticks > 0 && mc.thePlayer.isSprinting) {
                     mc.thePlayer.serverSprintState = false
-                    if (fixlf.takeIf { isActive } == true) {
-                        mc.gameSettings.keyBindSprint.pressed = false
-                    }
-                    if (fix2lf.takeIf { isActive } == true) {
-                        mc.gameSettings.keyBindForward.pressed = false
-                    }
-                    if (debuglf.takeIf { isActive } == true) {
-                        displayChatMessage("Tapped")
-                    }
+                    if (fixlf) mc.gameSettings.keyBindSprint.pressed = false
+                    if (fix2lf) mc.gameSettings.keyBindForward.pressed = false
+                    if (debuglf) displayChatMessage("Tapped")
                     legitticks--
                 }
             }
         }
+    }
 
-        @EventTarget
-        fun onUpdate(event: UpdateEvent) {
-            if (mode == "WTap") {
+    @EventTarget
+    fun onUpdate(event: UpdateEvent) {
+        when (mode) {
+            "WTap" -> handleWTap()
+            "LegitFast" -> handleLegitFast()
+            "Legit" -> handleLegit()
+        }
+    }
+
+    private fun handleWTap() {
+        if (blockInput) {
+            if (ticksElapsed++ >= allowInputTicks) {
+                blockInput = false
+                ticksElapsed = 0
+            }
+        } else {
+            if (startWaiting) {
+                blockInput = blockTicksElapsed++ >= blockInputTicks
+
                 if (blockInput) {
-                    if (ticksElapsed++ >= allowInputTicks) {
-                        blockInput = false
-                        ticksElapsed = 0
-                    }
-                } else {
-                    if (startWaiting) {
-                        blockInput = blockTicksElapsed++ >= blockInputTicks
-
-                        if (blockInput) {
-                            startWaiting = false
-                            blockTicksElapsed = 0
-                        }
-                    }
-                }
-            }
-
-            if (mode == "LegitFast") {
-                if (onlyKillaura.takeIf { isActive } == true) {
-                    if (KillAura.target?.hurtTime == nextInt(mindelay, maxdelay)) {
-                        if (debuglf.takeIf { isActive } == true) {
-                            displayChatMessage("Start Sprinting")
-                        }
-                        legitfastTicks = nextInt(minlfticks, maxlfticks)
-                    }
-                } else {
-                    if (CombatManager.target?.hurtTime == nextInt(mindelay, maxdelay)) {
-                        if (debuglf.takeIf { isActive } == true) {
-                            displayChatMessage("Start Sprinting")
-                        }
-                        legitfastTicks = nextInt(minlfticks, maxlfticks)
-                    }
-                }
-            }
-
-            if (mode == "Legit") {
-                if (onlyKillaura.takeIf { isActive } == true) {
-                    if (KillAura.target?.hurtTime == nextInt(mindelay, maxdelay)) {
-                        if (debuglf.takeIf { isActive } == true) {
-                            displayChatMessage("Start-Tap")
-                        }
-                        legitticks = nextInt(minlfticks, maxlfticks)
-                    }
-                } else {
-                    if (CombatManager.target?.hurtTime == nextInt(mindelay, maxdelay)) {
-                        if (debuglf.takeIf { isActive } == true) {
-                            displayChatMessage("Start-Tap")
-                        }
-                        legitticks = nextInt(minlfticks, maxlfticks)
-                    }
+                    startWaiting = false
+                    blockTicksElapsed = 0
                 }
             }
         }
+    }
 
-        fun shouldBlockInput() = handleEvents() && mode == "WTap" && blockInput
+    private fun handleLegitFast() {
+        if (onlyKillaura && KillAura.target?.hurtTime == 10) {
+            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+                if (debuglf) displayChatMessage("Start Sprinting")
+                legitfastTicks = nextInt(minlfticks, maxlfticks)
+            }
+        } else if (CombatManager.target?.hurtTime == 10) {
+            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+                if (debuglf) displayChatMessage("Start Sprinting")
+                legitfastTicks = nextInt(minlfticks, maxlfticks)
+            }
+        }
+    }
 
-        override val tag
+    private fun handleLegit() {
+        if (onlyKillaura && KillAura.target?.hurtTime == 10) {
+            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+                if (debuglf) displayChatMessage("Start-Tap")
+                legitticks = nextInt(minlfticks, maxlfticks)
+            }
+        } else if (CombatManager.target?.hurtTime == 10) {
+            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+                if (debuglf) displayChatMessage("Start-Tap")
+                legitticks = nextInt(minlfticks, maxlfticks)
+            }
+        }
+    }
+
+    fun shouldBlockInput() = handleEvents() && mode == "WTap" && blockInput
+
+    override val tag
         get() = mode
 }

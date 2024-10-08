@@ -58,6 +58,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
         searchField = GuiTextField(2, mc.fontRendererObj, width - textFieldWidth - 10, 10, textFieldWidth, 20)
         searchField.maxStringLength = Int.MAX_VALUE
 
+
         altsList = GuiList(this)
         altsList.run {
             registerScrollButtons(7, 8)
@@ -96,7 +97,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
         this.drawString(
             mc.fontRendererObj,
             if (searchField.text.isEmpty()) "${accountsConfig.accounts.size} Alts" else altsList.accounts.size.toString() + " Search Results",
-            width / 2,
+            width / 4,
             18,
             0xffffff
         )

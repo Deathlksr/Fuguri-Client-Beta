@@ -201,8 +201,8 @@ class GuiClientConfiguration(val prevGui: GuiScreen) : GuiScreen() {
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         drawBackground(0)
         Fonts.fontBold180.drawCenteredString(
-            translationMenu("configuration"), width / 2F, height / 8F + 5F,
-                4673984, true)
+            ("Configuration"), width / 2F, height / 8F + 5F,
+            0x5DE2E7, true)
 
         Fonts.font40.drawString("Window", width / 2F - 98F, height / 4F + 15F,
             0xFFFFFF, true)
@@ -212,7 +212,7 @@ class GuiClientConfiguration(val prevGui: GuiScreen) : GuiScreen() {
         Fonts.font35.drawString("Supported background types: (.png, .frag, .glsl)", width / 2F - 98F, height / 4F + 100 + 25 * 3,
             0xFFFFFF, true)
 
-        Fonts.font40.drawString(translationMenu("altManager"), width / 2F - 98F, height / 4F + 200F,
+        Fonts.font40.drawString(("AltManager"), width / 2F - 98F, height / 4F + 200F,
             0xFFFFFF, true)
 
         drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
