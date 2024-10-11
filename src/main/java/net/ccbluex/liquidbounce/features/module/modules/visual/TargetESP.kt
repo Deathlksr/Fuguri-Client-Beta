@@ -16,6 +16,38 @@ import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawLies
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawPlatform
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawPlatformESP
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawZavz
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInSine
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutSine
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutSine
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInQuad
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutQuad
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutQuad
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInCubic
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutCubic
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutCubic
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInQuart
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutQuart
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutQuart
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInQuint
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutQuint
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutQuint
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInExpo
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutExpo
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutExpo
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInCirc
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutCirc
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutCirc
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInBack
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutBack
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutBack
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInElastic
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutElastic
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutElastic
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInBounce
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutBounce
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutBounce
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.linear
+import net.ccbluex.liquidbounce.utils.render.animation.AnimationUtil.easeInOutQuadX
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
@@ -59,6 +91,22 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies") }
     val liesalpha by FloatValue("Lies-Alpha", 150F, 0F..255F) { markValue in arrayOf("Lies") }
     val liesalphatwo by FloatValue("Lies-Alpha2", 150F, 0F..255F) { markValue in arrayOf("Lies") }
+    private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies") }
+    private val lenghtlies by FloatValue("Lies-Lenght", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies") }
+    val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
+    val mode by ListValue("AnimationType", arrayOf(
+        "easeInSine", "easeOutSine", "easeInOutSine",
+        "easeInQuad", "easeOutQuad", "easeInOutQuad",
+        "easeInCubic", "easeOutCubic", "easeInOutCubic",
+        "easeInQuart", "easeOutQuart", "easeInOutQuart",
+        "easeInQuint", "easeOutQuint", "easeInOutQuint",
+        "easeInExpo", "easeOutExpo", "easeInOutExpo",
+        "easeInCirc", "easeOutCirc", "easeInOutCirc",
+        "easeInBack", "easeOutBack", "easeInOutBack",
+        "easeInElastic", "easeOutElastic", "easeInOutElastic",
+        "easeInBounce", "easeOutBounce", "easeInOutBounce",
+        "easeInOutQuadX", "linear"
+    ), "easeInOutQuadX") { markValue in arrayOf("Lies") }
 
     private val alphaValue by IntegerValue("Alpha", 255, 0..255) { isMarkMode && markValue == "Zavz"}
 
@@ -165,7 +213,9 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
 
             "lies" -> drawLies(
                 entityLivingBase,
-                event
+                event,
+                speedlies.toDouble(),
+                lenghtlies.toDouble(),
             )
         }
     }
@@ -204,6 +254,44 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
             ) {
                 thePlayer.onEnchantmentCritical(entity)
             }
+        }
+    }
+
+    fun doAnimation(drawPercent: Double): Double {
+        return when (mode) {
+            "easeInSine" -> easeInSine(drawPercent)
+            "easeOutSine" -> easeOutSine(drawPercent)
+            "easeInOutSine" -> easeInOutSine(drawPercent)
+            "easeInQuad" -> easeInQuad(drawPercent)
+            "easeOutQuad" -> easeOutQuad(drawPercent)
+            "easeInOutQuad" -> easeInOutQuad(drawPercent)
+            "easeInCubic" -> easeInCubic(drawPercent)
+            "easeOutCubic" -> easeOutCubic(drawPercent)
+            "easeInOutCubic" -> easeInOutCubic(drawPercent)
+            "easeInQuart" -> easeInQuart(drawPercent)
+            "easeOutQuart" -> easeOutQuart(drawPercent)
+            "easeInOutQuart" -> easeInOutQuart(drawPercent)
+            "easeInQuint" -> easeInQuint(drawPercent)
+            "easeOutQuint" -> easeOutQuint(drawPercent)
+            "easeInOutQuint" -> easeInOutQuint(drawPercent)
+            "easeInExpo" -> easeInExpo(drawPercent)
+            "easeOutExpo" -> easeOutExpo(drawPercent)
+            "easeInOutExpo" -> easeInOutExpo(drawPercent)
+            "easeInCirc" -> easeInCirc(drawPercent)
+            "easeOutCirc" -> easeOutCirc(drawPercent)
+            "easeInOutCirc" -> easeInOutCirc(drawPercent)
+            "easeInBack" -> easeInBack(drawPercent)
+            "easeOutBack" -> easeOutBack(drawPercent)
+            "easeInOutBack" -> easeInOutBack(drawPercent)
+            "easeInElastic" -> easeInElastic(drawPercent)
+            "easeOutElastic" -> easeOutElastic(drawPercent)
+            "easeInOutElastic" -> easeInOutElastic(drawPercent)
+            "easeInBounce" -> easeInBounce(drawPercent)
+            "easeOutBounce" -> easeOutBounce(drawPercent)
+            "easeInOutBounce" -> easeInOutBounce(drawPercent)
+            "easeInOutQuadX" -> easeInOutQuadX(drawPercent)
+            "linear" -> linear(drawPercent)
+            else -> easeInOutQuadX(drawPercent)
         }
     }
 

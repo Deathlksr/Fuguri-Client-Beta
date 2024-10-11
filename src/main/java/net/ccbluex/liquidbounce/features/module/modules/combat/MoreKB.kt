@@ -9,7 +9,6 @@ import net.ccbluex.liquidbounce.utils.MovementUtils.isMoving
 import net.ccbluex.liquidbounce.utils.RotationUtils.getAngleDifference
 import net.ccbluex.liquidbounce.utils.RotationUtils.toRotation
 import net.ccbluex.liquidbounce.utils.extensions.*
-import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
 import net.ccbluex.liquidbounce.utils.timing.TimeUtils
 import net.ccbluex.liquidbounce.utils.timing.TimeUtils.randomDelay
 import net.ccbluex.liquidbounce.value.*
@@ -80,6 +79,8 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     private var ticksElapsed = 0
     private var legitfastTicks = 0
     private var legitticks = 0
+    private var delaylf = randomDelay(mindelay, maxdelay)
+    private var tickslf = randomDelay(minlfticks, maxlfticks)
 
     // Resets on module toggle
     override fun onToggle(state: Boolean) {
@@ -182,28 +183,28 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
 
     private fun handleLegitFast() {
         if (onlyKillaura && KillAura.target?.hurtTime == 10) {
-            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+            TimeUtils.delay(delaylf) {
                 if (debuglf) displayChatMessage("Start Sprinting")
-                legitfastTicks = nextInt(minlfticks, maxlfticks)
+                legitfastTicks = tickslf
             }
         } else if (CombatManager.target?.hurtTime == 10) {
-            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+            TimeUtils.delay(delaylf) {
                 if (debuglf) displayChatMessage("Start Sprinting")
-                legitfastTicks = nextInt(minlfticks, maxlfticks)
+                legitfastTicks = tickslf
             }
         }
     }
 
     private fun handleLegit() {
         if (onlyKillaura && KillAura.target?.hurtTime == 10) {
-            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+            TimeUtils.delay(delaylf) {
                 if (debuglf) displayChatMessage("Start-Tap")
-                legitticks = nextInt(minlfticks, maxlfticks)
+                legitticks = tickslf
             }
         } else if (CombatManager.target?.hurtTime == 10) {
-            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+            TimeUtils.delay(delaylf) {
                 if (debuglf) displayChatMessage("Start-Tap")
-                legitticks = nextInt(minlfticks, maxlfticks)
+                legitticks = tickslf
             }
         }
     }

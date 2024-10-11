@@ -8,15 +8,13 @@ import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
 import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacket
 import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
-import net.ccbluex.liquidbounce.utils.render.ColorUtils.rainbow
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.glColor
-import net.ccbluex.liquidbounce.utils.render.renderutilnahui
 import net.ccbluex.liquidbounce.utils.timing.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
+import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.gui.inventory.GuiInventory
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.network.Packet
 import net.minecraft.network.handshake.client.C00Handshake
 import net.minecraft.network.play.client.*
@@ -51,12 +49,11 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
     private val resetTimer = MSTimer()
     private var ignoreWholeTick = false
 
-    private val line by BoolValue("Line", true, subjective = true)
+    private val line by BoolValue("Render", true, subjective = true)
     private val thirdperson by BoolValue("Only-Third-Person", true) { line }
-    private val rainbow by BoolValue("Rainbow", false, subjective = true) { line }
-    private val red by IntegerValue("R", 0, 0..255, subjective = true) { !rainbow && line }
-    private val green by IntegerValue("G", 255, 0..255, subjective = true) { !rainbow && line }
-    private val blue by IntegerValue("B", 0, 0..255, subjective = true) { !rainbow && line }
+    private val red by FloatValue("red", 1.0F, 0.0F..1.0F) { line }
+    private val green by FloatValue("green", 1.0F, 0.0F..1.0F) { line }
+    private val blue by FloatValue("blue", 1.0F, 0.0F..1.0F) { line }
 
     private var ticksFlag = 0
 
@@ -240,10 +237,10 @@ object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = fa
     fun onRender3D(event: Render3DEvent) {
         if (!line) return
 
-        if (mc.gameSettings.thirdPersonView == 0 && thirdperson.takeIf { isActive } == true)
+        if (mc.gameSettings.thirdPersonView == 0 && thirdperson)
             return
 
-        val color = if (rainbow) rainbow() else Color(red, green, blue)
+        val color = Color(red, green, blue)
 
         if (Blink.blinkingSend())
             return

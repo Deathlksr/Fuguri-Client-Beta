@@ -3,6 +3,7 @@ package net.ccbluex.liquidbounce.features.module.modules.combat
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.Category
+import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
 import net.ccbluex.liquidbounce.utils.extensions.toDegrees
 import net.ccbluex.liquidbounce.utils.extensions.tryJump
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
@@ -23,12 +24,12 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
         ), "Intave"
     )
 
-    private val event by ListValue("Event", arrayOf("AttackEvent", "UpdateEvent"), "UpdateEvent")
-
     // Intave MotionXZ
     private val Motionxz by FloatValue("VelocityXZ-SprintHit", 0.6F, 0F..1F) { mode in arrayOf("Intave") }
     private val MotionnotSprintxz by FloatValue("VelocityXZ-Hit", 0.6F, 0F..1F) { mode in arrayOf("Intave") }
     private val falsesprint by BoolValue("FalseSprint", false) { mode in arrayOf("Intave") }
+    private val debugmotion by BoolValue("DebugSprintHit", false)
+    private val debugmotionhit by BoolValue("DebugHit", false)
 
     // Intave Jump
     private val intavejump by BoolValue("Intave-Jump", false) { mode in arrayOf("Intave") }
@@ -50,45 +51,18 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
 
     @EventTarget
     fun onAttack(event: AttackEvent) {
-        if (mode == "AttackEvent") {
-            when (mode.lowercase()) {
-                "intave" -> {
-                    if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.isSprinting) {
-                        mc.thePlayer.motionX *= Motionxz
-                        mc.thePlayer.motionZ *= Motionxz
-                        if (falsesprint.takeIf { isActive } == true) {
-                            mc.thePlayer.isSprinting = false
-                        }
-                    } else if (mc.thePlayer.hurtTime > 0) {
-                        mc.thePlayer.motionX *= MotionnotSprintxz
-                        mc.thePlayer.motionZ *= MotionnotSprintxz
-                        if (falsesprint.takeIf { isActive } == true) {
-                            mc.thePlayer.isSprinting = false
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @EventTarget
-    fun onUpdate(event: UpdateEvent) {
-        if (mode == "UpdateEvent") {
-            when (mode.lowercase()) {
-                "intave" -> {
-                    if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.isSprinting) {
-                        mc.thePlayer.motionX *= Motionxz
-                        mc.thePlayer.motionZ *= Motionxz
-                        if (falsesprint.takeIf { isActive } == true) {
-                            mc.thePlayer.isSprinting = false
-                        }
-                    } else if (mc.thePlayer.hurtTime > 0) {
-                        mc.thePlayer.motionX *= MotionnotSprintxz
-                        mc.thePlayer.motionZ *= MotionnotSprintxz
-                        if (falsesprint.takeIf { isActive } == true) {
-                            mc.thePlayer.isSprinting = false
-                        }
-                    }
+        when (mode.lowercase()) {
+            "intave" -> {
+                if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.isSprinting) {
+                    mc.thePlayer.motionX *= Motionxz
+                    mc.thePlayer.motionZ *= Motionxz
+                    if (debugmotion) displayChatMessage("ReducedSprintHit")
+                    if (falsesprint) mc.thePlayer.isSprinting = false
+                } else if (mc.thePlayer.hurtTime > 0) {
+                    mc.thePlayer.motionX *= MotionnotSprintxz
+                    mc.thePlayer.motionZ *= MotionnotSprintxz
+                    if (debugmotionhit) displayChatMessage("ReducedHit")
+                    if (falsesprint) mc.thePlayer.isSprinting = false
                 }
             }
         }
@@ -171,7 +145,6 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
         "receivedhits" -> limitUntilJump >= hitsUntilJump
         else -> false
     }
-
 
     override val tag
         get() = mode

@@ -7,6 +7,7 @@ import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.modules.client.AntiBot
 import net.ccbluex.liquidbounce.features.module.modules.client.Teams
+import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.EntityUtils
 import net.ccbluex.liquidbounce.utils.render.ColorUtils
@@ -58,7 +59,7 @@ object TargetHud : Module("TargetHud", Category.VISUAL, gameDetecting = false, h
 
         @EventTarget
         fun onRender3D(event: Render3DEvent) {
-            if(mc.thePlayer == null)
+            if (mc.thePlayer == null)
                 return
             for (entity in mc.theWorld.loadedEntityList) {
                 if (EntityUtils.isSelected(entity, false)) {
@@ -93,15 +94,17 @@ object TargetHud : Module("TargetHud", Category.VISUAL, gameDetecting = false, h
         private fun renderNameTag(entity: EntityLivingBase, tag: String) {
             xChange = translateX.get() * 20
 
-            if (entity != FuguriBeta.combatManager.target && entity.getName() != entityKeep) {
+            val killaura = KillAura
+
+            if (entity != killaura.target && entity.name != entityKeep) {
                 return
-            } else if ( entity == FuguriBeta.combatManager.target) {
-                entityKeep = entity.getName()
+            } else if ( entity == killaura.target) {
+                entityKeep = entity.name
                 targetTicks++
                 if (targetTicks >= zoomTicks.get() + 2) {
                     targetTicks = zoomTicks.get() + 1
                 }
-            } else if (FuguriBeta.combatManager.target == null) {
+            } else if (killaura.target == null) {
                 targetTicks--
                 if (targetTicks <= -1) {
                     targetTicks = 0
@@ -264,11 +267,11 @@ object TargetHud : Module("TargetHud", Category.VISUAL, gameDetecting = false, h
                         if (!fdpText.get()) addedLen = 110f
 
                         if (fdpRed.get()) {
-                            RenderUtils.drawRect(0f + xChange, 0f, addedLen + xChange, 47f, Color(212, 63, 63, 90).rgb)
-                            RenderUtils.drawRoundedRect(0f + xChange, 0f, healthPercent * addedLen + xChange, 47f, 3f, Color(245, 52, 27, 90).rgb)
+                            drawRect(0f + xChange, 0f, addedLen + xChange, 47f, Color(212, 63, 63, 90).rgb)
+                            drawRoundedRect(0f + xChange, 0f, healthPercent * addedLen + xChange, 47f, 3f, Color(245, 52, 27, 90).rgb)
                         } else {
-                            RenderUtils.drawRect(0f + xChange, 0f, addedLen + xChange, 47f, Color(0, 0, 0, 120).rgb)
-                            RenderUtils.drawRoundedRect(0f + xChange, 0f, healthPercent * addedLen + xChange, 47f, 3f, Color(0, 0, 0, 90).rgb)
+                            drawRect(0f + xChange, 0f, addedLen + xChange, 47f, Color(0, 0, 0, 120).rgb)
+                            drawRoundedRect(0f + xChange, 0f, healthPercent * addedLen + xChange, 47f, 3f, Color(0, 0, 0, 90).rgb)
                         }
 
                         drawShadow(0f, 0f, addedLen + xChange, 47f)
@@ -280,11 +283,11 @@ object TargetHud : Module("TargetHud", Category.VISUAL, gameDetecting = false, h
                         }
                     } else {
                         if (fdpRed.get()) {
-                            RenderUtils.drawRect(0f + xChange, 0f, 47f + xChange, 120f + xChange, Color(212, 63, 63, 90).rgb)
-                            RenderUtils.drawRoundedRect(healthPercent*120f + xChange, 0f, 47f + xChange, 0f, 3f, Color(245, 52, 27, 90).rgb)
+                            drawRect(0f + xChange, 0f, 47f + xChange, 120f + xChange, Color(212, 63, 63, 90).rgb)
+                            drawRoundedRect(healthPercent*120f + xChange, 0f, 47f + xChange, 0f, 3f, Color(245, 52, 27, 90).rgb)
                         } else {
-                            RenderUtils.drawRect(0f + xChange, 0f, 47f + xChange, 120f, Color(0, 0, 0, 120).rgb)
-                            RenderUtils.drawRoundedRect(0f + xChange, 0f, 47f + xChange, healthPercent * 120f, 3f, Color(0, 0, 0, 90).rgb)
+                            drawRect(0f + xChange, 0f, 47f + xChange, 120f, Color(0, 0, 0, 120).rgb)
+                            drawRoundedRect(0f + xChange, 0f, 47f + xChange, healthPercent * 120f, 3f, Color(0, 0, 0, 90).rgb)
                         }
                     }
 

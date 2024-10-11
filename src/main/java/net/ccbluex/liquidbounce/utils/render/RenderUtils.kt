@@ -1,11 +1,5 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce.utils.render
 
-import codes.som.anthony.koffee.types.double
 import com.jhlabs.image.GaussianFilter
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.DOUBLE_PI
@@ -15,6 +9,8 @@ import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorGr
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorGreenValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorRedTwoValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorRedValue
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.doAnimation
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.heihgtlies
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloBlueValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloGreenValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloRedValue
@@ -54,14 +50,12 @@ import net.minecraft.util.ResourceLocation
 import net.minecraft.util.Vec3
 import org.lwjgl.opengl.EXTFramebufferObject
 import org.lwjgl.opengl.EXTPackedDepthStencil
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL14
 import org.lwjgl.util.glu.Cylinder
 import java.awt.Color
 import java.awt.image.BufferedImage
 import kotlin.math.*
-
 
 object RenderUtils : MinecraftInstance() {
     private val glCapMap = mutableMapOf<Int, Boolean>()
@@ -604,10 +598,10 @@ object RenderUtils : MinecraftInstance() {
         glEnable(GL_TEXTURE_2D)
         glPopMatrix()
     }
+    fun drawLies(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double) {
 
-    fun drawLies(entity: EntityLivingBase, event: Render3DEvent) {
-
-        val everyTime = 3000
+        val baseTime = 3000.0
+        val everyTime = baseTime / speedMultiplier
         val drawTime = (System.currentTimeMillis() % everyTime).toInt()
         val drawMode = drawTime > (everyTime / 2)
         var drawPercent = drawTime / (everyTime / 2.0)
@@ -617,7 +611,8 @@ object RenderUtils : MinecraftInstance() {
         } else {
             drawPercent -= 1
         }
-        drawPercent = easeInOutQuadX(drawPercent)
+        drawPercent = doAnimation(drawPercent)
+
         mc.entityRenderer.disableLightmap()
         glPushMatrix()
         glDisable(GL_TEXTURE_2D)
@@ -631,7 +626,7 @@ object RenderUtils : MinecraftInstance() {
 
         val bb = entity.entityBoundingBox
         val radius = ((bb.maxX - bb.minX) + (bb.maxZ - bb.minZ)) * 0.5f
-        val height = bb.maxY - bb.minY
+        val height = (bb.maxY - bb.minY) * if (heihgtlies) 1.1 else 1.0
         val x =
             entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
         val y =
@@ -646,7 +641,7 @@ object RenderUtils : MinecraftInstance() {
             -1
         } else {
             1
-        })
+        }) *  trailLengthMultiplier
 
         for (i in 5..360 step 5) {
             val x1 = x - sin(i * Math.PI / 180F) * radius
@@ -673,6 +668,171 @@ object RenderUtils : MinecraftInstance() {
         glPopMatrix()
     }
 
+    fun easeInSine(x: Double): Double {
+            return 1 - Math.cos((x * Math.PI) / 2)
+        }
+
+        fun easeOutSine(x: Double): Double {
+            return Math.sin((x * Math.PI) / 2)
+        }
+
+        fun easeInOutSine(x: Double): Double {
+            return -(Math.cos(Math.PI * x) - 1) / 2
+        }
+
+        fun easeInQuad(x: Double): Double {
+            return x * x
+        }
+
+        fun easeOutQuad(x: Double): Double {
+            return 1 - (1 - x) * (1 - x)
+        }
+
+        fun easeInOutQuad(x: Double): Double {
+            return if (x < 0.5) 2 * x * x else 1 - Math.pow(-2 * x + 2, 2.0) / 2
+        }
+
+        fun easeInCubic(x: Double): Double {
+            return x * x * x
+        }
+
+        fun easeOutCubic(x: Double): Double {
+            return 1 - Math.pow(1 - x, 3.0)
+        }
+
+        fun easeInOutCubic(x: Double): Double {
+            return if (x < 0.5) 4 * x * x * x else 1 - Math.pow(-2 * x + 2, 3.0) / 2
+        }
+
+        fun easeInQuart(x: Double): Double {
+            return x * x * x * x
+        }
+
+        fun easeOutQuart(x: Double): Double {
+            return 1 - Math.pow(1 - x, 4.0)
+        }
+
+        fun easeInOutQuart(x: Double): Double {
+            return if (x < 0.5) 8 * x * x * x * x else 1 - Math.pow(-2 * x + 2, 4.0) / 2
+        }
+
+        fun easeInQuint(x: Double): Double {
+            return x * x * x * x * x
+        }
+
+        fun easeOutQuint(x: Double): Double {
+            return 1 - Math.pow(1 - x, 5.0)
+        }
+
+        fun easeInOutQuint(x: Double): Double {
+            return if (x < 0.5) 16 * x * x * x * x * x else 1 - Math.pow(-2 * x + 2, 5.0) / 2
+        }
+
+        fun easeInExpo(x: Double): Double {
+            return if (x == 0.0) 0.0 else Math.pow(2.0, 10 * x - 10)
+        }
+
+        fun easeOutExpo(x: Double): Double {
+            return if (x == 1.0) 1.0 else 1 - Math.pow(2.0, -10 * x)
+        }
+
+        fun easeInOutExpo(x: Double): Double {
+            return when {
+                x == 0.0 -> 0.0
+                x == 1.0 -> 1.0
+                x < 0.5 -> Math.pow(2.0, 20 * x - 10) / 2
+                else -> (2 - Math.pow(2.0, -20 * x + 10)) / 2
+            }
+        }
+
+        fun easeInCirc(x: Double): Double {
+            return 1 - Math.sqrt(1 - Math.pow(x, 2.0))
+        }
+
+        fun easeOutCirc(x: Double): Double {
+            return Math.sqrt(1 - Math.pow(x - 1, 2.0))
+        }
+
+        fun easeInOutCirc(x: Double): Double {
+            return if (x < 0.5) (1 - Math.sqrt(1 - Math.pow(2 * x, 2.0))) / 2 else (Math.sqrt(
+                1 - Math.pow(
+                    -2 * x + 2,
+                    2.0
+                )
+            ) + 1) / 2
+        }
+
+        fun easeInBack(x: Double): Double {
+            val c1 = 1.70158
+            val c3 = c1 + 1
+            return c3 * x * x * x - c1 * x * x
+        }
+
+        fun easeOutBack(x: Double): Double {
+            val c1 = 1.70158
+            val c3 = c1 + 1
+            return 1 + c3 * Math.pow(x - 1, 3.0) + c1 * Math.pow(x - 1, 2.0)
+        }
+
+        fun easeInOutBack(x: Double): Double {
+            val c1 = 1.70158
+            val c2 = c1 * 1.525
+            return if (x < 0.5) (Math.pow(2 * x, 2.0) * ((c2 + 1) * 2 * x - c2)) / 2 else (Math.pow(
+                2 * x - 2,
+                2.0
+            ) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2
+        }
+
+        fun easeInElastic(x: Double): Double {
+            val c4 = (2 * Math.PI) / 3
+            return when {
+                x == 0.0 -> 0.0
+                x == 1.0 -> 1.0
+                else -> -Math.pow(2.0, 10 * x - 10) * Math.sin((x * 10 - 10.75) * c4)
+            }
+        }
+
+        fun easeOutElastic(x: Double): Double {
+            val c4 = (2 * Math.PI) / 3
+            return when {
+                x == 0.0 -> 0.0
+                x == 1.0 -> 1.0
+                else -> Math.pow(2.0, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1
+            }
+        }
+
+        fun easeInOutElastic(x: Double): Double {
+            val c5 = (2 * Math.PI) / 4.5
+            return when {
+                x == 0.0 -> 0.0
+                x == 1.0 -> 1.0
+                x < 0.5 -> -(Math.pow(2.0, 20 * x - 10) * Math.sin((20 * x - 11.125) * c5)) / 2
+                else -> (Math.pow(2.0, -20 * x + 10) * Math.sin((20 * x - 11.125) * c5)) / 2 + 1
+            }
+        }
+
+        fun easeInBounce(x: Double): Double {
+            return 1 - easeOutBounce(1 - x)
+        }
+
+        fun easeOutBounce(x: Double): Double {
+            val n1 = 7.5625
+            val d1 = 2.75
+            return when {
+                x < 1 / d1 -> n1 * x * x
+                x < 2 / d1 -> n1 * (x - 1.5 / d1) * (x - 1.5 / d1) + 0.75
+                x < 2.5 / d1 -> n1 * (x - 2.25 / d1) * (x - 2.25 / d1) + 0.9375
+                else -> n1 * (x - 2.625 / d1) * (x - 2.625 / d1) + 0.984375
+            }
+        }
+
+        fun easeInOutBounce(x: Double): Double {
+            return if (x < 0.5) (1 - easeOutBounce(1 - 2 * x)) / 2 else (1 + easeOutBounce(2 * x - 1)) / 2
+        }
+
+        fun linear(x: Double): Double {
+            return x
+        }
 
     /**
      * Draws a rectangle.

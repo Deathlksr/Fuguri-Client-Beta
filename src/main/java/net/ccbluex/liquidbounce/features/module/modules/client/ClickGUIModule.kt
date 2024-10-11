@@ -11,10 +11,7 @@ import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
-import net.ccbluex.liquidbounce.ui.client.clickgui.style.styles.BlackStyle
-import net.ccbluex.liquidbounce.ui.client.clickgui.style.styles.LiquidBounceStyle
-import net.ccbluex.liquidbounce.ui.client.clickgui.style.styles.NullStyle
-import net.ccbluex.liquidbounce.ui.client.clickgui.style.styles.SlowlyStyle
+import net.ccbluex.liquidbounce.ui.client.clickgui.style.styles.*
 import net.ccbluex.liquidbounce.utils.render.ColorUtils
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
