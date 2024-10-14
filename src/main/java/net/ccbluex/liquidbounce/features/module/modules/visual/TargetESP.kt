@@ -89,8 +89,8 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies") }
     val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies") }
     val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies") }
-    val liesalpha by FloatValue("Lies-Alpha", 150F, 0F..255F) { markValue in arrayOf("Lies") }
-    val liesalphatwo by FloatValue("Lies-Alpha2", 150F, 0F..255F) { markValue in arrayOf("Lies") }
+    val liesalpha by FloatValue("Lies-Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies") }
+    val liesalphatwo by FloatValue("Lies-Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies") }
     private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies") }
     private val lenghtlies by FloatValue("Lies-Lenght", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies") }
     val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
@@ -106,7 +106,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
         "easeInElastic", "easeOutElastic", "easeInOutElastic",
         "easeInBounce", "easeOutBounce", "easeInOutBounce",
         "easeInOutQuadX", "linear"
-    ), "easeInOutQuadX") { markValue in arrayOf("Lies") }
+    ), "easeInOutQuadX") { markValue in arrayOf("Lies", "Jello", "FDP") }
 
     private val alphaValue by IntegerValue("Alpha", 255, 0..255) { isMarkMode && markValue == "Zavz"}
 

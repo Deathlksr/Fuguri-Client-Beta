@@ -9,6 +9,7 @@ import net.ccbluex.liquidbounce.utils.MovementUtils.isMoving
 import net.ccbluex.liquidbounce.utils.RotationUtils.getAngleDifference
 import net.ccbluex.liquidbounce.utils.RotationUtils.toRotation
 import net.ccbluex.liquidbounce.utils.extensions.*
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
 import net.ccbluex.liquidbounce.utils.timing.TimeUtils
 import net.ccbluex.liquidbounce.utils.timing.TimeUtils.randomDelay
 import net.ccbluex.liquidbounce.value.*
@@ -20,23 +21,29 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     // Modes of operation
     private val mode by ListValue(
         "Mode",
-        arrayOf("WTap", "PacketFast", "LegitFast", "Legit"),
+        arrayOf("WTap", "LegitFast"),
         "LegitFast"
     )
 
     // Timing and tick controls
-    private val delay by IntegerValue("Delay", 0, -50..50) { mode in arrayOf("WTap") }
+    private val delay by IntegerValue("Delay", 0, 0..250) { mode in arrayOf("WTap") }
     private val hurtTime by IntegerValue("Tick", 0, 0..10) { mode in arrayOf("WTap") }
-    private val mindelay by IntegerValue("MinTiming", 2, 0..10) { mode in arrayOf("LegitFast", "Legit") }
-    private val maxdelay by IntegerValue("MaxTiming", 2, 0..10) { mode in arrayOf("LegitFast", "Legit") }
-    private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast", "Legit") }
-    private val maxlfticks by IntegerValue("MaxTicks", 2, 1..10) { mode in arrayOf("LegitFast", "Legit") }
+    private val minhurttime by IntegerValue("MinTimingHurtTime", 10, 0..10) { mode in arrayOf("LegitFast") }
+    private val maxhurttime by IntegerValue("MaxTimingHurtTime", 10, 0..10) { mode in arrayOf("LegitFast") }
+    private val mindelay by IntegerValue("MinDelayTicks", 4, 0..10) { mode in arrayOf("LegitFast") }
+    private val maxdelay by IntegerValue("MaxDelayTicks", 8, 0..10) { mode in arrayOf("LegitFast") }
+    private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast") }
+    private val maxlfticks by IntegerValue("MaxTicks", 3, 1..10) { mode in arrayOf("LegitFast") }
 
     // KillAura and misc settings
-    private val onlyKillaura by BoolValue("OnlyKillAura", false) { mode in arrayOf("LegitFast", "Legit") }
-    private val fixlf by BoolValue("Fix1", true) { mode in arrayOf("LegitFast", "Legit") }
-    private val fix2lf by BoolValue("Fix2", true) { mode in arrayOf("LegitFast", "Legit") }
-    private val debuglf by BoolValue("Debug", false) { mode in arrayOf("LegitFast", "Legit") }
+    private val onlyKillaura by BoolValue("OnlyKillAura", false) { mode in arrayOf("LegitFast") }
+    private val falseclientsprint by BoolValue("FalseClientSprint", true)  { mode in arrayOf("LegitFast") }
+    private val sprintleft by BoolValue("SprintTicksLeft", false) { mode in arrayOf("LegitFast") && falseclientsprint}
+    private val minsprint by IntegerValue("SprintMinTicksLeft", 5, 0..25) { mode in arrayOf("LegitFast") && sprintleft}
+    private val maxsprint by IntegerValue("SprintMaxTicksLeft", 10, 0..25) { mode in arrayOf("LegitFast") && sprintleft}
+    private val presssprint by BoolValue("PressSprint", true) { mode in arrayOf("LegitFast") }
+    private val pressforward by BoolValue("PressForward", true) { mode in arrayOf("LegitFast") }
+    private val debuglf by BoolValue("Debug", false) { mode in arrayOf("LegitFast") }
 
     // WTap specific settings
     private val maxTicksUntilBlock: IntegerValue = object : IntegerValue("MaxTicksUntilBlock", 2, 0..5) {
@@ -68,7 +75,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
 
     // Movement-related options
     val onlyMove by BoolValue("OnlyMove", true)
-    val  onlyMoveForward by BoolValue("OnlyMoveForward", false) { onlyMove }
+    val onlyMoveForward by BoolValue("OnlyMoveForward", false) { onlyMove }
 
     // Internal timing variables for WTap and LegitFast modes
     private var blockInputTicks = randomDelay(minTicksUntilBlock.get(), maxTicksUntilBlock.get())
@@ -78,9 +85,6 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     private var allowInputTicks = randomDelay(reSprintMinTicks.get(), reSprintMaxTicks.get())
     private var ticksElapsed = 0
     private var legitfastTicks = 0
-    private var legitticks = 0
-    private var delaylf = randomDelay(mindelay, maxdelay)
-    private var tickslf = randomDelay(minlfticks, maxlfticks)
 
     // Resets on module toggle
     override fun onToggle(state: Boolean) {
@@ -133,22 +137,17 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
         when (mode) {
             "LegitFast" -> {
                 if (legitfastTicks > 0 && mc.thePlayer.isSprinting) {
-                    mc.thePlayer.isSprinting = false
+                    if (falseclientsprint) mc.thePlayer.isSprinting = false
+                    if (sprintleft) mc.thePlayer.sprintingTicksLeft = nextInt(minsprint, maxsprint)
                     mc.thePlayer.serverSprintState = false
-                    if (fixlf) mc.gameSettings.keyBindSprint.pressed = false
-                    if (fix2lf) mc.gameSettings.keyBindForward.pressed = false
-                    if (debuglf) displayChatMessage("Sprinting")
+                    if (mc.gameSettings.keyBindSprint.isPressed) {
+                        if (presssprint) mc.gameSettings.keyBindSprint.pressed = false
+                    }
+                    if (mc.gameSettings.keyBindForward.isPressed) {
+                        if (pressforward) mc.gameSettings.keyBindForward.pressed = false
+                    }
+                    if (debuglf) displayChatMessage("Falsely-Sprint")
                     legitfastTicks--
-                }
-            }
-
-            "Legit" -> {
-                if (legitticks > 0 && mc.thePlayer.isSprinting) {
-                    mc.thePlayer.serverSprintState = false
-                    if (fixlf) mc.gameSettings.keyBindSprint.pressed = false
-                    if (fix2lf) mc.gameSettings.keyBindForward.pressed = false
-                    if (debuglf) displayChatMessage("Tapped")
-                    legitticks--
                 }
             }
         }
@@ -159,7 +158,6 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
         when (mode) {
             "WTap" -> handleWTap()
             "LegitFast" -> handleLegitFast()
-            "Legit" -> handleLegit()
         }
     }
 
@@ -182,29 +180,15 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     }
 
     private fun handleLegitFast() {
-        if (onlyKillaura && KillAura.target?.hurtTime == 10) {
-            TimeUtils.delay(delaylf) {
-                if (debuglf) displayChatMessage("Start Sprinting")
-                legitfastTicks = tickslf
+        if (onlyKillaura && mc.thePlayer.isSprinting && KillAura.target?.hurtTime == nextInt(minhurttime, maxhurttime)) {
+            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+                if (debuglf) displayChatMessage("Start-False Sprint")
+                legitfastTicks = nextInt(minlfticks, maxlfticks)
             }
-        } else if (CombatManager.target?.hurtTime == 10) {
-            TimeUtils.delay(delaylf) {
-                if (debuglf) displayChatMessage("Start Sprinting")
-                legitfastTicks = tickslf
-            }
-        }
-    }
-
-    private fun handleLegit() {
-        if (onlyKillaura && KillAura.target?.hurtTime == 10) {
-            TimeUtils.delay(delaylf) {
-                if (debuglf) displayChatMessage("Start-Tap")
-                legitticks = tickslf
-            }
-        } else if (CombatManager.target?.hurtTime == 10) {
-            TimeUtils.delay(delaylf) {
-                if (debuglf) displayChatMessage("Start-Tap")
-                legitticks = tickslf
+        } else if (mc.thePlayer.isSprinting && CombatManager.target?.hurtTime == nextInt(minhurttime, maxhurttime)) {
+            TimeUtils.delay(nextInt(mindelay, maxdelay)) {
+                if (debuglf) displayChatMessage("Start-False Sprint")
+                legitfastTicks = nextInt(minlfticks, maxlfticks)
             }
         }
     }

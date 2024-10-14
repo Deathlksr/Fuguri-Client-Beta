@@ -10,6 +10,7 @@ import net.ccbluex.liquidbounce.utils.EntityUtils
 import net.ccbluex.liquidbounce.utils.RaycastTimerRange
 import net.ccbluex.liquidbounce.utils.extensions.expands
 import net.ccbluex.liquidbounce.utils.extensions.getNearestPointBB
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
 import net.ccbluex.liquidbounce.utils.timing.TimeUtils
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
@@ -39,36 +40,20 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
     private val maxHurtTimeValue = IntegerValue("TargetMaxHurtTime", 2, 0..10)
     private val onlyKillAura = BoolValue("OnlyKillAura", true)
     private val auraClick = BoolValue("AuraClick", true)
+
     private val modeAuraClick = ListValue("ModeAuraClick", arrayOf("BeforeTimer", "AfterTimer"), "BeforeTimer") { auraClick.get() }
     private val onlyPlayer = BoolValue("OnlyPlayer", true)
     private val debug = BoolValue("Debug", false)
     private val betterAnimation = BoolValue("BetterAnimation", true)
-    val freezeAnim by BoolValue("FreezeAnimation", true)
+    val freezeAnim by BoolValue("FixAnimation", true)
     private val reverseValue = BoolValue("Reverse", false)
-    private val maxReverseRange: FloatValue = object : FloatValue("MaxReverseRange", 2.8f, 1f..4f) {
-        override fun onChanged(oldValue: Float, newValue: Float) {
-            if (newValue > minDistance.get() && minDistance.get() > minReverseRange.get()) set(minDistance.get())
-            else if (newValue < minReverseRange.get()) set(minReverseRange.get())
-        }
-    }
+    private val maxReverseRange by FloatValue("MaxReverseRange", 2.8f, 1f..4f)
 
-    private val minReverseRange: FloatValue = object : FloatValue("MinReverseRange", 2.5f, 1f..4f) {
-        override fun onChanged(oldValue: Float, newValue: Float) {
-            if (newValue > maxReverseRange.get()) set(maxReverseRange.get())
-        }
-    }
+    private val minReverseRange by FloatValue("MinReverseRange", 2.5f, 1f..4f)
 
-    private val reverseTime: IntegerValue = object : IntegerValue("ReverseStopTime", 3, 1..10) {
-        override fun onChanged(oldValue: Int, newValue: Int) {
-            if (newValue < reverseTickTime.get()) set(reverseTickTime.get())
-        }
-    }
+    private val reverseTime by IntegerValue("ReverseStopTime", 3, 1..10)
 
-    private val reverseTickTime: IntegerValue = object : IntegerValue("ReverseTickTime", 3, 0..10) {
-        override fun onChanged(oldValue: Int, newValue: Int) {
-            if (newValue > reverseTime.get()) set(reverseTime.get())
-        }
-    }
+    private val reverseTickTime by IntegerValue("ReverseTickTime", 3, 0..10)
 
     private val reverseDelay = IntegerValue("ReverseDelay", 5, 0..20)
     private val reverseTargetMaxHurtTime = IntegerValue("ReverseTargetMaxHurtTime", 3, 0..10)
@@ -124,8 +109,8 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
             val range = box.distanceTo(vecEyes)
             val afterRange = box2.distanceTo(predictEyes)
             if (!working && reverseValue.get()) {
-                if (range <= maxReverseRange.get() && range >= minReverseRange.get() && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
-                    freezeTicks = reverseTime.get()
+                if (range <= maxReverseRange && range >= minReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
+                    freezeTicks = reverseTime
                     firstAnimation = false
                     reverseFreeze = true
                     return
@@ -173,8 +158,8 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
                     val range = box.distanceTo(vecEyes)
                     val afterRange = box2.distanceTo(afterEyes)
                     if (!working && reverseValue.get()) {
-                        if (range <= maxReverseRange.get() && range >= minReverseRange.get() && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
-                            freezeTicks = reverseTime.get()
+                        if (range <= maxReverseRange && range >= minReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
+                            freezeTicks = reverseTime
                             firstAnimation = false
                             reverseFreeze = true
                             return
@@ -232,7 +217,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
         }
         if (reverseFreeze) {
             reverseFreeze = false
-            var time = reverseTickTime.get()
+            var time = reverseTickTime
             working = true
             if (reverseAuraClick.get() === "BeforeTimer") killAura.clicks += 1
             while (time > 0) {

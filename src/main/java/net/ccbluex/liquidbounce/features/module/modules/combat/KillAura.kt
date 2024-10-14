@@ -607,7 +607,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
         val hurtTime = nextInt(minhurtTime, maxhurtTime)
 
             if (hittable) {
-                if (currentTarget.hurtTime < hurtTime || (mc.thePlayer.hurtTime > 0 && SmartAttack.takeIf { isActive } == true)) {
+                if (currentTarget.hurtTime < hurtTime || (mc.thePlayer.hurtTime > 0 && SmartAttack)) {
                 } else {
                     return
                 }

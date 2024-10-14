@@ -1,26 +1,27 @@
-#version 130
+#version 330 core
 
-in vec2 vTexCoord;  // Текстурные координаты из вершинного шейдера
+in vec2 uvCoord;  // UV координаты из вершинного шейдера
 
-uniform vec3 glowColor;  // Цвет свечения
-uniform float glowRadius; // Радиус свечения
-uniform float time;  // Время для анимации свечения
+out vec4 FragColor;  // Итоговый цвет пикселя
 
-out vec4 fragColor;
+uniform vec3 innerColor;    // Внутренний цвет круга
+uniform vec3 glowColor;     // Цвет свечения
+uniform float glowRadius;   // Радиус свечения
+uniform float glowIntensity; // Интенсивность свечения
 
 void main() {
-    vec2 center = vec2(0.5, 0.5);  // Центр круга
-    float distanceFromCenter = distance(vTexCoord, center);  // Расстояние от центра
+    // Центр круга - это точка (0.5, 0.5) в UV координатах
+    vec2 uv = uvCoord - vec2(0.5, 0.5);
+    float dist = length(uv);  // Расстояние от центра круга до текущей точки
 
-    // Интенсивность свечения на основе расстояния
-    float glowFactor = 1.0 - smoothstep(0.0, glowRadius, distanceFromCenter);
+    // Градиент свечения
+    float glow = smoothstep(0.5, 0.5 + glowRadius, dist) * glowIntensity;
 
-    // Анимация свечения
-    float animatedGlow = 0.5 + 0.5 * sin(time * 3.14159);
+    // Смешивание внутреннего цвета и цвета свечения
+    vec3 finalColor = mix(innerColor, glowColor, glow);
 
-    // Окончательная интенсивность свечения
-    glowFactor *= animatedGlow;
+    // Прозрачность (постепенное исчезновение к границам)
+    float alpha = 1.0 - smoothstep(0.5, 0.5 + glowRadius, dist);
 
-    // Цвет свечения
-    fragColor = vec4(glowColor * glowFactor, 1.0);
+    FragColor = vec4(finalColor, alpha);
 }

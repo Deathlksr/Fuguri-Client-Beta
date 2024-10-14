@@ -28,7 +28,6 @@ import net.ccbluex.liquidbounce.utils.block.BlockUtils.getBlock
 import net.ccbluex.liquidbounce.utils.extensions.hitBox
 import net.ccbluex.liquidbounce.utils.extensions.toRadians
 import net.ccbluex.liquidbounce.utils.render.ColorUtils.setColour
-import net.ccbluex.liquidbounce.utils.render.animation.AnimationUtil.easeInOutQuadX
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.*
@@ -492,7 +491,7 @@ object RenderUtils : MinecraftInstance() {
         var drawPercent = drawTime / 1000.0
 
         drawPercent = if (drawMode) drawPercent - 1 else 1 - drawPercent
-        drawPercent = easeInOutQuadX(drawPercent)
+        drawPercent = doAnimation(drawPercent)
 
         val bb = entity.entityBoundingBox
         val radius = bb.maxX - bb.minX
@@ -552,6 +551,7 @@ object RenderUtils : MinecraftInstance() {
         glPopMatrix()
     }
 
+
     fun drawFDP(entity: EntityLivingBase, event: Render3DEvent) {
 
         val themeTextColor = getColor(1).rgb
@@ -565,7 +565,7 @@ object RenderUtils : MinecraftInstance() {
         } else {
             drawPercent -= 1
         }
-        drawPercent = easeInOutQuadX(drawPercent)
+        drawPercent = doAnimation(drawPercent)
         mc.entityRenderer.disableLightmap()
         glPushMatrix()
         glDisable(GL_TEXTURE_2D)
@@ -598,6 +598,7 @@ object RenderUtils : MinecraftInstance() {
         glEnable(GL_TEXTURE_2D)
         glPopMatrix()
     }
+
     fun drawLies(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double) {
 
         val baseTime = 3000.0

@@ -353,6 +353,10 @@ object Scaffold : Module("Scaffold", Category.PLAYER, Keyboard.KEY_I, hideModule
 
     // Visuals
     private val mark by BoolValue("Mark", false, subjective = true)
+    private val scaffred by IntegerValue("Mark-Red", 255, 0..255) { mark }
+    private val scaffgreen by IntegerValue("Mark-Green", 255, 0..255) { mark }
+    private val scaffblue by IntegerValue("Mark-Blue", 255, 0..255) { mark }
+    private val scaffalpha by IntegerValue("Mark-Alpha", 255, 0..255) { mark }
     private val trackCPS by BoolValue("TrackCPS", false, subjective = true)
     private val safetyLines by BoolValue("SafetyLines", false, subjective = true) { isGodBridgeEnabled }
 
@@ -927,7 +931,7 @@ object Scaffold : Module("Scaffold", Category.PLAYER, Keyboard.KEY_I, hideModule
             val placeInfo = PlaceInfo.get(blockPos)
 
             if (isReplaceable(blockPos) && placeInfo != null) {
-                RenderUtils.drawBlockBox(blockPos, Color(68, 117, 255, 100), false)
+                RenderUtils.drawBlockBox(blockPos, Color(scaffred, scaffgreen, scaffblue, scaffalpha), false)
                 return
             }
         }
