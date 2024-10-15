@@ -28,8 +28,6 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     // Timing and tick controls
     private val delay by IntegerValue("Delay", 0, 0..250) { mode in arrayOf("WTap") }
     private val hurtTime by IntegerValue("Tick", 0, 0..10) { mode in arrayOf("WTap") }
-    private val minhurttime by IntegerValue("MinTimingHurtTime", 10, 0..10) { mode in arrayOf("LegitFast") }
-    private val maxhurttime by IntegerValue("MaxTimingHurtTime", 10, 0..10) { mode in arrayOf("LegitFast") }
     private val mindelay by IntegerValue("MinDelayTicks", 4, 0..10) { mode in arrayOf("LegitFast") }
     private val maxdelay by IntegerValue("MaxDelayTicks", 8, 0..10) { mode in arrayOf("LegitFast") }
     private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast") }
@@ -37,10 +35,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
 
     // KillAura and misc settings
     private val onlyKillaura by BoolValue("OnlyKillAura", false) { mode in arrayOf("LegitFast") }
-    private val falseclientsprint by BoolValue("FalseClientSprint", true)  { mode in arrayOf("LegitFast") }
-    private val sprintleft by BoolValue("SprintTicksLeft", false) { mode in arrayOf("LegitFast") && falseclientsprint}
-    private val minsprint by IntegerValue("SprintMinTicksLeft", 5, 0..25) { mode in arrayOf("LegitFast") && sprintleft}
-    private val maxsprint by IntegerValue("SprintMaxTicksLeft", 10, 0..25) { mode in arrayOf("LegitFast") && sprintleft}
+    private val falseclientsprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("LegitFast") }
     private val presssprint by BoolValue("PressSprint", true) { mode in arrayOf("LegitFast") }
     private val pressforward by BoolValue("PressForward", true) { mode in arrayOf("LegitFast") }
     private val debuglf by BoolValue("Debug", false) { mode in arrayOf("LegitFast") }
@@ -138,14 +133,9 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
             "LegitFast" -> {
                 if (legitfastTicks > 0 && mc.thePlayer.isSprinting) {
                     if (falseclientsprint) mc.thePlayer.isSprinting = false
-                    if (sprintleft) mc.thePlayer.sprintingTicksLeft = nextInt(minsprint, maxsprint)
                     mc.thePlayer.serverSprintState = false
-                    if (mc.gameSettings.keyBindSprint.isPressed) {
-                        if (presssprint) mc.gameSettings.keyBindSprint.pressed = false
-                    }
-                    if (mc.gameSettings.keyBindForward.isPressed) {
-                        if (pressforward) mc.gameSettings.keyBindForward.pressed = false
-                    }
+                    if (presssprint) mc.gameSettings.keyBindSprint.pressed = false
+                    if (pressforward) mc.gameSettings.keyBindForward.pressed = false
                     if (debuglf) displayChatMessage("Falsely-Sprint")
                     legitfastTicks--
                 }
@@ -180,12 +170,12 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     }
 
     private fun handleLegitFast() {
-        if (onlyKillaura && mc.thePlayer.isSprinting && KillAura.target?.hurtTime == nextInt(minhurttime, maxhurttime)) {
+        if (onlyKillaura && KillAura.target?.hurtTime == 10) {
             TimeUtils.delay(nextInt(mindelay, maxdelay)) {
                 if (debuglf) displayChatMessage("Start-False Sprint")
                 legitfastTicks = nextInt(minlfticks, maxlfticks)
             }
-        } else if (mc.thePlayer.isSprinting && CombatManager.target?.hurtTime == nextInt(minhurttime, maxhurttime)) {
+        } else if (CombatManager.target?.hurtTime == 10) {
             TimeUtils.delay(nextInt(mindelay, maxdelay)) {
                 if (debuglf) displayChatMessage("Start-False Sprint")
                 legitfastTicks = nextInt(minlfticks, maxlfticks)
