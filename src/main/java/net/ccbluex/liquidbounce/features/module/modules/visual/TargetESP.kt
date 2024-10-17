@@ -90,9 +90,13 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies") }
     val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies") }
     val liesalpha by FloatValue("Lies-Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies") }
+    val liescolorRedtwo by FloatValue("Lies-Red2", 1F, 0F..1F) { markValue in arrayOf("Lies") }
+    val liescolorGreentwo by FloatValue("Lies-Green2", 1F, 0F..1F) { markValue in arrayOf("Lies") }
+    val liescolorBluetwo by FloatValue("Lies-Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies") }
     val liesalphatwo by FloatValue("Lies-Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies") }
     private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies") }
     private val lenghtlies by FloatValue("Lies-Lenght", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies") }
+    private val radiuslies by FloatValue("Lies-Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies") }
     val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
     val mode by ListValue("AnimationType", arrayOf(
         "easeInSine", "easeOutSine", "easeInOutSine",
@@ -192,14 +196,19 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
 
             "sims" -> drawCrystal(
                 entityLivingBase,
-                if ((hurt && entityLivingBase.hurtTime <= 0)) Color(80, 255, 80, 200).rgb else Color(255, 0, 0, 200).rgb,
+                if ((hurt && entityLivingBase.hurtTime <= 0)) Color(80, 255, 80, 200).rgb else Color(
+                    255,
+                    0,
+                    0,
+                    200
+                ).rgb,
                 event
             )
 
             "zavz" -> drawZavz(
                 entityLivingBase,
                 event,
-                dual = zavzdouble, // or false based on your requirement
+                dual = zavzdouble,
             )
 
             "jello" -> drawJello(
@@ -216,6 +225,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 event,
                 speedlies.toDouble(),
                 lenghtlies.toDouble(),
+                radiuslies,
             )
         }
     }

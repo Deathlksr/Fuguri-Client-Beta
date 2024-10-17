@@ -66,8 +66,8 @@ object DiscordRPC : MinecraftInstance() {
 
                 // Set display info
                 if (mc.isIntegratedServerRunning || serverData == null) {
-                    setDetails("Playing lonely in singleplayer")
-                    setState("Ingame")
+                    setDetails("Playing lonely in Singleplayer")
+                    setState("In-game")
                 } else {
                     setDetails("Maybe cheating on ${ServerUtils.hideSensitiveInformation(serverData.serverIP)}")
                     setState("Cheating")
@@ -77,7 +77,7 @@ object DiscordRPC : MinecraftInstance() {
 
                 if (screen is GuiMultiplayer) {
                     setDetails("Idle")
-                    setState("Multiplayer menu")
+                    setState("Multiplayer-menu")
                 }
             }
         }

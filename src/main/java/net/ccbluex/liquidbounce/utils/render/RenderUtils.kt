@@ -17,8 +17,11 @@ import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloRe
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesalpha
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesalphatwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorBlue
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorBluetwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorGreen
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorGreentwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRed
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRedtwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.start
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.ClientThemesUtils.getColor
@@ -598,8 +601,8 @@ object RenderUtils : MinecraftInstance() {
         glEnable(GL_TEXTURE_2D)
         glPopMatrix()
     }
-
-    fun drawLies(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double) {
+/*
+    fun drawLies(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float) {
 
         val baseTime = 3000.0
         val everyTime = baseTime / speedMultiplier
@@ -626,7 +629,7 @@ object RenderUtils : MinecraftInstance() {
         mc.entityRenderer.disableLightmap()
 
         val bb = entity.entityBoundingBox
-        val radius = ((bb.maxX - bb.minX) + (bb.maxZ - bb.minZ)) * 0.5f
+        val radius = ((bb.maxX - bb.minX) + (bb.maxZ - bb.minZ)) * radiuslies
         val height = (bb.maxY - bb.minY) * if (heihgtlies) 1.1 else 1.0
         val x =
             entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
@@ -642,7 +645,7 @@ object RenderUtils : MinecraftInstance() {
             -1
         } else {
             1
-        }) *  trailLengthMultiplier
+        }) * trailLengthMultiplier
 
         for (i in 5..360 step 5) {
             val x1 = x - sin(i * Math.PI / 180F) * radius
@@ -653,7 +656,7 @@ object RenderUtils : MinecraftInstance() {
             glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
             glVertex3d(x1, y + eased, z1)
             glVertex3d(x2, y + eased, z2)
-            glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalphatwo)
+            glColor4f(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo, liesalphatwo)
             glVertex3d(x2, y, z2)
             glVertex3d(x1, y, z1)
             glEnd()
@@ -661,13 +664,94 @@ object RenderUtils : MinecraftInstance() {
 
         glEnable(GL_CULL_FACE)
         glShadeModel(7424)
-        glColor4f(1f, 1f, 1f, 1f)
+        glColor4f(0f, 0f, 0f, 0f)
         glEnable(GL_DEPTH_TEST)
         glDisable(GL_LINE_SMOOTH)
         glDisable(GL_BLEND)
         glEnable(GL_TEXTURE_2D)
         glPopMatrix()
     }
+
+ */
+fun drawLies(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float) {
+
+    val baseTime = 3000.0
+    val everyTime = baseTime / speedMultiplier
+    val drawTime = (System.currentTimeMillis() % everyTime).toInt()
+    val drawMode = drawTime > (everyTime / 2)
+    var drawPercent = drawTime / (everyTime / 2.0)
+
+    if (!drawMode) {
+        drawPercent = 1 - drawPercent
+    } else {
+        drawPercent -= 1
+    }
+    drawPercent = doAnimation(drawPercent)
+
+    mc.entityRenderer.disableLightmap()
+    glPushMatrix()
+    glDisable(GL_TEXTURE_2D)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glEnable(GL_LINE_SMOOTH)
+    glEnable(GL_BLEND)
+    glDisable(GL_DEPTH_TEST)
+    glDisable(GL_CULL_FACE)
+    glShadeModel(7425)
+    mc.entityRenderer.disableLightmap()
+
+    val bb = entity.entityBoundingBox
+    val radius = ((bb.maxX - bb.minX) + (bb.maxZ - bb.minZ)) * radiuslies
+    val height = (bb.maxY - bb.minY) * if (heihgtlies) 1.1 else 1.0
+    val x =
+        entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
+    val y =
+        (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY) + height * drawPercent
+    val z =
+        entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * event.partialTicks - mc.renderManager.viewerPosZ
+
+    // Modify eased calculation to use a sinusoidal function for upward and downward motion
+    val timeFactor = (System.currentTimeMillis() % everyTime) / everyTime.toFloat() // Create a time factor
+    val eased = (height / 3) * (if (drawPercent > 0.5) {
+        1 - drawPercent
+    } else {
+        drawPercent
+    }) * (if (drawMode) {
+        -1
+    } else {
+        1
+    }) * trailLengthMultiplier
+
+    // Calculate oscillation using sine function
+    val oscillation = Math.sin(timeFactor * Math.PI * 2) * (height / 5) // Adjust oscillation height as needed
+
+    // Update the y-coordinate to include oscillation
+    val finalY = y + eased + oscillation
+
+    for (i in 5..360 step 5) {
+        val x1 = x - sin(i * Math.PI / 180F) * radius
+        val z1 = z + cos(i * Math.PI / 180F) * radius
+        val x2 = x - sin((i - 5) * Math.PI / 180F) * radius
+        val z2 = z + cos((i - 5) * Math.PI / 180F) * radius
+        glBegin(GL_QUADS)
+        glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
+        glVertex3d(x1, finalY, z1)
+        glVertex3d(x2, finalY, z2)
+        glColor4f(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo, liesalphatwo)
+        glVertex3d(x2, y, z2)
+        glVertex3d(x1, y, z1)
+        glEnd()
+    }
+
+    glEnable(GL_CULL_FACE)
+    glShadeModel(7424)
+    glColor4f(0f, 0f, 0f, 0f)
+    glEnable(GL_DEPTH_TEST)
+    glDisable(GL_LINE_SMOOTH)
+    glDisable(GL_BLEND)
+    glEnable(GL_TEXTURE_2D)
+    glPopMatrix()
+}
+
 
     fun easeInSine(x: Double): Double {
             return 1 - Math.cos((x * Math.PI) / 2)

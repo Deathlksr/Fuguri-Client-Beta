@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
-object DrinkAlert : Module("DrinkingAlert", Category.OTHER, hideModule = false) {
+object DrinkAlert : Module("DrinkAlert", Category.OTHER, hideModule = false) {
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
@@ -20,7 +20,7 @@ object DrinkAlert : Module("DrinkingAlert", Category.OTHER, hideModule = false) 
     }
 
     @SubscribeEvent
-    fun onPlayerUseItem(event: PlayerUseItemEvent.Finish) {
+    fun onPlayerUseItem(event: PlayerUseItemEvent) {
         val itemStack = event.item
         if (itemStack.item is ItemPotion) {
             val potionItem = itemStack.item as ItemPotion

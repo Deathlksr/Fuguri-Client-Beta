@@ -10,8 +10,6 @@ import net.ccbluex.liquidbounce.utils.EntityUtils
 import net.ccbluex.liquidbounce.utils.RaycastTimerRange
 import net.ccbluex.liquidbounce.utils.extensions.expands
 import net.ccbluex.liquidbounce.utils.extensions.getNearestPointBB
-import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
-import net.ccbluex.liquidbounce.utils.timing.TimeUtils
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
@@ -29,11 +27,13 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
             if (newValue > maxDistance.get()) set(maxDistance.get())
         }
     }
+
     private val maxDistance: FloatValue = object : FloatValue("MaxDistance", 4F, 3F..7F) {
         override fun onChanged(oldValue: Float, newValue: Float) {
             if (newValue < minDistance.get()) set(minDistance.get())
         }
     }
+
     private val rangeMode = ListValue("RangeMode", arrayOf("Setting", "Smart"), "Smart")
     private val maxTimeValue = IntegerValue("MaxTime", 3, 0..20)
     private val delayValue = IntegerValue("Delay", 5, 0..20)
@@ -112,7 +112,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
                 if (range <= maxReverseRange && range >= minReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
                     freezeTicks = reverseTime
                     firstAnimation = false
-                    reverseFreeze = true
+                    reverseFreeze = false
                     return
                 }
             }
@@ -161,7 +161,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
                         if (range <= maxReverseRange && range >= minReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
                             freezeTicks = reverseTime
                             firstAnimation = false
-                            reverseFreeze = true
+                            reverseFreeze = false
                             return
                         }
                     }
@@ -215,8 +215,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
             --freezeTicks
             return true
         }
-        if (reverseFreeze) {
-            reverseFreeze = false
+        if (!reverseFreeze) {
             var time = reverseTickTime
             working = true
             if (reverseAuraClick.get() === "BeforeTimer") killAura.clicks += 1
@@ -224,6 +223,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
                 --time
                 mc.runTick()
             }
+            reverseFreeze = true
             working = false
             cooldown = reverseDelay.get()
             if (reverseAuraClick.get() == "AfterTimer") killAura.clicks += 1

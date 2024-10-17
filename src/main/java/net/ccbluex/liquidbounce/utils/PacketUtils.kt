@@ -6,7 +6,7 @@
 package net.ccbluex.liquidbounce.utils
 
 import net.ccbluex.liquidbounce.event.*
-import net.ccbluex.liquidbounce.features.module.modules.combat.DelayPackets
+import net.ccbluex.liquidbounce.features.module.modules.combat.Ping
 import net.ccbluex.liquidbounce.injection.implementations.IMixinEntity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.network.NetworkManager
@@ -91,7 +91,7 @@ object PacketUtils : MinecraftInstance(), Listenable {
             queuedPackets.forEach {
                 handlePacket(it)
                 val packetEvent = PacketEvent(it, EventState.RECEIVE)
-                DelayPackets.onPacket(packetEvent)
+                Ping.onPacket(packetEvent)
             }
 
             queuedPackets.clear()

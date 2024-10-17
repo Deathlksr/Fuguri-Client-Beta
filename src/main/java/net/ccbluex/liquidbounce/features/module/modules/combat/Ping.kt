@@ -4,7 +4,6 @@ import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.modules.player.Blink
-import net.ccbluex.liquidbounce.features.module.modules.player.scaffolds.Scaffold
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
 import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacket
 import net.ccbluex.liquidbounce.utils.Rotation
@@ -28,7 +27,7 @@ import net.minecraft.util.Vec3
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 
-object DelayPackets : Module("DelayPackets", Category.COMBAT, gameDetecting = false, hideModule = false) {
+object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule = false) {
 
     private val delay by IntegerValue("Delay", 500, 0..1000)
     private val ticksexxisted by BoolValue("Ticks-Existed", true)
