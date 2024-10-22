@@ -128,7 +128,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     }
 
     @EventTarget
-    fun onSprint(event: PostSprintUpdateEvent) {
+    fun onSprintUpdate(event: SprintUpdateEvent) {
         when (mode) {
             "LegitFast" -> {
                 if (legitfastTicks > 0 && mc.thePlayer.isSprinting) {
@@ -172,12 +172,12 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     private fun handleLegitFast() {
         if (onlyKillaura && KillAura.target?.hurtTime == 10) {
             TimeUtils.delay(nextInt(mindelay, maxdelay)) {
-                if (debuglf) displayChatMessage("Start-False Sprint")
+                if (debuglf) displayChatMessage("Start-False-Sprint")
                 legitfastTicks = nextInt(minlfticks, maxlfticks)
             }
         } else if (CombatManager.target?.hurtTime == 10) {
             TimeUtils.delay(nextInt(mindelay, maxdelay)) {
-                if (debuglf) displayChatMessage("Start-False Sprint")
+                if (debuglf) displayChatMessage("Start-False-Sprint")
                 legitfastTicks = nextInt(minlfticks, maxlfticks)
             }
         }

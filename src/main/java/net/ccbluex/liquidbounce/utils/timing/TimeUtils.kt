@@ -5,6 +5,7 @@ import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
 import java.util.concurrent.atomic.AtomicInteger
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.gameevent.TickEvent
 import kotlin.math.roundToInt
 
 object TimeUtils {
@@ -43,7 +44,7 @@ object TimeUtils {
     }
 
     @SubscribeEvent
-    fun onTick(event: net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent) {
+    fun onTick(event: TickEvent.ClientTickEvent) {
         if (event.phase == net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END) {
             val currentTick = tickCount.incrementAndGet()
 

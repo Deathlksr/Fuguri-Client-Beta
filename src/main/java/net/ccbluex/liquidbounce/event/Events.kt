@@ -103,7 +103,7 @@ class SneakSlowDownEvent(var strafe: Float, var forward: Float) : Event()
 /**
  * Called in "onLivingUpdate" after when the player's sprint states are updated
  */
-class PostSprintUpdateEvent : Event()
+class SprintUpdateEvent : Event()
 
 /**
  * Called in "moveFlying"
@@ -196,14 +196,10 @@ class StepConfirmEvent : Event()
 class GameTickEvent : Event()
 
 /**
- * tick... tack... tick... tack
- */
-class TickEvent : Event()
-
-/**
- * tick tack for player
+ * tick-tack for player
  */
 class PlayerTickEvent(val state: EventState) : CancellableEvent()
+
 
 class RotationUpdateEvent : Event()
 /**
@@ -223,6 +219,6 @@ class ClickWindowEvent(val windowId: Int, val slotId: Int, val mouseButtonClicke
     CancellableEvent()
 
 /**
- * Called when LiquidBounce finishes starting up
+ * Called when FuguriBeta finishes starting up
  */
 class StartupEvent : Event()

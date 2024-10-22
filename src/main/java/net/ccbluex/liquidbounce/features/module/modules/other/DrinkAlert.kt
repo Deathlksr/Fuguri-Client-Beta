@@ -5,21 +5,10 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
 import net.minecraft.item.ItemPotion
 import net.minecraft.potion.PotionEffect
-import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.event.FMLInitializationEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 object DrinkAlert : Module("DrinkAlert", Category.OTHER, hideModule = false) {
 
-    @Mod.EventHandler
-    fun init(event: FMLInitializationEvent) {
-        MinecraftForge.EVENT_BUS.register(this)
-        println("§r is working")
-    }
-
-    @SubscribeEvent
     fun onPlayerUseItem(event: PlayerUseItemEvent) {
         val itemStack = event.item
         if (itemStack.item is ItemPotion) {

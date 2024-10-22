@@ -111,7 +111,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
             blockRange = blockRange.coerceAtMost(newValue)
         }
     }
-    private val scanRange by FloatValue("ScanRange", 6f, 0f..6f)
+    private val scanRange by FloatValue("MaxRange", 6f, 0f..6f)
     private val throughWallsRange by FloatValue("ThroughWallsRange", 3f, 0f..8f)
     private val rangeSprintReduction by FloatValue("RangeSprintReduction", 0f, 0f..0.4f)
 
@@ -641,7 +641,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
                     // It decreases gradually (tick by tick) when you hold the button.
                     // If you click and then release the button, the cool down drops from where it was immediately to 0.
                     // Most humans will release the button 1-2 ticks max after clicking, leaving them with an average of 10 CPS.
-                    // The maximum CPS allowed when you miss is 20 CPS, if you click and release immediately, which is highly unlikely.
+                    // The maximum CPS allowed when your miss is 20 CPS, if you click and release immediately, which is highly unlikely.
                     // With that being said, we force an average of 10 CPS by doing this below, since 10 CPS when missing is possible.
                     if (respectMissCooldown && ticksSinceClick() <= 1 && it.typeOfHit.isMiss) {
                         return@runWithModifiedRaycastResult

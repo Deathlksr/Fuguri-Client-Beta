@@ -379,7 +379,7 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer {
             setSprinting(false);
         }
 
-        EventManager.INSTANCE.callEvent(new PostSprintUpdateEvent());
+        EventManager.INSTANCE.callEvent(new SprintUpdateEvent());
 
         sprint.correctSprintState(modifiedInput, isUsingItem);
 

@@ -25,15 +25,17 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
     )
 
     // Intave MotionXZ
-    private val Motionxz by FloatValue("VelocityXZ-SprintHit", 0.6F, 0F..1F) { mode in arrayOf("Intave") }
-    private val MotionnotSprintxz by FloatValue("VelocityXZ-Hit", 1.0F, 0F..1F) { mode in arrayOf("Intave") }
-    private val falsesprint by BoolValue("FalseSprint", true) { mode in arrayOf("Intave") }
+    private val Motionxz by FloatValue("XZ-SprintHit", 0.6F, 0F..1F) { mode in arrayOf("Intave") }
+    private val MotionnotSprintxz by FloatValue("XZ-Hit", 1.0F, 0F..1F) { mode in arrayOf("Intave") }
+
+    // Intave Settings
+    private val falsesprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("Intave") }
     private val falseserversprint by BoolValue("FalseServerSprint", false) { mode in arrayOf("Intave") }
     private val debugmotion by BoolValue("DebugSprintHit", false) { mode in arrayOf("Intave") }
     private val debugmotionhit by BoolValue("DebugHit", false) { mode in arrayOf("Intave") }
 
     // Intave Jump
-    private val intavejump by BoolValue("Intave-Jump", false) { mode in arrayOf("Intave") }
+    private val intavejump by BoolValue("Jump", false) { mode in arrayOf("Intave") }
 
     // Intave Chance
     private val chance by IntegerValue("Chance", 100, 0..100) { intavejump }
@@ -93,7 +95,7 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
 
         when (mode.lowercase()) {
             "intave" -> {
-                if (intavejump.takeIf { isActive } == true) {
+                if (intavejump) {
                     // TODO: Recode and make all velocity modes support velocity direction checks
                     var packetDirection = 0.0
                     when (packet) {
@@ -128,7 +130,7 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
     fun onStrafe(event: StrafeEvent) {
         val player = mc.thePlayer ?: return
 
-        if (mode == "Intave" && hasReceivedVelocity && intavejump.takeIf { isActive } == true) {
+        if (mode == "Intave" && hasReceivedVelocity && intavejump) {
             if (!player.isJumping && nextInt(endExclusive = 100) < chance && shouldJump() && player.isSprinting && player.onGround && player.hurtTime == 9) {
                 player.tryJump()
                 limitUntilJump = 0

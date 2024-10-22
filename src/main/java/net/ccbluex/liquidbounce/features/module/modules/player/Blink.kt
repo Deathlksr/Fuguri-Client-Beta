@@ -1,8 +1,3 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce.features.module.modules.player
 
 import net.ccbluex.liquidbounce.event.*
@@ -28,7 +23,7 @@ object Blink : Module("Blink", Category.PLAYER, gameDetecting = false, hideModul
 
     private val fakePlayerMenu by BoolValue("FakePlayer", true)
 
-    private val pulseTimer = MSTimer()
+    val pulseTimer = MSTimer()
 
     override fun onEnable() {
         pulseTimer.reset()

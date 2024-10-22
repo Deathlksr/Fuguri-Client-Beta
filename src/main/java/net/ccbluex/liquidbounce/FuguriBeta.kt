@@ -1,8 +1,3 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce
 
 import net.ccbluex.liquidbounce.event.ClientShutdownEvent
@@ -46,14 +41,10 @@ import net.ccbluex.liquidbounce.utils.*
 import net.ccbluex.liquidbounce.utils.ClassUtils.hasForge
 import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.ClientUtils.disableFastRender
-import net.ccbluex.liquidbounce.utils.MinecraftInstance.Companion.mc
 import net.ccbluex.liquidbounce.utils.inventory.InventoryUtils
 import net.ccbluex.liquidbounce.utils.render.MiniMapRegister
 import net.ccbluex.liquidbounce.utils.timing.TickedActions
 import net.ccbluex.liquidbounce.utils.timing.WaitTickUtils
-import net.minecraft.client.audio.PositionedSoundRecord
-import net.minecraft.client.audio.SoundHandler
-import net.minecraft.util.ResourceLocation
 import kotlin.concurrent.thread
 
 
@@ -62,7 +53,7 @@ object FuguriBeta {
     /**
      * Client Information
      *
-     * This has all of the basic information.
+     * This has all the basic information.
      */
 
     const val CLIENT_NAME = "FuguriBeta"
@@ -71,7 +62,7 @@ object FuguriBeta {
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
     const val CLIENT_WEBSITE = "fdpclient.net"
     const val CLIENT_VERSION = "B1.8"
-    
+
     val clientVersionText = gitInfo["git.build.version"]?.toString() ?: "unknown"
     val clientVersionNumber = clientVersionText.substring(1).toIntOrNull() ?: 0 // version format: "b<VERSION>" on legacy
     val clientCommit = gitInfo["git.commit.id.abbrev"]?.let { "git-$it" } ?: "unknown"
@@ -117,7 +108,7 @@ object FuguriBeta {
         isStarting = true
         isLoadingConfig = true
 
-        LOGGER.info("Starting Fuguri Beta")
+        LOGGER.info("Starting Fuguri-Beta")
 
             runCatching {
                     // Load languages
@@ -238,6 +229,7 @@ object FuguriBeta {
                 isStarting = false
 
                 callEvent(StartupEvent())
+                LOGGER.info("E-Sound Nigger!!!!!")
                 LOGGER.info("Successfully started client")
             }
         }
@@ -255,5 +247,4 @@ object FuguriBeta {
         // Shutdown discord rpc
         discordRPC.shutdown()
     }
-
 }

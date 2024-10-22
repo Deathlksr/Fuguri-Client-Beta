@@ -238,8 +238,15 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
             doEffect(target)
         }
 
-        doSound()
         attackEntity(target)
+    }
+
+
+    @EventTarget
+    fun onUpdate(event: UpdateEvent) {
+        if (killaura.target?.hurtTime == 10) {
+            doSound()
+        }
     }
 
     @EventTarget
@@ -251,7 +258,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
             // Critical Effect
             if (thePlayer.fallDistance > 0F && !thePlayer.onGround && !thePlayer.isOnLadder && !thePlayer.isInWater && !thePlayer.isPotionActive(
                     Potion.blindness
-                ) && thePlayer.ridingEntity == null || Criticals.handleEvents() && Criticals.msTimer.hasTimePassed(
+                ) && thePlayer.ridingEntity == null || handleEvents() && Criticals.msTimer.hasTimePassed(
                     Criticals.delay
                 ) && !thePlayer.isInWater && !thePlayer.isInLava && !thePlayer.isInWeb) {
                 thePlayer.onCriticalHit(entity)

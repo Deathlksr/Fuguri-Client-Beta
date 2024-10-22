@@ -3,7 +3,6 @@ package net.ccbluex.liquidbounce.features.module.modules.combat
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
-import net.ccbluex.liquidbounce.features.module.modules.player.Blink
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
 import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacket
 import net.ccbluex.liquidbounce.utils.Rotation
@@ -30,6 +29,7 @@ import java.awt.Color
 object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule = false) {
 
     private val delay by IntegerValue("Delay", 500, 0..1000)
+    private val recoildelay by IntegerValue("Recoil-Delay", 0, 0..250)
     private val ticksexxisted by BoolValue("Ticks-Existed", true)
     private val minticksalive by IntegerValue("Max-Ticks-Existed", 15, 0..60) { ticksexxisted }
     private val flushflag by BoolValue("Flush-Flag", true)
@@ -48,7 +48,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val positions = LinkedHashMap<Vec3, Long>()
     private val resetTimer = MSTimer()
     private var ignoreWholeTick = false
-
     private val line by BoolValue("Render", true, subjective = true)
     private val thirdperson by BoolValue("Only-Third-Person", true) { line }
     private val red by FloatValue("red", 1.0F, 0.0F..1.0F) { line }
@@ -74,7 +73,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         if (mc.thePlayer == null || mc.thePlayer.isDead)
             return
 
-        if (ticksexxisted.takeIf { isActive } == true) {
+        if (ticksexxisted) {
             if (mc.thePlayer.ticksExisted < minticksalive) {
                 blink()
                 return
@@ -99,28 +98,28 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
             }
 
             is C02PacketUseEntity -> {
-                if (flushonattack.takeIf { isActive } == true) {
+                if (flushonattack) {
                     blink()
                     return
                 }
             }
 
             is C0EPacketClickWindow, is C0DPacketCloseWindow -> {
-                if (flushoninv.takeIf { isActive } == true) {
+                if (flushoninv) {
                     blink()
                     return
                 }
             }
 
             is S08PacketPlayerPosLook -> {
-                if (flushflag.takeIf { isActive } == true) {
+                if (flushflag) {
                     ticksFlag = tickflag
                     return
                 }
             }
 
             is C07PacketPlayerDigging, is C08PacketPlayerBlockPlacement -> {
-                if (flushuseitem.takeIf { isActive } == true) {
+                if (flushuseitem) {
                     blink()
                     return
                 }
@@ -128,7 +127,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
             is S12PacketEntityVelocity -> {
                 if (mc.thePlayer.entityId == packet.entityID) {
-                    if (flushvelocity.takeIf { isActive } == true) {
+                    if (flushvelocity) {
                         blink()
                         return
                     }
@@ -138,28 +137,28 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
         val screen = mc.currentScreen
 
-        if (flushoninv.takeIf { isActive } == true) {
+        if (flushoninv) {
             if (screen is GuiInventory) {
                 blink()
                 return
             }
         }
 
-        if (flushoncontainer.takeIf { isActive } == true) {
+        if (flushoncontainer) {
             if (screen is GuiContainer) {
                 blink()
                 return
             }
         }
 
-        if (flushclickgui.takeIf { isActive } == true) {
+        if (flushclickgui) {
             if (screen is ClickGui) {
                 blink()
                 return
             }
         }
 
-        if (flushblock.takeIf { isActive } == true) {
+        if (flushblock) {
             if (mc.thePlayer.isUsingItem) {
                 blink()
                 return
@@ -167,7 +166,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         }
 
         if (mc.gameSettings.keyBindBack.pressed) {
-            if (flushback.takeIf { isActive } == true) {
+            if (flushback) {
                 blink()
                 return
             }
@@ -175,7 +174,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
         if (mc.thePlayer.health < mc.thePlayer.maxHealth) {
             if (mc.thePlayer.hurtTime != 0) {
-                if (flushdamage.takeIf { isActive } == true) {
+                if (flushdamage) {
                     blink()
                     return
                 }
@@ -183,7 +182,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         }
 
         // Passed time
-        if (!resetTimer.hasTimePassed(0))
+        if (!resetTimer.hasTimePassed(recoildelay))
             return
 
         if (event.eventType == EventState.SEND) {
@@ -221,11 +220,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     fun onGameLoop(event: GameLoopEvent) {
         mc.thePlayer ?: return
 
-        if (Blink.blinkingSend() || mc.thePlayer.isDead) {
-            blink()
-            return
-        }
-
         if (!resetTimer.hasTimePassed(0))
             return
 
@@ -241,9 +235,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
             return
 
         val color = Color(red, green, blue)
-
-        if (Blink.blinkingSend())
-            return
 
         synchronized(positions.keys) {
             glPushMatrix()
