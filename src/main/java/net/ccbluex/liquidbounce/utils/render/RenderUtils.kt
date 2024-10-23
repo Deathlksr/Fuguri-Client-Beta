@@ -2,14 +2,8 @@ package net.ccbluex.liquidbounce.utils.render
 
 import com.jhlabs.image.GaussianFilter
 import net.ccbluex.liquidbounce.event.Render3DEvent
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.DOUBLE_PI
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorBlueTwoValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorBlueValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorGreenTwoValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorGreenValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorRedTwoValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorRedValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.doAnimation
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.gradientlies
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.heihgtlies
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloBlueValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloGreenValue
@@ -22,6 +16,7 @@ import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescol
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorGreentwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRed
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRedtwo
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorgix
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.start
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.ClientThemesUtils.getColor
@@ -31,8 +26,6 @@ import net.ccbluex.liquidbounce.utils.block.BlockUtils.getBlock
 import net.ccbluex.liquidbounce.utils.extensions.hitBox
 import net.ccbluex.liquidbounce.utils.extensions.toRadians
 import net.ccbluex.liquidbounce.utils.render.ColorUtils.setColour
-import net.ccbluex.liquidbounce.value.BoolValue
-import net.ccbluex.liquidbounce.value.FloatValue
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.*
@@ -54,7 +47,6 @@ import net.minecraft.util.ResourceLocation
 import net.minecraft.util.Vec3
 import org.lwjgl.opengl.EXTFramebufferObject
 import org.lwjgl.opengl.EXTPackedDepthStencil
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL14
 import org.lwjgl.util.glu.Cylinder
@@ -391,99 +383,6 @@ object RenderUtils : MinecraftInstance() {
     }
 
     /**
-     * Draws a visual effect around the specified entity in 3D space.
-     *
-     * @param event The render event containing the partial tick time for smooth rendering.
-     */
-    fun drawZavz(entity: EntityLivingBase, event: Render3DEvent, dual: Boolean) {
-        val speed = 0.1f
-
-        val ticks = event.partialTicks
-        glPushMatrix()
-        glDisable(GL_TEXTURE_2D)
-
-        startSmooth()
-
-        glDisable(GL_DEPTH_TEST)
-        glDepthMask(false)
-        glLineWidth(2.0f)
-        glBegin(GL_LINE_STRIP)
-
-        val x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * ticks - mc.renderManager.renderPosX
-        val z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * ticks - mc.renderManager.renderPosZ
-        var y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * ticks - mc.renderManager.renderPosY
-
-        val radius = 0.65
-        val precision = 360
-
-        var startPos = start % 360
-
-        start += speed
-
-        for (i in 0..precision) {
-            val posX = x + radius * cos(startPos + i * DOUBLE_PI / (precision / 2.0))
-            val posZ = z + radius * sin(startPos + i * DOUBLE_PI / (precision / 2.0))
-
-            glColor(ColorUtils.getGradientOffset(Color(colorRedValue, colorGreenValue, colorBlueValue), Color(colorRedTwoValue, colorGreenTwoValue, colorBlueTwoValue, 1), abs((System.currentTimeMillis() / 10L).toDouble()) / 100.0 + y))
-
-            glVertex3d(posX, y, posZ)
-
-            y += entity.height / precision
-
-            glColor(0, 0, 0, 0)
-        }
-
-        glEnd()
-        glDepthMask(true)
-        glEnable(GL_DEPTH_TEST)
-
-        endSmooth()
-
-        glEnable(GL_TEXTURE_2D)
-        glPopMatrix()
-
-        if (dual) {
-            glPushMatrix()
-            glDisable(GL_TEXTURE_2D)
-
-            startSmooth()
-
-            glDisable(GL_DEPTH_TEST)
-            glDepthMask(false)
-            glLineWidth(2.0f)
-            glBegin(GL_LINE_STRIP)
-
-            startPos = start % 360
-
-            start += speed
-
-            y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * ticks - mc.renderManager.renderPosY + entity.height
-
-            for (i in 0..precision) {
-                val posX = x + radius * cos(-(startPos + i * DOUBLE_PI / (precision / 2.0)))
-                val posZ = z + radius * sin(-(startPos + i * DOUBLE_PI / (precision / 2.0)))
-
-                glColor(ColorUtils.getGradientOffset(Color(colorRedValue, colorGreenValue, colorBlueValue), Color(colorRedTwoValue, colorGreenTwoValue, colorBlueTwoValue, 1), abs((System.currentTimeMillis() / 10L).toDouble()) / 100.0 + y))
-
-                glVertex3d(posX, y, posZ)
-
-                y -= entity.height / precision
-
-                glColor(0, 0, 0, 0)
-            }
-
-            glEnd()
-            glDepthMask(true)
-            glEnable(GL_DEPTH_TEST)
-
-            endSmooth()
-
-            glEnable(GL_TEXTURE_2D)
-            glPopMatrix()
-        }
-    }
-
-    /**
      * Draws a jello-like effect around the given entity.
      *
      * @param entity The entity to draw the jello effect around.
@@ -634,12 +533,9 @@ object RenderUtils : MinecraftInstance() {
     val bb = entity.entityBoundingBox
     val radius = ((bb.maxX - bb.minX) + (bb.maxZ - bb.minZ)) * radiuslies
     val height = (bb.maxY - bb.minY) * if (heihgtlies) 1.1 else 1.0
-    val x =
-        entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
-    val y =
-        (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY) + height * drawPercent
-    val z =
-        entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * event.partialTicks - mc.renderManager.viewerPosZ
+    val x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
+    val y = (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY) + height * drawPercent
+    val z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * event.partialTicks - mc.renderManager.viewerPosZ
 
     val timeFactor = (System.currentTimeMillis() % everyTime) / everyTime.toFloat()
     val eased = (height / 3) * (if (drawPercent > 0.5) {
@@ -655,22 +551,21 @@ object RenderUtils : MinecraftInstance() {
     val oscillation = Math.sin(timeFactor * Math.PI * 2) * (height / 5)
 
     val finalY = y + eased + oscillation
-
+    glBegin(GL_QUADS)
     for (i in 5..360 step 5) {
         val x1 = x - sin(i * Math.PI / 180F) * radius
         val z1 = z + cos(i * Math.PI / 180F) * radius
         val x2 = x - sin((i - 5) * Math.PI / 180F) * radius
         val z2 = z + cos((i - 5) * Math.PI / 180F) * radius
-        glBegin(GL_QUADS)
         glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
         glVertex3d(x1, finalY, z1)
         glVertex3d(x2, finalY, z2)
         glColor4f(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo, liesalphatwo)
         glVertex3d(x2, y, z2)
         glVertex3d(x1, y, z1)
-        glEnd()
     }
 
+    glEnd()
     glEnable(GL_CULL_FACE)
     glShadeModel(7424)
     glColor4f(0f, 0f, 0f, 0f)
@@ -680,6 +575,57 @@ object RenderUtils : MinecraftInstance() {
     glEnable(GL_TEXTURE_2D)
     glPopMatrix()
 }
+
+    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, speedcolorlies: Int, liesstepvalue: Int) {
+        glPushMatrix()
+        glDisable(GL_TEXTURE_2D)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_LINE_SMOOTH)
+        glEnable(GL_BLEND)
+        glDisable(GL_DEPTH_TEST)
+        glDisable(GL_CULL_FACE)
+        glShadeModel(7425)
+        if (liescolorgix) mc.entityRenderer.disableLightmap()
+        val x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
+        val y = (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY)
+        val z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * event.partialTicks - mc.renderManager.viewerPosZ
+        glBegin(GL_QUAD_STRIP)
+        val penis = sin(System.currentTimeMillis() * 0.003 * speedMultiplier)
+        var red = liescolorRed
+        var green = liescolorGreen
+        var blue = liescolorBlue
+        for (i in 0..360 step liesstepvalue) {
+            val x1 = x + sin(i * Math.PI / 180) * radiuslies
+            val z1 = z + cos(i * Math.PI / 180) * radiuslies
+            val y1 = y + penis
+            if (gradientlies) {
+                glColor4f(red, green, blue, liesalpha)
+            } else {
+                glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
+            }
+            glVertex3d(x1, y1 + entity.height / 2, z1)
+            val penis2 = ColorUtils.rainbow(40000L + i * 10000000 * speedcolorlies, 1.0F)
+            red = penis2.red / 255F
+            green = penis2.green / 255F
+            blue = penis2.blue / 255F
+            if (gradientlies) {
+                glColor4f(penis2.red / 255F, penis2.green / 255F, penis2.blue / 255F, liesalphatwo)
+            } else {
+                glColor4f(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo, liesalphatwo)
+            }
+            glVertex3d(x1, y1 + entity.height / 2 - penis * trailLengthMultiplier, z1)
+        }
+
+        glEnd()
+        glEnable(GL_CULL_FACE)
+        glShadeModel(7424)
+        glColor4f(0f, 0f, 0f, 0f)
+        glEnable(GL_DEPTH_TEST)
+        glDisable(GL_LINE_SMOOTH)
+        glDisable(GL_BLEND)
+        glEnable(GL_TEXTURE_2D)
+        glPopMatrix()
+    }
 
     fun easeInSine(x: Double): Double {
             return 1 - Math.cos((x * Math.PI) / 2)

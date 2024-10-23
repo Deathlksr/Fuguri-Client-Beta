@@ -21,7 +21,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     // Modes of operation
     private val mode by ListValue(
         "Mode",
-        arrayOf("WTap", "LegitFast"),
+        arrayOf("WTap", "LegitFast", "WTapNew"),
         "LegitFast"
     )
 
@@ -32,6 +32,8 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     private val maxdelay by IntegerValue("MaxDelayTicks", 8, 0..10) { mode in arrayOf("LegitFast") }
     private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast") }
     private val maxlfticks by IntegerValue("MaxTicks", 3, 1..10) { mode in arrayOf("LegitFast") }
+    private val minwtick by IntegerValue("MinTicks", 2, 1..10) { mode in arrayOf("WTapNew") }
+    private val maxwtick by IntegerValue("MaxTicks", 2, 1..10) { mode in arrayOf("WTapNew") }
 
     // KillAura and misc settings
     private val onlyKillaura by BoolValue("OnlyKillAura", false) { mode in arrayOf("LegitFast") }
@@ -80,6 +82,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     private var allowInputTicks = randomDelay(reSprintMinTicks.get(), reSprintMaxTicks.get())
     private var ticksElapsed = 0
     private var legitfastTicks = 0
+    private var wtaptick = 0
 
     // Resets on module toggle
     override fun onToggle(state: Boolean) {
@@ -88,6 +91,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
         blockTicksElapsed = 0
         ticksElapsed = 0
         legitfastTicks = 0
+        wtaptick = 0
     }
 
     @EventTarget
@@ -148,6 +152,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
         when (mode) {
             "WTap" -> handleWTap()
             "LegitFast" -> handleLegitFast()
+            "WTapNew" -> handleWTapNew()
         }
     }
 
@@ -166,6 +171,17 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
                     blockTicksElapsed = 0
                 }
             }
+        }
+    }
+
+    private fun handleWTapNew() {
+        if (KillAura.target?.hurtTime == 10) {
+            wtaptick = nextInt(minwtick, maxwtick)
+        }
+        if (wtaptick > 0 && mc.thePlayer.isSprinting) {
+            mc.thePlayer.isSprinting = false
+            mc.gameSettings.keyBindForward.pressed = false
+            wtaptick--
         }
     }
 

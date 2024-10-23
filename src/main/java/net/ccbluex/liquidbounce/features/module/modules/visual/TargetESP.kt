@@ -13,9 +13,9 @@ import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawEntityBoxESP
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawFDP
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawJello
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawLies
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawLiesNew
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawPlatform
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawPlatformESP
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawZavz
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInSine
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutSine
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutSine
@@ -70,7 +70,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     }
 
     // Mark - TargetESP
-    private val markValue by ListValue("MarkMode", arrayOf("None", "Zavz", "Jello", "Lies", "FDP", "Sims", "Box", "RoundBox", "Head", "Mark"), "Lies")
+    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "LiesNew", "FDP", "Sims", "Box", "RoundBox", "Head", "Mark"), "LiesNew")
     private val isMarkMode: Boolean
         get() = markValue != "None" && markValue != "Sims" && markValue != "FDP"  && markValue != "Lies" && markValue != "Jello"
 
@@ -78,25 +78,25 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
         get() = markValue
 
     private val onlykillauratargetesp by BoolValue("Only-KillAura", false)
-    val colorRedValue by IntegerValue("Mark-Red", 0, 0.. 255) { isMarkMode }
-    val colorGreenValue by IntegerValue("Mark-Green", 160, 0..255) { isMarkMode }
-    val colorBlueValue by IntegerValue("Mark-Blue", 255, 0.. 255) { isMarkMode }
-    private val zavzdouble by BoolValue("Zavz-Dual", false) { markValue in arrayOf("Zavz") }
 
     val jelloRedValue by FloatValue("Jello-Red", 1F, 0F..1F) { markValue in arrayOf("Jello") }
     val jelloGreenValue by FloatValue("Jello-Green", 1F, 0F..1F) { markValue in arrayOf("Jello") }
     val jelloBlueValue by FloatValue("Jello-Blue", 1F, 0F..1F) { markValue in arrayOf("Jello") }
-    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies") }
-    val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies") }
-    val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies") }
-    val liesalpha by FloatValue("Lies-Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies") }
-    val liescolorRedtwo by FloatValue("Lies-Red2", 1F, 0F..1F) { markValue in arrayOf("Lies") }
-    val liescolorGreentwo by FloatValue("Lies-Green2", 1F, 0F..1F) { markValue in arrayOf("Lies") }
-    val liescolorBluetwo by FloatValue("Lies-Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies") }
-    val liesalphatwo by FloatValue("Lies-Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies") }
-    private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies") }
-    private val lenghtlies by FloatValue("Lies-Lenght", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies") }
-    private val radiuslies by FloatValue("Lies-Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies") }
+    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    val liesalpha by FloatValue("Lies-Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    val liescolorRedtwo by FloatValue("Lies-Red2", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    val liescolorGreentwo by FloatValue("Lies-Green2", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    val liescolorBluetwo by FloatValue("Lies-Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    val liesalphatwo by FloatValue("Lies-Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies", "LiesNew") }
+    private val lenghtlies by FloatValue("Lies-Lenght", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    private val radiuslies by FloatValue("Lies-Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies", "LiesNew") }
+    val gradientlies by BoolValue("Lies-Gradient", false) { markValue in arrayOf("LiesNew") }
+    private val speedcolorlies by IntegerValue("Lies-Color-Value", 9, 1..9) { markValue in arrayOf("LiesNew") }
+    val liescolorgix by BoolValue("Lies-Color-Fix", true) { markValue in arrayOf("LiesNew") }
+    private val liesstepvalue by IntegerValue("Lies-Step-Value", 10, 10..180) { markValue in arrayOf("LiesNew") }
     val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
     val mode by ListValue("AnimationType", arrayOf(
         "easeInSine", "easeOutSine", "easeInOutSine",
@@ -113,10 +113,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     ), "easeInOutQuadX") { markValue in arrayOf("Lies", "Jello", "FDP") }
 
     private val alphaValue by IntegerValue("Alpha", 255, 0..255) { isMarkMode && markValue == "Zavz"}
-
-    val colorRedTwoValue by IntegerValue("Mark-Red 2", 0, 0.. 255) { isMarkMode && markValue == "Zavz" }
-    val colorGreenTwoValue by IntegerValue("Mark-Green 2", 160, 0..255) { isMarkMode && markValue == "Zavz" }
-    val colorBlueTwoValue by IntegerValue("Mark-Blue 2", 255, 0.. 255) { isMarkMode && markValue == "Zavz" }
 
     private val rainbow by BoolValue("Mark-RainBow", false) { isMarkMode }
     private val hurt by BoolValue("Mark-HurtTime", true) { isMarkMode }
@@ -141,7 +137,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     private val combat = CombatManager
     private val killaura = KillAura
     var random = Random()
-    const val DOUBLE_PI = Math.PI * 2
     var start = 0.0
 
     @EventTarget
@@ -152,9 +147,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         val color: Color = if (rainbow) ColorUtils.rainbow() else Color(
-            colorRedValue,
-            colorGreenValue,
-            colorBlueValue,
             alphaValue
         )
         val renderManager = mc.renderManager
@@ -205,12 +197,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 event
             )
 
-            "zavz" -> drawZavz(
-                entityLivingBase,
-                event,
-                dual = zavzdouble,
-            )
-
             "jello" -> drawJello(
                 entityLivingBase
             )
@@ -226,6 +212,16 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 speedlies.toDouble(),
                 lenghtlies.toDouble(),
                 radiuslies,
+            )
+
+            "liesnew" -> drawLiesNew(
+                entityLivingBase,
+                event,
+                speedlies.toDouble(),
+                lenghtlies.toDouble(),
+                radiuslies,
+                speedcolorlies,
+                liesstepvalue,
             )
         }
     }
