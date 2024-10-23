@@ -61,7 +61,7 @@ object FuguriBeta {
     const val CLIENT_AUTHOR = "Deathlksr"
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
     const val CLIENT_WEBSITE = "fdpclient.net"
-    const val CLIENT_VERSION = "B1.8"
+    const val CLIENT_VERSION = "B1.9"
 
     val clientVersionText = gitInfo["git.build.version"]?.toString() ?: "unknown"
     val clientVersionNumber = clientVersionText.substring(1).toIntOrNull() ?: 0 // version format: "b<VERSION>" on legacy

@@ -70,7 +70,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     }
 
     // Mark - TargetESP
-    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "LiesNew", "FDP", "Sims", "Box", "RoundBox", "Head", "Mark"), "LiesNew")
+    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "LiesNew", "FDP", "Sims", "RoundBox",), "LiesNew")
     private val isMarkMode: Boolean
         get() = markValue != "None" && markValue != "Sims" && markValue != "FDP"  && markValue != "Lies" && markValue != "Jello"
 
@@ -112,11 +112,8 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
         "easeInOutQuadX", "linear"
     ), "easeInOutQuadX") { markValue in arrayOf("Lies", "Jello", "FDP") }
 
-    private val alphaValue by IntegerValue("Alpha", 255, 0..255) { isMarkMode && markValue == "Zavz"}
-
-    private val rainbow by BoolValue("Mark-RainBow", false) { isMarkMode }
-    private val hurt by BoolValue("Mark-HurtTime", true) { isMarkMode }
-    private val boxOutline by BoolValue("Mark-Outline", true, subjective = true) { isMarkMode && markValue == "RoundBox" }
+    private val hurt by BoolValue("Mark-HurtTime", true) { markValue in arrayOf("Sims", "RoundBox") }
+    private val boxOutline by BoolValue("Mark-Outline", true, subjective = true) { markValue == "RoundBox" }
 
     // fake sharp
     private val fakeSharp by BoolValue("FakeSharp", true, subjective = true)
@@ -146,9 +143,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
 
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
-        val color: Color = if (rainbow) ColorUtils.rainbow() else Color(
-            alphaValue
-        )
         val renderManager = mc.renderManager
         val entityLivingBase = if (onlykillauratargetesp.takeIf { isActive } == true) {
             killaura.target ?: return
@@ -162,11 +156,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
         (entityLivingBase.lastTickPosZ + (entityLivingBase.posZ - entityLivingBase.lastTickPosZ) * mc.timer.renderPartialTicks
                 - renderManager.renderPosZ)
         when (markValue.lowercase()) {
-            "box" -> drawEntityBoxESP(
-                entityLivingBase,
-                if ((hurt && entityLivingBase.hurtTime > 3)) Color(255, 50, 50, 75) else color
-            )
-
             "roundbox" -> drawEntityBox(
                 entityLivingBase,
                 if (hurt && entityLivingBase.hurtTime > 3)
@@ -174,16 +163,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 else
                     Color(255, 0, 0, 70),
                 boxOutline
-            )
-
-            "head" -> drawPlatformESP(
-                entityLivingBase,
-                if ((hurt && entityLivingBase.hurtTime > 3)) Color(255, 50, 50, 75) else color
-            )
-
-            "mark" -> drawPlatform(
-                entityLivingBase,
-                if ((hurt && entityLivingBase.hurtTime > 3)) Color(37, 126, 255, 70) else color
             )
 
             "sims" -> drawCrystal(

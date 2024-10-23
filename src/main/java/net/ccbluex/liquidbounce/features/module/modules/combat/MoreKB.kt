@@ -30,10 +30,8 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     private val hurtTime by IntegerValue("Tick", 0, 0..10) { mode in arrayOf("WTap") }
     private val mindelay by IntegerValue("MinDelayTicks", 4, 0..10) { mode in arrayOf("LegitFast") }
     private val maxdelay by IntegerValue("MaxDelayTicks", 8, 0..10) { mode in arrayOf("LegitFast") }
-    private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast") }
-    private val maxlfticks by IntegerValue("MaxTicks", 3, 1..10) { mode in arrayOf("LegitFast") }
-    private val minwtick by IntegerValue("MinTicks", 2, 1..10) { mode in arrayOf("WTapNew") }
-    private val maxwtick by IntegerValue("MaxTicks", 2, 1..10) { mode in arrayOf("WTapNew") }
+    private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast", "WTapNew") }
+    private val maxlfticks by IntegerValue("MaxTicks", 3, 1..10) { mode in arrayOf("LegitFast", "WTapNew") }
 
     // KillAura and misc settings
     private val onlyKillaura by BoolValue("OnlyKillAura", false) { mode in arrayOf("LegitFast") }
@@ -176,7 +174,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
 
     private fun handleWTapNew() {
         if (KillAura.target?.hurtTime == 10) {
-            wtaptick = nextInt(minwtick, maxwtick)
+            wtaptick = nextInt(minlfticks, maxlfticks)
         }
         if (wtaptick > 0 && mc.thePlayer.isSprinting) {
             mc.thePlayer.isSprinting = false

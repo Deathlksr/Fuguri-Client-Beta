@@ -15,8 +15,6 @@ object TrashTalk : Module("TrashTalk", Category.OTHER, hideModule = false) {
     private val userName = TextValue("Nickname", "Name")
     private val delayValue = IntegerValue("Delay", 6, 1..6)
     private val emotionsValue = BoolValue("Emotions", true)
-    private val bedwars = BoolValue("BedwarsMode", false)
-    private val default = BoolValue("DefaultMode(KitPvp)", false)
 
     private val phraseList = arrayOf(
         ", я дырку твоей матери на атомы разорвал нахуй)",
@@ -619,11 +617,8 @@ object TrashTalk : Module("TrashTalk", Category.OTHER, hideModule = false) {
             if (emotionsValue.get()) {
                 mc.thePlayer.sendChatMessage(userName.get() + randomPhrase() + ")")
                 msTimer.reset()
-            } else if (msTimer.hasTimePassed((delayValue.get() * 1000).toLong()) && default.get()) {
+            } else if (msTimer.hasTimePassed((delayValue.get() * 1000).toLong())) {
                 mc.thePlayer.sendChatMessage(userName.get() + randomPhrase())
-                msTimer.reset()
-            } else if (msTimer.hasTimePassed((delayValue.get() * 1000).toLong()) && bedwars.get()) {
-                mc.thePlayer.sendChatMessage("!" + userName.get() + randomPhrase())
                 msTimer.reset()
             }
         }

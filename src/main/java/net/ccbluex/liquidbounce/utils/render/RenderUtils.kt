@@ -17,7 +17,6 @@ import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescol
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRed
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRedtwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorgix
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.start
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.ClientThemesUtils.getColor
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
