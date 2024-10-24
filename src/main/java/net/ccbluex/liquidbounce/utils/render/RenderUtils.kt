@@ -575,7 +575,7 @@ object RenderUtils : MinecraftInstance() {
     glPopMatrix()
 }
 
-    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, speedcolorlies: Int, liesstepvalue: Int) {
+    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, speedcolorlies: Int, liesstepvalue: Int, heihgtlies1: Float) {
         glPushMatrix()
         glDisable(GL_TEXTURE_2D)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -586,7 +586,7 @@ object RenderUtils : MinecraftInstance() {
         glShadeModel(7425)
         if (liescolorgix) mc.entityRenderer.disableLightmap()
         val x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
-        val y = (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY)
+        val y = (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY) * heihgtlies1
         val z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * event.partialTicks - mc.renderManager.viewerPosZ
         glBegin(GL_QUAD_STRIP)
         val penis = sin(System.currentTimeMillis() * 0.003 * speedMultiplier)

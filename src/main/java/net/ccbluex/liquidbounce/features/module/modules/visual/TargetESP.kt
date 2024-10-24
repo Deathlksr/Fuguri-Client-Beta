@@ -97,6 +97,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     private val speedcolorlies by IntegerValue("Lies-Color-Value", 9, 1..9) { markValue in arrayOf("LiesNew") }
     val liescolorgix by BoolValue("Lies-Color-Fix", true) { markValue in arrayOf("LiesNew") }
     private val liesstepvalue by IntegerValue("Lies-Step-Value", 10, 10..180) { markValue in arrayOf("LiesNew") }
+    private val heihgtlies2 by FloatValue("Height-Lies", 1.1F, 1F..2F) { markValue in arrayOf("LiesNew") }
     val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
     val mode by ListValue("AnimationType", arrayOf(
         "easeInSine", "easeOutSine", "easeInOutSine",
@@ -201,6 +202,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 radiuslies,
                 speedcolorlies,
                 liesstepvalue,
+                heihgtlies2,
             )
         }
     }
