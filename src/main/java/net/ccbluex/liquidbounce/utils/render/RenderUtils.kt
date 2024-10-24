@@ -575,7 +575,8 @@ object RenderUtils : MinecraftInstance() {
     glPopMatrix()
 }
 
-    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, speedcolorlies: Int, liesstepvalue: Int, heihgtlies1: Float) {
+    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, speedcolorlies: Int, liesstepvalue: Int, trailLengthMultiplier2: Double) {
+
         glPushMatrix()
         glDisable(GL_TEXTURE_2D)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -585,14 +586,18 @@ object RenderUtils : MinecraftInstance() {
         glDisable(GL_CULL_FACE)
         glShadeModel(7425)
         if (liescolorgix) mc.entityRenderer.disableLightmap()
+
         val x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
-        val y = (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY) * heihgtlies1
+        val y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY
         val z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * event.partialTicks - mc.renderManager.viewerPosZ
+
         glBegin(GL_QUAD_STRIP)
+
         val penis = sin(System.currentTimeMillis() * 0.003 * speedMultiplier)
         var red = liescolorRed
         var green = liescolorGreen
         var blue = liescolorBlue
+
         for (i in 0..360 step liesstepvalue) {
             val x1 = x + sin(i * Math.PI / 180) * radiuslies
             val z1 = z + cos(i * Math.PI / 180) * radiuslies
@@ -602,7 +607,7 @@ object RenderUtils : MinecraftInstance() {
             } else {
                 glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
             }
-            glVertex3d(x1, y1 + entity.height / 2, z1)
+            glVertex3d(x1, y1 + entity.height / 2 * trailLengthMultiplier2, z1)
             val penis2 = ColorUtils.rainbow(40000L + i * 10000000 * speedcolorlies, 1.0F)
             red = penis2.red / 255F
             green = penis2.green / 255F

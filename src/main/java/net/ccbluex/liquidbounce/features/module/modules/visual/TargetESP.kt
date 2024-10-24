@@ -92,12 +92,12 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     val liesalphatwo by FloatValue("Lies-Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
     private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies", "LiesNew") }
     private val lenghtlies by FloatValue("Lies-Lenght", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
+    private val trailLength by FloatValue("Lies-Lenght2", 1.0F, 0F..1F) { markValue in arrayOf("LiesNew") }
     private val radiuslies by FloatValue("Lies-Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies", "LiesNew") }
     val gradientlies by BoolValue("Lies-Gradient", false) { markValue in arrayOf("LiesNew") }
     private val speedcolorlies by IntegerValue("Lies-Color-Value", 9, 1..9) { markValue in arrayOf("LiesNew") }
     val liescolorgix by BoolValue("Lies-Color-Fix", true) { markValue in arrayOf("LiesNew") }
     private val liesstepvalue by IntegerValue("Lies-Step-Value", 10, 10..180) { markValue in arrayOf("LiesNew") }
-    private val heihgtlies2 by FloatValue("Height-Lies", 1.1F, 1F..2F) { markValue in arrayOf("LiesNew") }
     val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
     val mode by ListValue("AnimationType", arrayOf(
         "easeInSine", "easeOutSine", "easeInOutSine",
@@ -202,7 +202,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 radiuslies,
                 speedcolorlies,
                 liesstepvalue,
-                heihgtlies2,
+                trailLength.toDouble(),
             )
         }
     }

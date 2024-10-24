@@ -17,6 +17,7 @@ object FakePlayer : Module("FakePlayer", Category.OTHER, hideModule = false) {
     /**
      * Initializes the fake player when the module is enabled.
      */
+
     override fun onEnable() {
         // Create an instance of EntityOtherPlayerMP using the current player's profile
         fakePlayer = EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.gameProfile).apply {

@@ -30,17 +30,17 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     private val hurtTime by IntegerValue("Tick", 0, 0..10) { mode in arrayOf("WTap") }
     private val mindelay by IntegerValue("MinDelayTicks", 4, 0..10) { mode in arrayOf("LegitFast") }
     private val maxdelay by IntegerValue("MaxDelayTicks", 8, 0..10) { mode in arrayOf("LegitFast") }
-    private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast", "WTapNew") }
-    private val maxlfticks by IntegerValue("MaxTicks", 3, 1..10) { mode in arrayOf("LegitFast", "WTapNew") }
-    private val minwticks by IntegerValue("MinWTapTicks", 1, 1..10) { mode in arrayOf("WTapNew") }
-    private val maxwticks by IntegerValue("MaxWTapTicks", 1, 1..10) { mode in arrayOf("WTapNew") }
+    private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast") }
+    private val maxlfticks by IntegerValue("MaxTicks", 3, 1..10) { mode in arrayOf("LegitFast") }
+    private val minwticks by IntegerValue("MinWTapTicks", 2, 1..10) { mode in arrayOf("WTapNew") }
+    private val maxwticks by IntegerValue("MaxWTapTicks", 3, 1..10) { mode in arrayOf("WTapNew") }
 
     // KillAura and misc settings
     private val onlyKillaura by BoolValue("OnlyKillAura", false) { mode in arrayOf("LegitFast") }
     private val falseclientsprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("LegitFast") }
     private val presssprint by BoolValue("PressSprint", true) { mode in arrayOf("LegitFast") }
     private val pressforward by BoolValue("PressForward", true) { mode in arrayOf("LegitFast") }
-    private val debuglf by BoolValue("Debug", false) { mode in arrayOf("LegitFast") }
+    private val debuglf by BoolValue("Debug", false) { mode in arrayOf("LegitFast", "WTapNew") }
 
     // WTap specific settings
     private val maxTicksUntilBlock: IntegerValue = object : IntegerValue("MaxTicksUntilBlock", 2, 0..5) {
@@ -177,8 +177,10 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     private fun handleWTapNew() {
         if (KillAura.target?.hurtTime == 10) {
             wtaptick = nextInt(minwticks, maxwticks)
+            if (debuglf) displayChatMessage("Start-Tapping")
         }
         if (wtaptick > 0) {
+            if (debuglf) displayChatMessage("Tap")
             mc.thePlayer.isSprinting = false
             mc.gameSettings.keyBindForward.pressed = false
             wtaptick--
