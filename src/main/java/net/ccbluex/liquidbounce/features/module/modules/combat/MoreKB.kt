@@ -179,10 +179,10 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
             wtaptick = nextInt(minwticks, maxwticks)
             if (debuglf) displayChatMessage("Start-Tapping")
         }
-        if (wtaptick > 0) {
-            if (debuglf) displayChatMessage("Tap")
+        if (wtaptick > 0 && mc.thePlayer.isSprinting) {
             mc.thePlayer.isSprinting = false
             mc.gameSettings.keyBindForward.pressed = false
+            if (debuglf) displayChatMessage("Tap")
             wtaptick--
         }
     }

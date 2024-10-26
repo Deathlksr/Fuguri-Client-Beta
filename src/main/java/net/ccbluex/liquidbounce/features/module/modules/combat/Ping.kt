@@ -48,7 +48,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
     private val packetQueue = LinkedHashMap<Packet<*>, Long>()
     private val positions = LinkedHashMap<Vec3, Long>()
-    private var fakePlayer: EntityOtherPlayerMP? = null
     private val resetTimer = MSTimer()
     private var ignoreWholeTick = false
     private val line by BoolValue("Render", true, subjective = true)
@@ -232,8 +231,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         ignoreWholeTick = false
     }
 
-
-    /*
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         if (!line) return
@@ -270,97 +267,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
             glPopMatrix()
         }
     }
-
-     */
-
-    var pingOffsetX = 0.0 // Смещение по X для фейкового пинга
-    var pingOffsetY = 0.0 // Смещение по Y для фейкового пинга
-    var pingOffsetZ = 0.0 // Смещение по Z для фейкового пинга
-
-    @EventTarget
-    fun onRender3D(event: Render3DEvent) {
-        if (!line) return // Если режим линий выключен, просто выходим
-
-        if (mc.gameSettings.thirdPersonView == 0 && thirdperson)
-            return // Выйти, если игрок в режиме первого лица и установлен флаг thirdperson
-
-        val color = Color(red, green, blue)
-
-        // Создание фейкового игрока (один раз)
-        if (fakePlayer == null) {
-            fakePlayer = EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.gameProfile).apply {
-                // Клонируем свойства текущего игрока
-                clonePlayer(mc.thePlayer, true)
-                rotationYawHead = mc.thePlayer.rotationYawHead
-                // Копируем местоположение и углы поворота
-                copyLocationAndAnglesFrom(mc.thePlayer)
-            }
-
-            // Добавляем фейкового игрока в мир с уникальным ID
-            mc.theWorld.addEntityToWorld(-1000, fakePlayer)
-        }
-
-        // Рассчитываем пинг-позицию (виртуальную задержку)
-        updatePingOffsets()
-
-        // Обновляем состояние фейкового игрока, но с учетом смещения по пингу
-        fakePlayer?.apply {
-            clonePlayer(mc.thePlayer, true) // Обновляем состояние
-            rotationYawHead = mc.thePlayer.rotationYawHead
-
-            // Устанавливаем позицию фейкового игрока с учетом пинг-смещения
-            setPosition(mc.thePlayer.posX + pingOffsetX, mc.thePlayer.posY + pingOffsetY, mc.thePlayer.posZ + pingOffsetZ)
-        }
-
-        // Рендер фейкового игрока по пинг-позиции
-        synchronized(positions.keys) {
-            glPushMatrix()
-            glDisable(GL_TEXTURE_2D)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-            glEnable(GL_LINE_SMOOTH)
-            glEnable(GL_BLEND)
-            glDisable(GL_DEPTH_TEST)
-            mc.entityRenderer.disableLightmap()
-
-            // Определяем позицию камеры
-            val renderPosX = mc.renderManager.viewerPosX
-            val renderPosY = mc.renderManager.viewerPosY
-            val renderPosZ = mc.renderManager.viewerPosZ
-
-            // Начинаем рендер фейкового игрока на основе пинг-позиции
-            glPushMatrix()
-
-            // Смещаем фейкового игрока относительно позиции камеры
-            fakePlayer?.setPosition(
-                fakePlayer!!.posX - renderPosX,
-                fakePlayer!!.posY - renderPosY,
-                fakePlayer!!.posZ - renderPosZ
-            )
-
-            // Здесь происходит отрисовка фейкового игрока
-            mc.renderManager.doRenderEntity(fakePlayer, 0.0, 0.0, 0.0, 0.0f, mc.timer.renderPartialTicks, false)
-
-            glPopMatrix()
-
-            glEnable(GL_DEPTH_TEST)
-            glDisable(GL_LINE_SMOOTH)
-            glDisable(GL_BLEND)
-            glEnable(GL_TEXTURE_2D)
-            glPopMatrix()
-        }
-    }
-
-    // Метод для обновления смещений на основе пинга (виртуально моделируем задержку)
-    fun updatePingOffsets() {
-        // Предположим, что мы моделируем пинг как задержку в 100 мс (0.1 сек)
-        val ping = delay // пинг в миллисекундах
-
-        // Расчеты смещения на основе пинга
-        pingOffsetX = mc.thePlayer.motionX * (ping / 1000.0)
-        pingOffsetY = mc.thePlayer.motionY * (ping / 1000.0)
-        pingOffsetZ = mc.thePlayer.motionZ * (ping / 1000.0)
-    }
-
 
     private fun blink(handlePackets: Boolean = true) {
         synchronized(packetQueue) {

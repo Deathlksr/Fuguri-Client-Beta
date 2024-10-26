@@ -575,7 +575,7 @@ object RenderUtils : MinecraftInstance() {
     glPopMatrix()
 }
 
-    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, speedcolorlies: Int, liesstepvalue: Int, trailLengthMultiplier2: Double) {
+    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, speedcolorlies: Int, liesstepvalue: Int) {
 
         glPushMatrix()
         glDisable(GL_TEXTURE_2D)
@@ -607,7 +607,7 @@ object RenderUtils : MinecraftInstance() {
             } else {
                 glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
             }
-            glVertex3d(x1, y1 + entity.height / 2 * trailLengthMultiplier2, z1)
+            glVertex3d(x1, y1 + entity.height / 2, z1)
             val penis2 = ColorUtils.rainbow(40000L + i * 10000000 * speedcolorlies, 1.0F)
             red = penis2.red / 255F
             green = penis2.green / 255F
