@@ -24,7 +24,7 @@ abstract class Style : MinecraftInstance() {
     abstract fun drawButtonElement(mouseX: Int, mouseY: Int, buttonElement: ButtonElement)
     abstract fun drawModuleElementAndClick(mouseX: Int, mouseY: Int, moduleElement: ModuleElement, mouseButton: Int?): Boolean
 
-    fun clickSound() = mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("minecraft/sounds/enable_event"), 1f))
+    fun clickSound() = mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("gui.button.press"), 1f))
 
     fun showSettingsSound() = mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("random.bow"), 1f))
 

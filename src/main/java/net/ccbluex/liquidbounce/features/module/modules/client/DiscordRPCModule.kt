@@ -8,9 +8,11 @@ object DiscordRPCModule : Module("DiscordRPC", Category.CLIENT, hideModule = fal
 
     override fun onEnable() {
         discordRPC.ClientRPCStarted = true
+        discordRPC.running = true
     }
 
     override fun onDisable() {
         discordRPC.ClientRPCStarted = false
+        discordRPC.running = false
     }
 }

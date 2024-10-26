@@ -22,7 +22,7 @@ object DiscordRPC : MinecraftInstance() {
     private var appID = 1282692956700016640
     private val timestamp = OffsetDateTime.now()
 
-    private var running = false
+    var running = false
 
     fun setup() {
         try {

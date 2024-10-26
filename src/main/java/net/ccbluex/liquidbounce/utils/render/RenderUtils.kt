@@ -617,7 +617,33 @@ object RenderUtils : MinecraftInstance() {
             } else {
                 glColor4f(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo, liesalphatwo)
             }
-            glVertex3d(x1, y1 + entity.height / 2 - penis * trailLengthMultiplier, z1)
+            glVertex3d(x1, (y1 + entity.height / 2) + (penis * trailLengthMultiplier), z1)
+        }
+
+        glEnd()
+
+        glBegin(GL_QUAD_STRIP)
+
+        for (i in 0..360 step liesstepvalue) {
+            val x1 = x + sin(i * Math.PI / 180) * radiuslies
+            val z1 = z + cos(i * Math.PI / 180) * radiuslies
+            val y1 = y + penis
+            if (gradientlies) {
+                glColor4f(red, green, blue, 1.0F)
+            } else {
+                glColor4f(liescolorRed, liescolorGreen, liescolorBlue, 1.0F)
+            }
+            glVertex3d(x1, y1 + entity.height / 2, z1)
+
+            val penis2 = ColorUtils.rainbow(40000L + i * 10000000 * speedcolorlies, 1.0F)
+            red = penis2.red / 255F
+            green = penis2.green / 255F
+            blue = penis2.blue / 255F
+            if (gradientlies) {
+                glColor4f(penis2.red / 255F, penis2.green / 255F, penis2.blue / 255F, 1.0F)
+            } else {
+                glColor4f(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo, 1.0F)
+            }
         }
 
         glEnd()

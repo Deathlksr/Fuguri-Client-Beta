@@ -1,11 +1,5 @@
-/*
- * LiquidBounce Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge.
- * https://github.com/CCBlueX/LiquidBounce/
- */
 package net.ccbluex.liquidbounce.injection.forge.mixins.client;
 
-import net.ccbluex.liquidbounce.features.module.modules.combat.MoreKB;
 import net.ccbluex.liquidbounce.features.module.modules.player.scaffolds.Scaffold;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.MovementInputFromOptions;
@@ -19,18 +13,6 @@ public class MixinMovementInputFromOptions extends MixinMovementInput {
 
     @Inject(method = "updatePlayerMoveState", at = @At(value = "FIELD", target = "Lnet/minecraft/util/MovementInputFromOptions;jump:Z"))
     private void hookSuperKnockbackInputBlock(CallbackInfo ci) {
-        MoreKB module = MoreKB.INSTANCE;
-
-        if (module.shouldBlockInput()) {
-            if (module.getOnlyMove()) {
-                this.moveForward = 0f;
-
-                if (!module.getOnlyMoveForward()) {
-                    this.moveStrafe = 0f;
-                }
-            }
-        }
-
         Scaffold.INSTANCE.handleMovementOptions(((MovementInput) (Object) this));
     }
 }

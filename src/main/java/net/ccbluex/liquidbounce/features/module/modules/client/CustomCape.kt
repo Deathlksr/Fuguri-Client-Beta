@@ -1,6 +1,5 @@
 package net.ccbluex.liquidbounce.features.module.modules.client
 
-import codes.som.anthony.koffee.types.boolean
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.utils.APIConnecter
@@ -29,7 +28,6 @@ object CustomCape : Module("CustomCape", Category.CLIENT, hideModule = false) {
     }
 
     private val capeCache = hashMapOf<String, CapeStyle>()
-    private var nowCape: CapeStyle? = null
 
     fun getCapeLocation(value: String): ResourceLocation? {
         val upperValue = value.uppercase(Locale.getDefault())
@@ -38,10 +36,9 @@ object CustomCape : Module("CustomCape", Category.CLIENT, hideModule = false) {
         }
         return capeCache[upperValue]?.location
     }
-
     enum class CapeStyle(val location: ResourceLocation) {
         NONE(APIConnecter.callImage("none", "cape")),
-        FUGURIBETA(ResourceLocation("fdpclient/cape/FuguriBeta.png")),
+        FUGURIBETA(ResourceLocation("fdpclient/cape/classic.png")),
         AUGUSTUS(ResourceLocation("fdpclient/cape/Augustus.png")),
         AUGUSTUSAMETHYST(ResourceLocation("fdpclient/cape/AugustusAmethyst.png")),
         AUGUSTUSCANDY(ResourceLocation("fdpclient/cape/AugustusCandy.png")),
@@ -55,9 +52,5 @@ object CustomCape : Module("CustomCape", Category.CLIENT, hideModule = false) {
         RICKROLL(ResourceLocation("fdpclient/cape/RickRoll.png")),
         ESOUND(ResourceLocation("fdpclient/cape/ESound.png")),
         DISCORDLOADING(ResourceLocation("fdpclient/cape/DiscordLoading.gif"));
-    }
-
-    private fun updateCapeStyle() {
-        nowCape = CapeStyle.valueOf(styleValue.value.uppercase(Locale.getDefault()))
     }
 }

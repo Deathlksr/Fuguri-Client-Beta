@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 object DrinkAlert : Module("DrinkAlert", Category.OTHER, hideModule = false) {
 
     @SubscribeEvent
-    fun onPlayerUseItem(event: PlayerUseItemEvent.Finish) {
+    fun onPlayerUseItem(event: PlayerUseItemEvent.Start) {
         val itemStack = event.item
         if (itemStack.item is ItemPotion) {
             val potionItem = itemStack.item as ItemPotion
@@ -25,7 +25,4 @@ object DrinkAlert : Module("DrinkAlert", Category.OTHER, hideModule = false) {
             }
         }
     }
-
-
-
 }
