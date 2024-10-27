@@ -107,7 +107,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
             val range = box.distanceTo(vecEyes)
             val afterRange = box2.distanceTo(predictEyes)
             if (!working && reverseValue.get()) {
-                if (range <= maxReverseRange && range >= minReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
+                if (range in minReverseRange..maxReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
                     firstAnimation = false
                     reverseFreeze = false
                     return
@@ -155,7 +155,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
                     val range = box.distanceTo(vecEyes)
                     val afterRange = box2.distanceTo(afterEyes)
                     if (!working && reverseValue.get()) {
-                        if (range <= maxReverseRange && range >= minReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
+                        if (range in minReverseRange..maxReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
                             firstAnimation = false
                             reverseFreeze = false
                             return

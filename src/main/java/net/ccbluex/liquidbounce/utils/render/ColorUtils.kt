@@ -121,7 +121,6 @@ object ColorUtils {
         return Color(red, green, part)
     }
 
-
     fun fade(color: Color, index: Int, count: Int): Color {
         val hsb = FloatArray(3)
         Color.RGBtoHSB(color.red, color.green, color.blue, hsb)
@@ -198,6 +197,23 @@ object ColorUtils {
             st,
             bright
         )
+    }
+
+    fun rainbow(speed: Double, offset: Double, milis: Double): Int {
+        return Color.HSBtoRGB((((milis / speed + offset) % 360) / 360f).toFloat(), 1f, 1f)
+    }
+
+    fun skyRainbow(offset: Double, time: Float, speed: Double): Int {
+        return Color.HSBtoRGB(((time.toInt() / speed + offset) % 360).toFloat() / 360f, 0.5f, 1f)
+    }
+
+    fun getAlphaColor(color: Int, alpha: Int): Int {
+        val red = Color(color).red
+        val green = Color(color).green
+        val blue = Color(color).blue
+        val newAlpha = (255f / 100f * alpha).toInt()
+
+        return Color(red, green, blue, newAlpha).rgb
     }
 
     fun getHealthColor(health: Float, maxHealth: Float): Color {

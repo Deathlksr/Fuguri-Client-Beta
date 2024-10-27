@@ -7,7 +7,7 @@ package net.ccbluex.liquidbounce.injection.forge.mixins.render;
 
 import net.ccbluex.liquidbounce.event.EventManager;
 import net.ccbluex.liquidbounce.event.UpdateModelEvent;
-import net.ccbluex.liquidbounce.features.module.modules.visual.CustomModel;
+import net.ccbluex.liquidbounce.features.module.modules.visual.PlayerEdit;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
@@ -115,8 +115,8 @@ public class MixinModelPlayerFix extends ModelBiped {
 
     @Inject(method = {"render"}, at = {@At("HEAD")}, cancellable = true)
     public void renderHook(final Entity entityIn, final float limbSwing, final float limbSwingAmount, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scale, final CallbackInfo ci) {
-        final CustomModel customModel = CustomModel.INSTANCE;
-        if (customModel.getState()) {
+        final PlayerEdit playerEdit = PlayerEdit.INSTANCE;
+        if (playerEdit.getState()) {
             ci.cancel();
             renderCustom(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
         }
@@ -350,9 +350,9 @@ public class MixinModelPlayerFix extends ModelBiped {
             generatemodel();
         }
 
-        final CustomModel customModel = CustomModel.INSTANCE;
+        final PlayerEdit playerEdit = PlayerEdit.INSTANCE;
         GlStateManager.pushMatrix();
-        if (customModel.getState() && customModel.getMode().contains("Rabbit")) {
+        if (playerEdit.getState() && playerEdit.getMode().contains("Rabbit")) {
             GlStateManager.pushMatrix();
             GlStateManager.scale(1.25D, 1.25D, 1.25D);
             GlStateManager.translate(0.0D, -0.3D, 0.0D);
@@ -373,7 +373,7 @@ public class MixinModelPlayerFix extends ModelBiped {
             this.rabbitLleg.rotateAngleZ = this.bipedLeftLeg.rotateAngleZ;
             this.rabbitBone.render(scale);
             GlStateManager.popMatrix();
-        } else if (customModel.getState() && customModel.getMode().contains("Freddy")) {
+        } else if (playerEdit.getState() && playerEdit.getMode().contains("Freddy")) {
             this.fredhead.rotateAngleX = this.bipedHead.rotateAngleX;
             this.fredhead.rotateAngleY = this.bipedHead.rotateAngleY;
             this.fredhead.rotateAngleZ = this.bipedHead.rotateAngleZ;
@@ -394,7 +394,7 @@ public class MixinModelPlayerFix extends ModelBiped {
             GlStateManager.translate(0.0, 0.85, 0.0);
             this.fredbody.render(scale);
             GlStateManager.popMatrix();
-        } else if (customModel.getState() && customModel.getMode().contains("Imposter")) {
+        } else if (playerEdit.getState() && playerEdit.getMode().contains("Imposter")) {
             this.bipedHead.rotateAngleY = netHeadYaw * 0.017453292F;
             this.bipedHead.rotateAngleX = headPitch * 0.017453292F;
             this.bipedBody.rotateAngleY = 0.0F;

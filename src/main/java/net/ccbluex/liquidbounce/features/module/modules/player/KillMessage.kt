@@ -1,24 +1,35 @@
 package net.ccbluex.liquidbounce.features.module.modules.player
 
+import net.ccbluex.liquidbounce.FuguriBeta
+import net.ccbluex.liquidbounce.event.EntityKilledEvent
+import net.ccbluex.liquidbounce.event.EventTarget
+import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraftforge.event.entity.living.LivingDeathEvent
+import net.ccbluex.liquidbounce.utils.MovementUtils
+import net.ccbluex.liquidbounce.value.TextValue
+import net.minecraft.entity.EntityLivingBase
 
 object KillMessage : Module("KillMessage", Category.PLAYER, gameDetecting = false, hideModule = false) {
 
-    @SubscribeEvent
-    fun onPlayerDeath(event: LivingDeathEvent) {
-        val deadEntity = event.entityLiving
-        if (deadEntity is EntityPlayer) {
-            val source = event.source.entity
-            if (source is EntityPlayer && source.uniqueID == mc.thePlayer.uniqueID) {
-                val globalKillMessage = "You were a good opponent ${deadEntity.displayNameString}, but you were still killed by the Fuguri Client!"
-                deadEntity.entityWorld.playerEntities.forEach { _ ->
-                    mc.thePlayer.sendChatMessage(globalKillMessage)
-                }
+    private val textString by TextValue("Message", "You were a good opponent but you were still killed by the Fuguri Client!")
+
+    var target: EntityLivingBase? = null
+    private val attackedEntityList = mutableListOf<EntityLivingBase>()
+
+    @EventTarget
+    fun onUpdate(e: UpdateEvent) {
+        if (mc.thePlayer == null) return
+        MovementUtils.updateBlocksPerSecond()
+
+        attackedEntityList.map { it }.forEach {
+            if (it.isDead) {
+                FuguriBeta.eventManager.callEvent(EntityKilledEvent(it))
+                mc.thePlayer.sendChatMessage(it.name + " " + textString)
+                attackedEntityList.remove(it)
             }
         }
     }
 }
+
+

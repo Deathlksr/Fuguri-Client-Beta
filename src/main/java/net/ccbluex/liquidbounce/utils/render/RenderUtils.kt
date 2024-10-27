@@ -94,6 +94,23 @@ object RenderUtils : MinecraftInstance() {
         glEndList()
     }
 
+    fun start3D() {
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_DEPTH_TEST)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_BLEND)
+
+        glDepthMask(false)
+        GlStateManager.disableCull()
+    }
+
+    fun stop3D() {
+        GlStateManager.enableCull()
+        glEnable(GL_TEXTURE_2D)
+        glEnable(GL_DEPTH_TEST)
+        glDepthMask(true)
+        glDisable(GL_BLEND)
+    }
 
     fun drawBlockBox(blockPos: BlockPos, color: Color, outline: Boolean) {
         val renderManager = mc.renderManager

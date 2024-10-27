@@ -88,9 +88,9 @@ public abstract class MixinRendererLivingEntity extends MixinRender {
 
     @Inject(method = "rotateCorpse", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;deathTime:I", shift = At.Shift.AFTER))
     protected <T extends EntityLivingBase> void rotateCorpse(T p_rotateCorpse_1_, float p_rotateCorpse_2_, float p_rotateCorpse_3_, float p_rotateCorpse_4_, CallbackInfo ci) {
-        final CustomModel customModel = CustomModel.INSTANCE;
+        final PlayerEdit playerEdit = PlayerEdit.INSTANCE;
         String s = EnumChatFormatting.getTextWithoutFormattingCodes(p_rotateCorpse_1_.getName());
-        if (s != null && (customModel.getRotatePlayer() && p_rotateCorpse_1_.equals(mc.thePlayer) && customModel.handleEvents()) && (!(p_rotateCorpse_1_ instanceof EntityPlayer) || ((EntityPlayer)p_rotateCorpse_1_).isWearing(EnumPlayerModelParts.CAPE))) {
+        if (s != null && (playerEdit.getRotatePlayer() && p_rotateCorpse_1_.equals(mc.thePlayer) && playerEdit.handleEvents()) && (!(p_rotateCorpse_1_ instanceof EntityPlayer) || ((EntityPlayer)p_rotateCorpse_1_).isWearing(EnumPlayerModelParts.CAPE))) {
             translate(0.0F, p_rotateCorpse_1_.height + 0.1F, 0.0F);
             rotate(180.0F, 0.0F, 0.0F, 1.0F);
         }
@@ -139,7 +139,7 @@ public abstract class MixinRendererLivingEntity extends MixinRender {
     @Overwrite
     public<T extends EntityLivingBase> void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
-        final CustomModel customModel = CustomModel.INSTANCE;
+        final PlayerEdit playerEdit = PlayerEdit.INSTANCE;
         pushMatrix();
         disableCull();
         this.mainModel.swingProgress = this.getSwingProgress(entity, partialTicks);

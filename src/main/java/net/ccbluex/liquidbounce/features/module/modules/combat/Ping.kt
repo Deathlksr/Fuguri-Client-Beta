@@ -50,6 +50,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val flushclickgui by BoolValue("Flush-Click-Gui", false)
     private val packetQueue = LinkedHashMap<Packet<*>, Long>()
     private val positions = LinkedHashMap<Vec3, Long>()
+    private var player: EntityOtherPlayerMP? = null
     private val resetTimer = MSTimer()
     private var ignoreWholeTick = false
     private val line by BoolValue("Render", true, subjective = true)
@@ -218,8 +219,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         // Clear packets on disconnect only
         if (event.worldClient == null)
             blink(false)
-        displayChatMessage("Ping")
-        displayChatMessage("Pong")
     }
 
     @EventTarget

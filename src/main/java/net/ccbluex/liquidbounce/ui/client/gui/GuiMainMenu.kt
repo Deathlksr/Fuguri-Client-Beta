@@ -2,42 +2,23 @@ package net.ccbluex.liquidbounce.ui.client.gui
 
 import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME
 import net.ccbluex.liquidbounce.FuguriBeta.clientVersionText
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.ui.client.gui.button.ImageButton
 import net.ccbluex.liquidbounce.ui.client.gui.button.QuitButton
-import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager
-import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.ui.font.Fonts.minecraftFont
-import net.ccbluex.liquidbounce.utils.APIConnecter.canConnect
-import net.ccbluex.liquidbounce.utils.APIConnecter.checkBugs
-import net.ccbluex.liquidbounce.utils.APIConnecter.checkChangelogs
-import net.ccbluex.liquidbounce.utils.APIConnecter.checkStatus
-import net.ccbluex.liquidbounce.utils.APIConnecter.isLatest
-import net.ccbluex.liquidbounce.utils.APIConnecter.loadDonors
-import net.ccbluex.liquidbounce.utils.APIConnecter.loadPictures
-import net.ccbluex.liquidbounce.utils.GitUtils
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawShadowRect
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.client.GuiModList
 import java.awt.Color
-import java.util.*
 
 class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
     private var logo: ResourceLocation? = null
     private lateinit var btnSinglePlayer: GuiButton
     private lateinit var btnMultiplayer: GuiButton
     private lateinit var btnClientOptions: GuiButton
-    private lateinit var btnConnectAPI: ImageButton
-    private lateinit var btnCommitInfo: ImageButton
-    private lateinit var btnCosmetics: ImageButton
     private lateinit var btnMinecraftOptions: ImageButton
-    private lateinit var btnLanguage: ImageButton
     private lateinit var btnForgeModList: ImageButton
     private lateinit var btnQuit: QuitButton
-    private lateinit var btnAddAccount: ImageButton
 
     override fun initGui() {
         logo = ResourceLocation("fdpclient/mainmenu/logo.png")
@@ -49,47 +30,17 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         btnMultiplayer = GuiButton(1, width / 2 - 66, height / 2 - 80 + 95 - 2, buttonWidth, buttonHeight, "Multi Player")
         btnClientOptions = GuiButton(2, width / 2 - 66, height / 2 - 80 + 120 - 4, buttonWidth, buttonHeight, "Settings")
 
-        btnCommitInfo = ImageButton(
-            "COMMIT INFO",
-            ResourceLocation("fdpclient/mainmenu/github.png"),
-            width / 2 - 30,
-            yPos
-        )
-        btnCosmetics = ImageButton(
-            "COSMETICS",
-            ResourceLocation("fdpclient/mainmenu/cosmetics.png"),
-            width / 2 - 15,
-            yPos
-        )
         btnMinecraftOptions = ImageButton(
             "MINECRAFT SETTINGS",
             ResourceLocation("fdpclient/mainmenu/cog.png"),
-            width / 2,
-            yPos
-        )
-        btnLanguage = ImageButton(
-            "LANGUAGE",
-            ResourceLocation("fdpclient/mainmenu/globe.png"),
-            width / 2 + 15,
+            width / 2 - 10,
             yPos
         )
         btnForgeModList = ImageButton(
             "FORGE MODS",
             ResourceLocation("fdpclient/mainmenu/forge.png"),
-            width / 2 + 30,
+            width / 2 + 5,
             yPos
-        )
-        btnAddAccount = ImageButton(
-            "ALT MANAGER",
-            ResourceLocation("fdpclient/mainmenu/add-account.png"),
-            width - 55,
-            7
-        )
-        btnConnectAPI = ImageButton(
-            "Connect API",
-            ResourceLocation("fdpclient/mainmenu/reload.png"),
-            width - 37,
-            7
         )
         btnQuit = QuitButton(width - 17, 7)
 
@@ -105,17 +56,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
             when {
                 btnQuit.hoverFade > 0 -> mc.shutdown()
                 btnMinecraftOptions.hoverFade > 0 -> mc.displayGuiScreen(GuiOptions(this, mc.gameSettings))
-                btnLanguage.hoverFade > 0 -> mc.displayGuiScreen(GuiLanguage(this, mc.gameSettings, mc.languageManager))
-                btnCommitInfo.hoverFade > 0 -> mc.displayGuiScreen(GuiCommitInfo())
                 btnForgeModList.hoverFade > 0 -> mc.displayGuiScreen(GuiModList(mc.currentScreen))
-                btnAddAccount.hoverFade > 0 -> mc.displayGuiScreen(GuiAltManager(this))
-                btnConnectAPI.hoverFade > 0 -> {
-                    checkStatus()
-                    checkChangelogs()
-                    checkBugs()
-                    loadPictures()
-                    loadDonors()
-                }
             }
         }
     }
@@ -143,14 +84,18 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
             CLIENT_NAME,
             ((width - 4f - minecraftFont.getStringWidth(CLIENT_NAME)).toDouble().toFloat()),
             ((height - 23f).toDouble().toFloat()),
-            Color(255, 225, 255, 255).rgb
+            Color(255, 225, 255, 100).rgb
         )
         minecraftFont.drawStringWithShadow(
             "Your currently build is $clientVersionText",
             ((width - 4f - minecraftFont.getStringWidth("Your currently build is $clientVersionText")).toDouble().toFloat()),
             ((height - 12f).toDouble().toFloat()),
-            Color(255, 225, 255, 255).rgb
+            Color(255, 225, 255, 100).rgb
         )
+
+        listOf(btnMinecraftOptions, btnForgeModList, btnQuit).forEach {
+            it.drawButton(mouseX, mouseY)
+        }
 
         GlStateManager.popMatrix()
 

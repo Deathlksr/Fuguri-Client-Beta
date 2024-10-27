@@ -23,7 +23,7 @@ object APIConnecter {
 
     var canConnect = false
     var isLatest = false
-    var discord = ""
+    var discord = "https://discord.gg/mwy9JcKFmB"
     var discordApp = ""
     var appClientID = ""
     var appClientSecret = ""

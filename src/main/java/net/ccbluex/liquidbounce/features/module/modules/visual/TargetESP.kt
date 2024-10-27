@@ -70,7 +70,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     }
 
     // Mark - TargetESP
-    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "LiesNew", "FDP", "Sims", "RoundBox",), "LiesNew")
+    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "New", "FDP", "Sims", "RoundBox",), "LiesNew")
     private val isMarkMode: Boolean
         get() = markValue != "None" && markValue != "Sims" && markValue != "FDP"  && markValue != "Lies" && markValue != "Jello"
 
@@ -82,21 +82,21 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     val jelloRedValue by FloatValue("Jello-Red", 1F, 0F..1F) { markValue in arrayOf("Jello") }
     val jelloGreenValue by FloatValue("Jello-Green", 1F, 0F..1F) { markValue in arrayOf("Jello") }
     val jelloBlueValue by FloatValue("Jello-Blue", 1F, 0F..1F) { markValue in arrayOf("Jello") }
-    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
-    val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
-    val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
-    val liesalpha by FloatValue("Lies-Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
-    val liescolorRedtwo by FloatValue("Lies-Red2", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
-    val liescolorGreentwo by FloatValue("Lies-Green2", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
-    val liescolorBluetwo by FloatValue("Lies-Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
-    val liesalphatwo by FloatValue("Lies-Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
-    private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies", "LiesNew") }
-    private val lenghtlies by FloatValue("Lies-Lenght", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "LiesNew") }
-    private val radiuslies by FloatValue("Lies-Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies", "LiesNew") }
-    val gradientlies by BoolValue("Lies-Gradient", false) { markValue in arrayOf("LiesNew") }
-    private val speedcolorlies by IntegerValue("Lies-Color-Value", 9, 1..9) { markValue in arrayOf("LiesNew") }
-    val liescolorgix by BoolValue("Lies-Color-Fix", true) { markValue in arrayOf("LiesNew") }
-    private val liesstepvalue by IntegerValue("Lies-Step-Value", 10, 10..180) { markValue in arrayOf("LiesNew") }
+    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    val liesalpha by FloatValue("Lies-Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    val liescolorRedtwo by FloatValue("Lies-Red2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    val liescolorGreentwo by FloatValue("Lies-Green2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    val liescolorBluetwo by FloatValue("Lies-Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    val liesalphatwo by FloatValue("Lies-Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies", "New") }
+    private val lenghtlies by FloatValue("Lies-Lenght", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    private val radiuslies by FloatValue("Lies-Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies", "New") }
+    val gradientlies by BoolValue("Lies-Gradient", false) { markValue in arrayOf("New") }
+    private val speedcolorlies by IntegerValue("Lies-Color-Value", 9, 1..9) { markValue in arrayOf("New") }
+    val liescolorgix by BoolValue("Lies-Color-Fix", true) { markValue in arrayOf("New") }
+    private val liesstepvalue by IntegerValue("Lies-Step-Value", 10, 10..180) { markValue in arrayOf("New") }
     val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
     val mode by ListValue("AnimationType", arrayOf(
         "easeInSine", "easeOutSine", "easeInOutSine",
@@ -193,7 +193,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 radiuslies,
             )
 
-            "liesnew" -> drawLiesNew(
+            "new" -> drawLiesNew(
                 entityLivingBase,
                 event,
                 speedlies.toDouble(),

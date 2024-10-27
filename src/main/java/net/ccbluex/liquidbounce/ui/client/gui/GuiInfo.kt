@@ -24,13 +24,11 @@ class GuiInfo(private val prevGui: GuiScreen) : GuiScreen() {
         val buttonHeight = 20
 
         val buttons = listOf(
-            GuiButton(1, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 0, "Open Website"),
-            GuiButton(2, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 1 + 10, "Join Discord Server"),
-            GuiButton(3, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 2 + 20, "Server Status"),
-            GuiButton(4, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 3 + 30, "Scripts"),
-            GuiButton(5, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 4 + 40, "Client Configuration"),
-            GuiButton(6, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 5 + 50, "Donate Now"),
-            GuiButton(7, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 6 + 60, "Done")
+            GuiButton(1, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 1 + 10, "Join Discord Server"),
+            GuiButton(2, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 2 + 20, "Server Status"),
+            GuiButton(3, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 3 + 30, "Scripts"),
+            GuiButton(4, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 4 + 40, "Client Configuration"),
+            GuiButton(5, width / 2 - buttonWidth / 2, yOffset + buttonHeight * 5 + 50, "Done")
         )
 
         buttonList.addAll(buttons)
@@ -55,13 +53,11 @@ class GuiInfo(private val prevGui: GuiScreen) : GuiScreen() {
 
     override fun actionPerformed(button: GuiButton) {
         when (button.id) {
-            1 -> MiscUtils.showURL(URLComponent.WEBSITE)
-            2 -> MiscUtils.showURL(APIConnecter.discord)
-            3 -> mc.displayGuiScreen(GuiServerStatus(this))
-            4 -> mc.displayGuiScreen(GuiScripts(this))
-            5 -> mc.displayGuiScreen(GuiClientConfiguration(this))
-            6 -> MiscUtils.showURL(donate)
-            7 -> mc.displayGuiScreen(prevGui)
+            1 -> MiscUtils.showURL(APIConnecter.discord)
+            2 -> mc.displayGuiScreen(GuiServerStatus(this))
+            3 -> mc.displayGuiScreen(GuiScripts(this))
+            4 -> mc.displayGuiScreen(GuiClientConfiguration(this))
+            5 -> mc.displayGuiScreen(prevGui)
         }
     }
 }

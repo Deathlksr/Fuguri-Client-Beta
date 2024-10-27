@@ -5,9 +5,9 @@
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.render;
 
-import net.ccbluex.liquidbounce.features.module.modules.visual.CustomModel;
 import net.ccbluex.liquidbounce.features.module.modules.visual.FreeCam;
 import net.ccbluex.liquidbounce.features.module.modules.visual.CustomGlint;
+import net.ccbluex.liquidbounce.features.module.modules.visual.PlayerEdit;
 import net.minecraft.client.renderer.entity.layers.LayerArmorBase;
 import net.minecraft.entity.EntityLivingBase;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,10 +23,10 @@ public class MixinLayerArmorBase {
 
     @Inject(method = {"doRenderLayer"}, at = {@At("HEAD")}, cancellable = true)
     public void doRenderLayer(final EntityLivingBase entitylivingbaseIn, final float limbSwing, final float limbSwingAmount, final float partialTicks, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scale, final CallbackInfo ci) {
-        final CustomModel customModel = CustomModel.INSTANCE;
+        final PlayerEdit playerEdit = PlayerEdit.INSTANCE;
         final FreeCam freecam = FreeCam.INSTANCE;
 
-        if (customModel.getState() || freecam.getState())
+        if (playerEdit.getState() || freecam.getState())
             ci.cancel();
     }
 
