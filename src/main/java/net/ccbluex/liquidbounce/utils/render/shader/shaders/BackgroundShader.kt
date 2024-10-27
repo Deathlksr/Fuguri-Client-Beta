@@ -20,16 +20,16 @@ class BackgroundShader : Shader {
     private var time = 0f
 
     override fun setupUniforms() {
-        setupUniform("iResolution")
-        setupUniform("iTime")
+        setupUniform("resolution")
+        setupUniform("time")
     }
 
     override fun updateUniforms() {
-        val resolutionID = getUniform("iResolution")
+        val resolutionID = getUniform("resolution")
         if (resolutionID > -1)
             glUniform2f(resolutionID, Display.getWidth().toFloat(), Display.getHeight().toFloat())
 
-        val timeID = getUniform("iTime")
+        val timeID = getUniform("time")
         if (timeID > -1) glUniform1f(timeID, time)
 
         time += 0.003f * deltaTime

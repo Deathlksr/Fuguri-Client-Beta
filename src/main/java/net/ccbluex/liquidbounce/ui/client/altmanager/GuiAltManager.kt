@@ -42,7 +42,7 @@ import kotlin.concurrent.thread
 
 class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
 
-    var status = "§7Idle..."
+    var status = "§5Idle..."
 
     private lateinit var loginButton: GuiButton
     private lateinit var randomAltButton: GuiButton
@@ -93,7 +93,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
         drawBackground(0)
         altsList.drawScreen(mouseX, mouseY, partialTicks)
         this.drawCenteredString(mc.fontRendererObj, "Alt Manager", width / 2, 6, 0xffffff)
-        this.drawCenteredString(mc.fontRendererObj, "§7Status: §a$status", width / 2, 25, 0xffffff)
+        this.drawCenteredString(mc.fontRendererObj, "§7Status: §5$status", width / 2, 25, 0xffffff)
         this.drawString(
             mc.fontRendererObj,
             if (searchField.text.isEmpty()) "${accountsConfig.accounts.size} Alts" else altsList.accounts.size.toString() + " Search Results",
@@ -102,13 +102,13 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
             0xffffff
         )
         this.drawString(
-            mc.fontRendererObj, "§7Ign: §a${mc.getSession().username}",
+            mc.fontRendererObj, "§7Ign: §5${mc.getSession().username}",
             6,
             6,
             0xffffff
         )
         this.drawString(
-            mc.fontRendererObj, "§7Type: §a${
+            mc.fontRendererObj, "§7Type: §5${
                 if (isValidTokenOffline(
                         mc.getSession().token
                     )
@@ -120,8 +120,6 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
             this.drawString(
                 mc.fontRendererObj,  "§7Search...", searchField.xPosition + 4, 17, 0xffffff
             )
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }
@@ -151,7 +149,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
                     randomNameButton.enabled = false
 
                     login(it, {
-                        status = "§aLogged into ${mc.session.username}."
+                        status = "§5Logged into ${mc.session.username}."
                     }, { exception ->
                         status = "§cLogin failed due to '${exception.message}'."
                     }, {
@@ -160,7 +158,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
                         randomNameButton.enabled = true
                     })
 
-                    "§aLogging in..."
+                    "§5Logging in..."
                 } ?: "§cSelect an account."
             }
 
@@ -171,7 +169,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
                     randomNameButton.enabled = false
 
                     login(it, {
-                        status = "§aLogged into ${mc.session.username}."
+                        status = "§5Logged into ${mc.session.username}."
                     }, { exception ->
                         status = "§cLogin failed due to '${exception.message}'."
                     }, {
@@ -180,12 +178,12 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
                         randomNameButton.enabled = true
                     })
 
-                    "§aLogging in..."
+                    "§5Logging in..."
                 } ?: "§cYou do not have any accounts."
             }
 
             5 -> { // Random name button
-                status = "§aLogged into ${randomAccount().name}."
+                status = "§5Logged into ${randomAccount().name}."
             }
 
             6 -> { // Direct login button
@@ -207,7 +205,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
                 }
 
                 saveConfig(accountsConfig)
-                status = "§aThe accounts were imported successfully."
+                status = "§5The accounts were imported successfully."
             }
 
             12 -> { // Export button
@@ -235,7 +233,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
                     }
                     file.writeText(accounts)
 
-                    status = "§aExported successfully!"
+                    status = "§5Exported successfully!"
                 } catch (e: Exception) {
                     status = "§cUnable to export due to error: ${e.message}"
                 }
@@ -367,7 +365,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
                     randomNameButton.enabled = false
 
                     login(it, {
-                        status = "§aLogged into ${mc.session.username}."
+                        status = "§5Logged into ${mc.session.username}."
                     }, { exception ->
                         status = "§cLogin failed due to '${exception.message}'."
                     }, {

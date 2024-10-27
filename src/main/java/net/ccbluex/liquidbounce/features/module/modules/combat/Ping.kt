@@ -16,6 +16,8 @@ import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.entity.EntityOtherPlayerMP
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.gui.inventory.GuiInventory
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.network.Packet
 import net.minecraft.network.handshake.client.C00Handshake
 import net.minecraft.network.play.client.*
@@ -24,6 +26,7 @@ import net.minecraft.network.play.server.S12PacketEntityVelocity
 import net.minecraft.network.status.client.C00PacketServerQuery
 import net.minecraft.network.status.client.C01PacketPing
 import net.minecraft.network.status.server.S01PacketPong
+import net.minecraft.util.ResourceLocation
 import net.minecraft.util.Vec3
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
@@ -45,7 +48,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val flushuseitem by BoolValue("Flush-UsingItem", false)
     private val flushback by BoolValue("Flush-Back", false)
     private val flushclickgui by BoolValue("Flush-Click-Gui", false)
-
     private val packetQueue = LinkedHashMap<Packet<*>, Long>()
     private val positions = LinkedHashMap<Vec3, Long>()
     private val resetTimer = MSTimer()

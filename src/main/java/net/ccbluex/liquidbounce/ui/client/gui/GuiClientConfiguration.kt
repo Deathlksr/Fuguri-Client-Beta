@@ -202,7 +202,7 @@ class GuiClientConfiguration(val prevGui: GuiScreen) : GuiScreen() {
         drawBackground(0)
         Fonts.fontBold180.drawCenteredString(
             ("Configuration"), width / 2F, height / 8F + 5F,
-            0x5DE2E7, true)
+            0x930079, true)
 
         Fonts.font40.drawString("Window", width / 2F - 98F, height / 4F + 15F,
             0xFFFFFF, true)
@@ -214,8 +214,6 @@ class GuiClientConfiguration(val prevGui: GuiScreen) : GuiScreen() {
 
         Fonts.font40.drawString(("AltManager"), width / 2F - 98F, height / 4F + 200F,
             0xFFFFFF, true)
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }

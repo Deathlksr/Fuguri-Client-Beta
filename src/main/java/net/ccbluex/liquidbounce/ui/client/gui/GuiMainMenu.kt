@@ -132,36 +132,25 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         drawBackground(0)
 
         GlStateManager.pushMatrix()
-        drawShadowRect(
-            (width / 2 - 130).toFloat(),
-            (height / 2 - 90).toFloat(),
-            (width / 2 + 130).toFloat(),
-            (height / 2 + 90).toFloat(),
-            15F,
-            Color(44, 43, 43, 100).rgb.toFloat().toInt()
-        )
-
         GlStateManager.disableAlpha()
         GlStateManager.enableAlpha()
         GlStateManager.enableBlend()
         GlStateManager.color(1.0f, 1.0f, 1.0f)
         mc.textureManager.bindTexture(logo)
-        drawModalRectWithCustomSizedTexture(width / 2 - 77, height / 2 - 120, 150f, 150f, 150, 150, 150f, 150f)
+        drawModalRectWithCustomSizedTexture(width / 2 - 74, height / 2 - 140, 150f, 150f, 150, 150, 150f, 150f)
 
         minecraftFont.drawStringWithShadow(
             CLIENT_NAME,
             ((width - 4f - minecraftFont.getStringWidth(CLIENT_NAME)).toDouble().toFloat()),
             ((height - 23f).toDouble().toFloat()),
-            Color(93, 226, 231, 255).rgb
+            Color(255, 225, 255, 255).rgb
         )
         minecraftFont.drawStringWithShadow(
             "Your currently build is $clientVersionText",
             ((width - 4f - minecraftFont.getStringWidth("Your currently build is $clientVersionText")).toDouble().toFloat()),
             ((height - 12f).toDouble().toFloat()),
-            Color(93, 226, 231, 255).rgb
+            Color(255, 225, 255, 255).rgb
         )
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
 
         GlStateManager.popMatrix()
 

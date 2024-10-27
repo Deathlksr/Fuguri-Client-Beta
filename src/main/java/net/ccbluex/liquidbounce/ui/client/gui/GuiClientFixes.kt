@@ -87,9 +87,7 @@ class GuiClientFixes(private val prevGui: GuiScreen) : GuiScreen() {
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         drawBackground(0)
-        Fonts.fontBold180.drawCenteredString("Fixes", width / 2f, height / 8f + 5f, 4673984, true)
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
+        Fonts.fontBold180.drawCenteredString("Fixes", width / 2f, height / 8f + 5f, 1470121, true)
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }
