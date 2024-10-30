@@ -17,6 +17,7 @@ import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescol
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRed
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRedtwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorgix
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.speedcolorlies
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.ClientThemesUtils.getColor
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
@@ -565,7 +566,7 @@ object RenderUtils : MinecraftInstance() {
         1
     }) * trailLengthMultiplier
 
-    val oscillation = Math.sin(timeFactor * Math.PI * 2) * (height / 5)
+    val oscillation = sin(timeFactor * Math.PI * 2) * (height / 5)
 
     val finalY = y + eased + oscillation
     glBegin(GL_QUADS)
@@ -593,8 +594,7 @@ object RenderUtils : MinecraftInstance() {
     glPopMatrix()
 }
 
-    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, speedcolorlies: Int, liesstepvalue: Int) {
-
+    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, liesstepvalue: Int) {
         glPushMatrix()
         glDisable(GL_TEXTURE_2D)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -612,26 +612,32 @@ object RenderUtils : MinecraftInstance() {
         glBegin(GL_QUAD_STRIP)
 
         val penis = sin(System.currentTimeMillis() * 0.003 * speedMultiplier)
-        var red = liescolorRed
-        var green = liescolorGreen
-        var blue = liescolorBlue
+        val red = liescolorRed
+        val green = liescolorGreen
+        val blue = liescolorBlue
+        val red2 = liescolorRedtwo
+        val green2 = liescolorGreentwo
+        val blue2 = liescolorBluetwo
 
         for (i in 0..360 step liesstepvalue) {
             val x1 = x + sin(i * Math.PI / 180) * radiuslies
             val z1 = z + cos(i * Math.PI / 180) * radiuslies
             val y1 = y + penis
+
+            val color1 = Color(red, green, blue)
+            val color2 = Color(red2, green2, blue2)
+            val penis25 = (cos(i * Math.PI / 180 * speedcolorlies) + 1) / 2
+            val gradientcolor = ColorUtils.mixColorse(color1, color2, penis25.toFloat())
+
             if (gradientlies) {
-                glColor4f(red, green, blue, liesalpha)
+                glColor4f(gradientcolor.red / 255F, gradientcolor.green / 255F, gradientcolor.blue / 255F, liesalpha)
             } else {
                 glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
             }
             glVertex3d(x1, y1 + entity.height / 2, z1)
-            val penis2 = ColorUtils.rainbow(40000L + i * 10000000 * speedcolorlies, 1.0F)
-            red = penis2.red / 255F
-            green = penis2.green / 255F
-            blue = penis2.blue / 255F
+
             if (gradientlies) {
-                glColor4f(penis2.red / 255F, penis2.green / 255F, penis2.blue / 255F, liesalphatwo)
+                glColor4f(gradientcolor.red / 255F, gradientcolor.green / 255F, gradientcolor.blue / 255F, liesalphatwo)
             } else {
                 glColor4f(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo, liesalphatwo)
             }
@@ -646,17 +652,18 @@ object RenderUtils : MinecraftInstance() {
             val x1 = x + sin(i * Math.PI / 180) * radiuslies
             val z1 = z + cos(i * Math.PI / 180) * radiuslies
             val y1 = y + penis
+
+            val color1 = Color(red, green, blue)
+            val color2 = Color(red2, green2, blue2)
+            val penis25 = (cos(i * Math.PI / 180 * speedcolorlies) + 1) / 2
+            val gradientcolor = ColorUtils.mixColorse(color1, color2, penis25.toFloat())
+
             if (gradientlies) {
-                glColor4f(red, green, blue, 1.0F)
+                glColor4f(gradientcolor.red / 255F, gradientcolor.green / 255F, gradientcolor.blue / 255F, 1.0F)
             } else {
                 glColor4f(liescolorRed, liescolorGreen, liescolorBlue, 1.0F)
             }
             glVertex3d(x1, y1 + entity.height / 2, z1)
-
-            val penis2 = ColorUtils.rainbow(400L + i * 10000000 * speedcolorlies, 1.0F)
-            red = penis2.red / 255F
-            green = penis2.green / 255F
-            blue = penis2.blue / 255F
         }
 
         glEnd()

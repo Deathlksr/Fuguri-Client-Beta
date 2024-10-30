@@ -5,8 +5,11 @@ import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.MotionEvent
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
+import net.ccbluex.liquidbounce.features.module.modules.player.Blink
+import net.ccbluex.liquidbounce.features.module.modules.player.scaffolds.Scaffold
 import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.EntityUtils
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.RaycastTimerRange
 import net.ccbluex.liquidbounce.utils.extensions.expands
 import net.ccbluex.liquidbounce.utils.extensions.getNearestPointBB
@@ -15,6 +18,8 @@ import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.client.entity.EntityOtherPlayerMP
+import net.minecraft.client.gui.inventory.GuiContainer
+import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
@@ -41,6 +46,7 @@ object TimeManipulation : Module("TimeManipulation", Category.COMBAT, hideModule
     private val maxHurtTimeValue = IntegerValue("TargetMaxHurtTime", 2, 0..10)
     private val onlyKillAura = BoolValue("OnlyKillAura", true)
     private val onlyPlayer = BoolValue("OnlyPlayer", true)
+    private val blink = BoolValue("Blink", false)
     private val debug = BoolValue("Debug", false)
 
     private val maxReverseRange by FloatValue("MaxReverseRange", 3f, 3f..4f)
@@ -69,8 +75,18 @@ object TimeManipulation : Module("TimeManipulation", Category.COMBAT, hideModule
     private var auraClick = true
     private var modeAuraClick = true
 
+    override fun onDisable() {
+        Blink.state = false
+    }
+
     @EventTarget
     fun onMotion(event: MotionEvent) {
+        val screen = mc.currentScreen
+        if (screen is GuiInventory) return
+        if (screen is GuiContainer) return
+        if (!MovementUtils.isMoving) return
+        if (Scaffold.state) return
+        Blink.state = blink.get()
         if (event.eventState == EventState.PRE) return // post event mean player's tick is done
         val thePlayer = mc.thePlayer ?: return
         if (onlyKillAura.get() && !killAura.state) return
@@ -193,12 +209,11 @@ object TimeManipulation : Module("TimeManipulation", Category.COMBAT, hideModule
             ++freezeTicks
             mc.runTick()
         }
-        if (debug.get()) ClientUtils.displayChatMessage("Teleported")
+        if (debug.get()) ClientUtils.displayChatMessage("Teleported: $freezeTicks ticks")
         if (auraClick) {
             if (modeAuraClick) killAura.clicks += 1
             ++freezeTicks
             mc.runTick()
-            if (debug.get()) ClientUtils.displayChatMessage("Clicked")
         }
         stopWorking = false
         working = false
@@ -224,6 +239,7 @@ object TimeManipulation : Module("TimeManipulation", Category.COMBAT, hideModule
                 --time
                 mc.runTick()
             }
+            if (debug.get()) ClientUtils.displayChatMessage("Teleported: $freezeTicks ticks")
             reverseFreeze = true
             working = false
             cooldown = reverseDelay.get()

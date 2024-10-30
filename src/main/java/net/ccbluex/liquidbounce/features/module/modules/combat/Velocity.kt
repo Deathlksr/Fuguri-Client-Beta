@@ -30,7 +30,6 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
 
     // Intave Settings
     private val falsesprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("Intave") }
-    private val falseserversprint by BoolValue("FalseServerSprint", false) { mode in arrayOf("Intave") }
     private val debugmotion by BoolValue("DebugSprintHit", false) { mode in arrayOf("Intave") }
     private val debugmotionhit by BoolValue("DebugHit", false) { mode in arrayOf("Intave") }
 
@@ -61,13 +60,11 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
                     mc.thePlayer.motionZ *= Motionxz
                     if (debugmotion) displayChatMessage("ReducedSprintHit")
                     if (falsesprint) mc.thePlayer.isSprinting = false
-                    if (falseserversprint) mc.thePlayer.serverSprintState = false
                 } else if (mc.thePlayer.hurtTime > 0) {
                     mc.thePlayer.motionX *= MotionnotSprintxz
                     mc.thePlayer.motionZ *= MotionnotSprintxz
                     if (debugmotionhit) displayChatMessage("ReducedHit")
                     if (falsesprint) mc.thePlayer.isSprinting = false
-                    if (falseserversprint) mc.thePlayer.serverSprintState = false
                 }
             }
         }

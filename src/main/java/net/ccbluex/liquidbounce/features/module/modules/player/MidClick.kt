@@ -30,35 +30,34 @@ object MidClick : Module("MidClick", Category.PLAYER, subjective = true, gameDet
             if (entity is EntityPlayer) {
                 val playerName = stripColor(entity.name)
 
-                if (reverse.takeIf {isActive} == true) {
+                if (reverse) {
                     if (!friendsConfig.isFriend(playerName)) {
                         friendsConfig.addFriend(playerName)
-                        if (debug.takeIf { isActive } == true) {
+                        if (debug) {
                             displayChatMessage("§a§l[$playerName]§c Friend deleted.")
                         }
                     } else {
                         friendsConfig.removeFriend(playerName)
-                        if (debug.takeIf { isActive } == true) {
+                        if (debug) {
                             displayChatMessage("§a§l[$playerName]§c Friend added.")
                         }
                     }
                 }
 
-                if (reverse.takeIf {isActive} == false) {
+                if (!reverse) {
                     if (!friendsConfig.isFriend(playerName)) {
                         friendsConfig.addFriend(playerName)
-                        if (debug.takeIf { isActive } == true) {
+                        if (debug) {
                             displayChatMessage("§a§l[$playerName]§c Friend added.")
                         }
                     } else {
                         friendsConfig.removeFriend(playerName)
-                            if (debug.takeIf { isActive } == true) {
+                            if (debug) {
                                 displayChatMessage("§a§l[$playerName]§c Friend deleted.")
                             }
                     }
                 }
-
-            } else if (debug.takeIf { isActive } == true) {
+            } else if (debug) {
                 displayChatMessage("§c§lError: §a You didn't target the player.")
             }
         }

@@ -190,6 +190,14 @@ object ColorUtils {
         return Color(redPart, greenPart, bluePart)
     }
 
+    fun mixColorse(color1: Color, color2: Color, percent: Float): Color {
+        val inverse_percent = 1.0 - percent
+        val redPart = (color1.red * percent + color2.red * inverse_percent).toInt()
+        val greenPart = (color1.green * percent + color2.green * inverse_percent).toInt()
+        val bluePart = (color1.blue * percent + color2.blue * inverse_percent).toInt()
+        return Color(redPart, greenPart, bluePart)
+    }
+
     fun skyRainbow(var2: Int, st: Float, bright: Float, speed: Float): Color {
         var v1 = ceil((System.currentTimeMillis() + (var2 * 109 * speed).toLong()).toDouble()) / 5
         return Color.getHSBColor(

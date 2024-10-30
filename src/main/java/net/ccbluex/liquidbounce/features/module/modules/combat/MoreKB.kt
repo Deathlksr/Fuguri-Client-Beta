@@ -5,6 +5,7 @@ import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.handler.combat.CombatManager
 import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
 import net.ccbluex.liquidbounce.utils.timing.TimeUtils
 import net.ccbluex.liquidbounce.value.*
@@ -33,16 +34,14 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
 
     // Internal timing variables for WTap and LegitFast modes
     private var legitfastTicks = 0
-    private var wtaptick = 0
 
     // Resets on module toggle
     override fun onToggle(state: Boolean) {
         legitfastTicks = 0
-        wtaptick = 0
     }
 
     @EventTarget
-    fun onSprintUpdate(event: SprintUpdateEvent) {
+    fun onSprintUpdate(e: SprintUpdateEvent) {
         when (mode) {
             "LegitFast" -> {
                 if (legitfastTicks > 0 && mc.thePlayer.isSprinting) {
@@ -65,6 +64,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     }
 
     private fun handleLegitFast() {
+        if (!MovementUtils.isMoving) return
         if (onlyKillaura) {
             if (KillAura.target?.hurtTime == 10) {
                 TimeUtils.delay(nextInt(mindelay, maxdelay)) {

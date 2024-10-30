@@ -5,8 +5,11 @@ import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.MotionEvent
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
+import net.ccbluex.liquidbounce.features.module.modules.player.Blink
+import net.ccbluex.liquidbounce.features.module.modules.player.scaffolds.Scaffold
 import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.EntityUtils
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.RaycastTimerRange
 import net.ccbluex.liquidbounce.utils.extensions.expands
 import net.ccbluex.liquidbounce.utils.extensions.getNearestPointBB
@@ -15,6 +18,8 @@ import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.client.entity.EntityOtherPlayerMP
+import net.minecraft.client.gui.inventory.GuiContainer
+import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
@@ -39,6 +44,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
     private val delayValue = IntegerValue("Delay", 5, 0..20)
     private val maxHurtTimeValue = IntegerValue("TargetMaxHurtTime", 2, 0..10)
     private val onlyKillAura = BoolValue("OnlyKillAura", true)
+    private val blink = BoolValue("Blink", false)
     private val auraClick = BoolValue("AuraClick", true)
     private val modeAuraClick = ListValue("ModeAuraClick", arrayOf("BeforeTimer", "AfterTimer"), "BeforeTimer") { auraClick.get() }
     private val onlyPlayer = BoolValue("OnlyPlayer", true)
@@ -55,8 +61,18 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
     private var freezeTicks = 0
     private var firstAnimation = true
 
+    override fun onDisable() {
+        Blink.state = false
+    }
+
     @EventTarget
     fun onMotion(event: MotionEvent) {
+        val screen = mc.currentScreen
+        if (screen is GuiInventory) return
+        if (screen is GuiContainer) return
+        if (!MovementUtils.isMoving) return
+        if (Scaffold.state) return
+        Blink.state = blink.get()
         if (event.eventState == EventState.PRE) return // post event mean player's tick is done
         val thePlayer = mc.thePlayer ?: return
         if (onlyKillAura.get() && !killAura.state) return
@@ -165,12 +181,11 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
             ++freezeTicks
             mc.runTick()
         }
-        if (debug.get()) ClientUtils.displayChatMessage("Teleported")
+        if (debug.get()) ClientUtils.displayChatMessage("Teleported:{${freezeTicks}} ticks")
         if (auraClick.get()) {
             if (modeAuraClick.get() === "BeforeTimer") killAura.clicks += 1
             ++freezeTicks
             mc.runTick()
-            if (debug.get()) ClientUtils.displayChatMessage("Clicked")
         }
         stopWorking = false
         working = false

@@ -61,7 +61,7 @@ object FuguriBeta {
     const val CLIENT_AUTHOR = "Deathlksr"
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
     const val CLIENT_WEBSITE = "fdpclient.net"
-    const val CLIENT_VERSION = "B2.2"
+    const val CLIENT_VERSION = "B2.3"
 
     val clientVersionText = gitInfo["git.build.version"]?.toString() ?: "unknown"
     val clientVersionNumber = clientVersionText.substring(1).toIntOrNull() ?: 0 // version format: "b<VERSION>" on legacy
@@ -229,7 +229,6 @@ object FuguriBeta {
                 isStarting = false
 
                 callEvent(StartupEvent())
-                LOGGER.info("E-Sound Nigger!!!!!")
                 LOGGER.info("Successfully started client")
             }
         }

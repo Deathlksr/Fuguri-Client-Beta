@@ -83,7 +83,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     private val lenghtlies by FloatValue("Lies-Length", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     private val radiuslies by FloatValue("Lies-Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies", "New") }
     val gradientlies by BoolValue("Lies-Gradient", false) { markValue in arrayOf("New") }
-    private val speedcolorlies by IntegerValue("Lies-Color-Value", 9, 1..9) { markValue in arrayOf("New") }
+    val speedcolorlies by IntegerValue("Lies-Color-Value", 9, 1..9) { markValue in arrayOf("New") }
     val liescolorgix by BoolValue("Lies-Color-Fix", true) { markValue in arrayOf("New") }
     private val liesstepvalue by IntegerValue("Lies-Step-Value", 10, 10..180) { markValue in arrayOf("New") }
     val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
@@ -183,7 +183,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 speedlies.toDouble(),
                 lenghtlies.toDouble(),
                 radiuslies,
-                speedcolorlies,
                 liesstepvalue,
             )
         }
