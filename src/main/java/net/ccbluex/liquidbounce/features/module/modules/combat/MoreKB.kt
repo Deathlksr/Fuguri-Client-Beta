@@ -14,7 +14,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     // Modes of operation
     private val mode by ListValue(
         "Mode",
-        arrayOf("LegitFast", "WTap"),
+        arrayOf("LegitFast"),
         "LegitFast"
     )
 
@@ -61,21 +61,6 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     fun onUpdate(event: UpdateEvent) {
         when (mode) {
             "LegitFast" -> handleLegitFast()
-            "WTap" -> handleWTap()
-        }
-    }
-
-    private fun handleWTap() {
-        if (KillAura.target?.hurtTime == 10) {
-            wtaptick = nextInt(minlfticks, maxlfticks)
-            if (debuglf) displayChatMessage("Start-Tapping")
-            return
-        }
-        if (wtaptick > 0) {
-            mc.thePlayer.isSprinting = false
-            mc.gameSettings.keyBindForward.pressed = false
-            if (debuglf) displayChatMessage("Tap")
-            wtaptick--
         }
     }
 

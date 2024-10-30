@@ -1,35 +1,33 @@
 package net.ccbluex.liquidbounce.features.module.modules.player
 
-import net.ccbluex.liquidbounce.FuguriBeta
-import net.ccbluex.liquidbounce.event.EntityKilledEvent
-import net.ccbluex.liquidbounce.event.EventTarget
-import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
-import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.value.TextValue
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraftforge.event.entity.living.LivingDeathEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 object KillMessage : Module("KillMessage", Category.PLAYER, gameDetecting = false, hideModule = false) {
 
-    private val textString by TextValue("Message", "You were a good opponent but you were still killed by the Fuguri Client!")
+    private val textString by TextValue(
+        "Message",
+        "You were a good opponent but you were still killed by the Fuguri Client!"
+    )
 
-    var target: EntityLivingBase? = null
-    private val attackedEntityList = mutableListOf<EntityLivingBase>()
+    init {
+        // Регистрация обработчика события
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(this)
+    }
 
-    @EventTarget
-    fun onUpdate(e: UpdateEvent) {
-        if (mc.thePlayer == null) return
-        MovementUtils.updateBlocksPerSecond()
+    @SubscribeEvent
+    fun onEntityDeath(event: LivingDeathEvent) {
+        val entity = event.entity
+        val source = event.source.entity
 
-        attackedEntityList.map { it }.forEach {
-            if (it.isDead) {
-                FuguriBeta.eventManager.callEvent(EntityKilledEvent(it))
-                mc.thePlayer.sendChatMessage(it.name + " " + textString)
-                attackedEntityList.remove(it)
-            }
+        // Проверка, что жертва и атакующий - игроки
+        if (entity is EntityPlayer && source is EntityPlayer && source == mc.thePlayer) {
+            // Отправка сообщения только один раз (исключаем отправку всем игрокам)
+            mc.thePlayer.sendChatMessage("${entity.displayNameString} $textString")
         }
     }
 }
-
-

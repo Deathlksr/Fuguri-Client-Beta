@@ -40,23 +40,11 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
     private val maxHurtTimeValue = IntegerValue("TargetMaxHurtTime", 2, 0..10)
     private val onlyKillAura = BoolValue("OnlyKillAura", true)
     private val auraClick = BoolValue("AuraClick", true)
-
     private val modeAuraClick = ListValue("ModeAuraClick", arrayOf("BeforeTimer", "AfterTimer"), "BeforeTimer") { auraClick.get() }
     private val onlyPlayer = BoolValue("OnlyPlayer", true)
     private val debug = BoolValue("Debug", false)
     private val betterAnimation = BoolValue("BetterAnimation", true)
     val freezeAnim by BoolValue("FixAnimation", true)
-    private val reverseValue = BoolValue("Reverse", false)
-    private val maxReverseRange by FloatValue("MaxReverseRange", 2.8f, 1f..4f)
-
-    private val minReverseRange by FloatValue("MinReverseRange", 2.5f, 1f..4f)
-
-    private val reverseTickTime by IntegerValue("ReverseTickTime", 3, 0..10)
-
-    private val reverseDelay = IntegerValue("ReverseDelay", 5, 0..20)
-    private val reverseTargetMaxHurtTime = IntegerValue("ReverseTargetMaxHurtTime", 3, 0..10)
-    private val reverseAuraClick = ListValue("ReverseAuraClick", arrayOf("None", "BeforeTimer", "AfterTimer"), "None")
-
     private val killAura: KillAura = KillAura
 
     @JvmStatic
@@ -65,7 +53,6 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
     private var lastNearest = 10.0
     private var cooldown = 0
     private var freezeTicks = 0
-    private var reverseFreeze = true
     private var firstAnimation = true
 
     @EventTarget
@@ -106,13 +93,6 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
             )
             val range = box.distanceTo(vecEyes)
             val afterRange = box2.distanceTo(predictEyes)
-            if (!working && reverseValue.get()) {
-                if (range in minReverseRange..maxReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
-                    firstAnimation = false
-                    reverseFreeze = false
-                    return
-                }
-            }
             if (range < minDistance.get()) {
                 stopWorking = true
             } else if (((rangeMode.get() == "Smart" && range > minDistance.get() && afterRange < minDistance.get() && afterRange < range) || (rangeMode.get() == "Setting" && range <= maxDistance.get() && range < lastNearest && afterRange < range)) && entity.hurtTime <= maxHurtTimeValue.get()) {
@@ -154,13 +134,6 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
                     )
                     val range = box.distanceTo(vecEyes)
                     val afterRange = box2.distanceTo(afterEyes)
-                    if (!working && reverseValue.get()) {
-                        if (range in minReverseRange..maxReverseRange && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
-                            firstAnimation = false
-                            reverseFreeze = false
-                            return
-                        }
-                    }
                     if (range < minDistance.get()) {
                         targetInRange = true
                         break
@@ -192,7 +165,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
             ++freezeTicks
             mc.runTick()
         }
-        if (debug.get()) ClientUtils.displayChatMessage("Timer-ed")
+        if (debug.get()) ClientUtils.displayChatMessage("Teleported")
         if (auraClick.get()) {
             if (modeAuraClick.get() === "BeforeTimer") killAura.clicks += 1
             ++freezeTicks
@@ -210,22 +183,6 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
         if (state && freezeTicks > 0) {
             --freezeTicks
             return true
-        }
-
-        if (!reverseFreeze) {
-            freezeTicks = 0
-            var time = reverseTickTime
-            working = true
-            if (reverseAuraClick.get() === "BeforeTimer") killAura.clicks += 1
-            while (time > 0) {
-                freezeTicks++
-                --time
-                mc.runTick()
-            }
-            reverseFreeze = true
-            working = false
-            cooldown = reverseDelay.get()
-            if (reverseAuraClick.get() == "AfterTimer") killAura.clicks += 1
         }
         if (cooldown > 0) --cooldown
         return false

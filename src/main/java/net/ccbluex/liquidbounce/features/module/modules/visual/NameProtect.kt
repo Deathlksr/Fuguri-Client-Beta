@@ -132,7 +132,7 @@ object NameProtect : Module("NameProtect", Category.VISUAL, subjective = true, g
         val p = mc.thePlayer ?: return text
 
         // If the message includes the client name, don't change it
-        if ("§a§l[$CLIENT_NAME]§c §3" in text) {
+        if ("§8[§9§l$CLIENT_NAME§8] §3" in text) {
             return text
         }
 

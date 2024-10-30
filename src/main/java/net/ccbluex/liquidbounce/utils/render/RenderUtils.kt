@@ -24,6 +24,7 @@ import net.ccbluex.liquidbounce.utils.UIEffectRenderer.drawTexturedRect
 import net.ccbluex.liquidbounce.utils.block.BlockUtils.getBlock
 import net.ccbluex.liquidbounce.utils.extensions.hitBox
 import net.ccbluex.liquidbounce.utils.extensions.toRadians
+import net.ccbluex.liquidbounce.utils.render.ColorUtils.mixColors
 import net.ccbluex.liquidbounce.utils.render.ColorUtils.setColour
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.ScaledResolution
@@ -652,15 +653,10 @@ object RenderUtils : MinecraftInstance() {
             }
             glVertex3d(x1, y1 + entity.height / 2, z1)
 
-            val penis2 = ColorUtils.rainbow(40000L + i * 10000000 * speedcolorlies, 1.0F)
+            val penis2 = ColorUtils.rainbow(400L + i * 10000000 * speedcolorlies, 1.0F)
             red = penis2.red / 255F
             green = penis2.green / 255F
             blue = penis2.blue / 255F
-            if (gradientlies) {
-                glColor4f(penis2.red / 255F, penis2.green / 255F, penis2.blue / 255F, 1.0F)
-            } else {
-                glColor4f(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo, 1.0F)
-            }
         }
 
         glEnd()
@@ -2270,6 +2266,14 @@ object RenderUtils : MinecraftInstance() {
         val blue = (hex and 0xFF) / 255f
 
         color(red, green, blue, alpha)
+    }
+
+    fun glColor(hex: Int, alpha: Float) {
+        val red = (hex shr 16 and 0xFF) / 255f
+        val green = (hex shr 8 and 0xFF) / 255f
+        val blue = (hex and 0xFF) / 255f
+
+        color(red, green, blue, alpha / 255f)
     }
 
     fun glColor(color: Color) = glColor(color.red, color.green, color.blue, color.alpha)

@@ -11,7 +11,7 @@ import net.vitox.ParticleGenerator
 
 @SideOnly(Side.CLIENT)
 object ParticleUtils {
-    private val particleGenerator = ParticleGenerator(100)
+    private val particleGenerator = ParticleGenerator(150)
 
     fun drawParticles(mouseX: Int, mouseY: Int) = particleGenerator.draw(mouseX, mouseY)
 }

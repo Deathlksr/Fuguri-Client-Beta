@@ -151,7 +151,6 @@ object RotationUtils : MinecraftInstance(), Listenable {
             ).toDegreesF()
         )
     }
-
     /**
      * Translate vec to rotation
      *

@@ -6,16 +6,12 @@ import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.modules.combat.Criticals
 import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura
 import net.ccbluex.liquidbounce.handler.combat.CombatManager
-import net.ccbluex.liquidbounce.utils.render.ColorUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawCrystal
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawEntityBox
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawEntityBoxESP
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawFDP
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawJello
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawLies
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawLiesNew
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawPlatform
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawPlatformESP
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInSine
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutSine
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutSine
@@ -52,14 +48,9 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
-import net.minecraft.block.Block
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.effect.EntityLightningBolt
-import net.minecraft.init.Blocks
-import net.minecraft.network.play.server.S2CPacketSpawnGlobalEntity
 import net.minecraft.potion.Potion
-import net.minecraft.util.EnumParticleTypes
 import java.awt.Color
 import java.util.*
 
@@ -70,9 +61,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     }
 
     // Mark - TargetESP
-    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "New", "FDP", "Sims", "RoundBox",), "LiesNew")
-    private val isMarkMode: Boolean
-        get() = markValue != "None" && markValue != "Sims" && markValue != "FDP"  && markValue != "Lies" && markValue != "Jello"
+    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "New", "New2", "FDP", "Sims", "RoundBox",), "LiesNew")
 
     override val tag
         get() = markValue
@@ -82,7 +71,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     val jelloRedValue by FloatValue("Jello-Red", 1F, 0F..1F) { markValue in arrayOf("Jello") }
     val jelloGreenValue by FloatValue("Jello-Green", 1F, 0F..1F) { markValue in arrayOf("Jello") }
     val jelloBlueValue by FloatValue("Jello-Blue", 1F, 0F..1F) { markValue in arrayOf("Jello") }
-    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New", ) }
     val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     val liesalpha by FloatValue("Lies-Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
@@ -91,7 +80,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     val liescolorBluetwo by FloatValue("Lies-Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     val liesalphatwo by FloatValue("Lies-Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies", "New") }
-    private val lenghtlies by FloatValue("Lies-Lenght", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    private val lenghtlies by FloatValue("Lies-Length", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     private val radiuslies by FloatValue("Lies-Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies", "New") }
     val gradientlies by BoolValue("Lies-Gradient", false) { markValue in arrayOf("New") }
     private val speedcolorlies by IntegerValue("Lies-Color-Value", 9, 1..9) { markValue in arrayOf("New") }
@@ -118,11 +107,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     // fake sharp
     private val fakeSharp by BoolValue("FakeSharp", true, subjective = true)
 
-    private val particle by ListValue("Particle",
-        arrayOf("None", "Blood", "Lighting", "Fire", "Heart", "Water", "Smoke", "Magic", "Crits"), "Blood")
-
-    private val amount by IntegerValue("ParticleAmount", 5, 1..20) { particle != "None" }
-
     // Sound
     private val sound by ListValue("Sound", arrayOf("None", "Hit", "Explode", "Orb", "Pop", "Splash", "Lightning"), "Pop")
 
@@ -144,7 +128,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         val renderManager = mc.renderManager
-        val entityLivingBase = if (onlykillauratargetesp.takeIf { isActive } == true) {
+        val entityLivingBase = if (onlykillauratargetesp) {
             killaura.target ?: return
         } else {
             combat.target ?: return
@@ -208,11 +192,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     @EventTarget
     fun onAttack(event: AttackEvent) {
         val target = event.targetEntity as? EntityLivingBase ?: return
-
-        repeat(amount) {
-            doEffect(target)
-        }
-
         attackEntity(target)
     }
 
@@ -298,39 +277,5 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
             "Lightning" -> player.playSound("ambient.weather.thunder", volume, pitch)
             "Explode" -> player.playSound("random.explode", volume, pitch)
         }
-    }
-
-    private fun doEffect(target: EntityLivingBase) {
-        when (particle) {
-            "Blood" -> spawnBloodParticle(EnumParticleTypes.BLOCK_CRACK, target)
-            "Crits" -> spawnEffectParticle(EnumParticleTypes.CRIT, target)
-            "Magic" -> spawnEffectParticle(EnumParticleTypes.CRIT_MAGIC, target)
-            "Lighting" -> spawnLightning(target)
-            "Smoke" -> spawnEffectParticle(EnumParticleTypes.SMOKE_NORMAL, target)
-            "Water" -> spawnEffectParticle(EnumParticleTypes.WATER_DROP, target)
-            "Heart" -> spawnEffectParticle(EnumParticleTypes.HEART, target)
-            "Fire" -> spawnEffectParticle(EnumParticleTypes.LAVA, target)
-        }
-    }
-
-    private fun spawnBloodParticle(particleType: EnumParticleTypes, target: EntityLivingBase) {
-        mc.theWorld.spawnParticle(particleType,
-            target.posX, target.posY + target.height - 0.75, target.posZ,
-            0.0, 0.0, 0.0,
-            Block.getStateId(Blocks.redstone_block.defaultState)
-        )
-    }
-
-    private fun spawnEffectParticle(particleType: EnumParticleTypes, target: EntityLivingBase) {
-        mc.effectRenderer.spawnEffectParticle(particleType.particleID,
-            target.posX, target.posY, target.posZ,
-            target.posX, target.posY, target.posZ
-        )
-    }
-
-    private fun spawnLightning(target: EntityLivingBase) {
-        mc.netHandler.handleSpawnGlobalEntity(S2CPacketSpawnGlobalEntity(
-            EntityLightningBolt(mc.theWorld, target.posX, target.posY, target.posZ)
-        ))
     }
 }

@@ -48,7 +48,7 @@ abstract class Background(val backgroundFile: File) {
 
 class ImageBackground(backgroundFile: File) : Background(backgroundFile) {
 
-    private val resourceLocation = ResourceLocation("${CLIENT_NAME2.lowercase()}/background.png")
+    private val resourceLocation = ResourceLocation("${CLIENT_NAME2.lowercase()}/background/background.png")
 
     override fun initBackground() {
         val image = ImageIO.read(backgroundFile.inputStream())

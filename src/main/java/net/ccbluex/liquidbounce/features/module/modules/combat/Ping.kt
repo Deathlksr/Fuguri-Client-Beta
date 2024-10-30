@@ -18,6 +18,7 @@ import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.entity.RenderManager
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.Packet
 import net.minecraft.network.handshake.client.C00Handshake
 import net.minecraft.network.play.client.*
@@ -28,6 +29,8 @@ import net.minecraft.network.status.client.C01PacketPing
 import net.minecraft.network.status.server.S01PacketPong
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.Vec3
+import net.minecraftforge.fml.common.gameevent.TickEvent
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 
@@ -50,7 +53,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val flushclickgui by BoolValue("Flush-Click-Gui", false)
     private val packetQueue = LinkedHashMap<Packet<*>, Long>()
     private val positions = LinkedHashMap<Vec3, Long>()
-    private var player: EntityOtherPlayerMP? = null
     private val resetTimer = MSTimer()
     private var ignoreWholeTick = false
     private val line by BoolValue("Render", true, subjective = true)

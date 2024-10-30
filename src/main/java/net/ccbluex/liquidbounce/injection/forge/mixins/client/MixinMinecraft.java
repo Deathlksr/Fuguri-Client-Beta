@@ -6,6 +6,7 @@
 package net.ccbluex.liquidbounce.injection.forge.mixins.client;
 
 import net.ccbluex.liquidbounce.FuguriBeta;
+import net.ccbluex.liquidbounce.features.module.modules.combat.TimeManipulation;
 import net.ccbluex.liquidbounce.features.module.modules.combat.TimerRange;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -161,9 +162,12 @@ public abstract class MixinMinecraft {
     @Redirect(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;runTick()V"))
     private void skipTicksCheck(Minecraft instance) {
         FuguriBeta.INSTANCE.getModuleManager().getModule(TimerRange.class);
+        FuguriBeta.INSTANCE.getModuleManager().getModule(TimeManipulation.class);
         if (TimerRange.handleTick()) return;
+        if (TimeManipulation.handleTick()) return;
         this.runTick();
     }
+
 
 
         @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;displayGuiScreen(Lnet/minecraft/client/gui/GuiScreen;)V", shift = At.Shift.AFTER))

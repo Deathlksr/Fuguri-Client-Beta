@@ -191,7 +191,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         RenderUtils.setGLCap(GL_DEPTH_TEST, false)
         RenderUtils.setGLCap(GL_BLEND, true)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        val text = friendtext + colorfriend
+        val text = friendtext + "$colorfriend"
         val stringWidth = fontRenderer.getStringWidth(text) / 2
         if (background) {
             Gui.drawRect((-stringWidth - 1), -14, (stringWidth + 1), -4, Integer.MIN_VALUE)
