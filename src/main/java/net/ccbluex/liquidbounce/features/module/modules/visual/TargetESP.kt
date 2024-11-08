@@ -61,7 +61,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     }
 
     // Mark - TargetESP
-    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "New", "New2", "FDP", "Sims", "RoundBox",), "LiesNew")
+    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "New", "FDP", "Sims", "RoundBox",), "LiesNew")
 
     override val tag
         get() = markValue
@@ -71,7 +71,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     val jelloRedValue by FloatValue("Jello-Red", 1F, 0F..1F) { markValue in arrayOf("Jello") }
     val jelloGreenValue by FloatValue("Jello-Green", 1F, 0F..1F) { markValue in arrayOf("Jello") }
     val jelloBlueValue by FloatValue("Jello-Blue", 1F, 0F..1F) { markValue in arrayOf("Jello") }
-    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New", ) }
+    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New" ) }
     val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     val liesalpha by FloatValue("Lies-Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }

@@ -9,6 +9,7 @@ import net.ccbluex.liquidbounce.features.command.CommandManager
 import net.ccbluex.liquidbounce.features.command.CommandManager.registerCommands
 import net.ccbluex.liquidbounce.features.module.ModuleManager
 import net.ccbluex.liquidbounce.features.module.ModuleManager.registerModules
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule.volume
 import net.ccbluex.liquidbounce.features.module.modules.player.scaffolds.Tower
 import net.ccbluex.liquidbounce.file.FileManager
 import net.ccbluex.liquidbounce.file.FileManager.loadAllConfigs
@@ -42,11 +43,11 @@ import net.ccbluex.liquidbounce.utils.ClassUtils.hasForge
 import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.ClientUtils.disableFastRender
 import net.ccbluex.liquidbounce.utils.inventory.InventoryUtils
+import net.ccbluex.liquidbounce.utils.misc.sound.TipSoundManager
 import net.ccbluex.liquidbounce.utils.render.MiniMapRegister
 import net.ccbluex.liquidbounce.utils.timing.TickedActions
 import net.ccbluex.liquidbounce.utils.timing.WaitTickUtils
 import kotlin.concurrent.thread
-
 
 object FuguriBeta {
 
@@ -61,7 +62,7 @@ object FuguriBeta {
     const val CLIENT_AUTHOR = "Deathlksr"
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
     const val CLIENT_WEBSITE = "fdpclient.net"
-    const val CLIENT_VERSION = "B2.3"
+    const val CLIENT_VERSION = "B2.6"
 
     val clientVersionText = gitInfo["git.build.version"]?.toString() ?: "unknown"
     val clientVersionNumber = clientVersionText.substring(1).toIntOrNull() ?: 0 // version format: "b<VERSION>" on legacy
@@ -88,7 +89,7 @@ object FuguriBeta {
     var combatManager = CombatManager
     val keyBindManager = KeyBindManager
     val macroManager = MacroManager
-
+    lateinit var tipSoundManager: TipSoundManager
 
     // HUD & ClickGUI
     val hud = HUD
@@ -109,6 +110,9 @@ object FuguriBeta {
         isLoadingConfig = true
 
         LOGGER.info("Starting Fuguri-Beta")
+
+        // Init SoundManager
+        tipSoundManager = TipSoundManager()
 
             runCatching {
                     // Load languages
@@ -230,6 +234,7 @@ object FuguriBeta {
 
                 callEvent(StartupEvent())
                 LOGGER.info("Successfully started client")
+                tipSoundManager.startUpSound.asyncPlay(volume)
             }
         }
 
@@ -239,6 +244,8 @@ object FuguriBeta {
     fun stopClient() {
         // Call client shutdown
         callEvent(ClientShutdownEvent())
+
+        tipSoundManager.shutdownSound.asyncPlay(volume)
 
         // Save all available configs
         saveAllConfigs()

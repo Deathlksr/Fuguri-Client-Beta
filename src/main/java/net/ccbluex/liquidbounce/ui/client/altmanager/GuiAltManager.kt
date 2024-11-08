@@ -14,7 +14,6 @@ import me.liuli.elixir.account.MojangAccount
 import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_CLOUD
 import net.ccbluex.liquidbounce.event.EventManager.callEvent
 import net.ccbluex.liquidbounce.event.SessionEvent
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.file.FileManager.accountsConfig
 import net.ccbluex.liquidbounce.file.FileManager.saveConfig
 import net.ccbluex.liquidbounce.ui.client.altmanager.menus.GuiLoginIntoAccount
@@ -26,7 +25,6 @@ import net.ccbluex.liquidbounce.utils.login.UserUtils.isValidTokenOffline
 import net.ccbluex.liquidbounce.utils.misc.HttpUtils.get
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils.randomAccount
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiSlot

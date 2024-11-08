@@ -6,11 +6,9 @@
 package net.ccbluex.liquidbounce.ui.client.gui
 
 import net.ccbluex.liquidbounce.FuguriBeta.IN_DEV
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.handler.api.ClientUpdate
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
@@ -44,8 +42,6 @@ class GuiUpdate : GuiScreen() {
         // Title
         glScalef(2F, 2F, 2F)
         Fonts.font35.drawCenteredStringWithShadow("New update available!", width / 4f, height / 16f + 20, Color(255, 0, 0).rgb)
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
     }
 
     override fun actionPerformed(button: GuiButton) {

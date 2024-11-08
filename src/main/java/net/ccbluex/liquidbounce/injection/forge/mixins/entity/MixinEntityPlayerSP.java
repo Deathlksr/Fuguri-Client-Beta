@@ -9,7 +9,7 @@ import net.ccbluex.liquidbounce.event.*;
 import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura;
 import net.ccbluex.liquidbounce.features.module.modules.exploit.AntiHunger;
 import net.ccbluex.liquidbounce.features.module.modules.exploit.Disabler;
-import net.ccbluex.liquidbounce.features.module.modules.movement.InvMove;
+import net.ccbluex.liquidbounce.features.module.modules.movement.SaveMoveKeys;
 import net.ccbluex.liquidbounce.features.module.modules.movement.NoSlow;
 import net.ccbluex.liquidbounce.features.module.modules.movement.Sneak;
 import net.ccbluex.liquidbounce.features.module.modules.movement.Sprint;
@@ -125,7 +125,7 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer {
     private void onUpdateWalkingPlayer(CallbackInfo ci) {
         EventManager.INSTANCE.callEvent(new MotionEvent(EventState.PRE));
 
-        final InvMove inventoryMove = InvMove.INSTANCE;
+        final SaveMoveKeys inventoryMove = SaveMoveKeys.INSTANCE;
         final Sneak sneak = Sneak.INSTANCE;
         final boolean fakeSprint = inventoryMove.handleEvents() && inventoryMove.getAacAdditionPro()
                 || AntiHunger.INSTANCE.handleEvents()

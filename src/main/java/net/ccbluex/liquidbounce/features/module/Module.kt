@@ -5,8 +5,10 @@
  */
 package net.ccbluex.liquidbounce.features.module
 
+import net.ccbluex.liquidbounce.FuguriBeta
 import net.ccbluex.liquidbounce.FuguriBeta.isStarting
 import net.ccbluex.liquidbounce.event.Listenable
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule.volume
 import net.ccbluex.liquidbounce.features.module.modules.client.GameDetector
 import net.ccbluex.liquidbounce.file.FileManager.modulesConfig
 import net.ccbluex.liquidbounce.file.FileManager.saveConfig
@@ -21,8 +23,6 @@ import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextFloat
 import net.ccbluex.liquidbounce.utils.timing.TickedActions.TickScheduler
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.Value
-import net.minecraft.client.audio.PositionedSoundRecord
-import net.minecraft.util.ResourceLocation
 import org.lwjgl.input.Keyboard
 
 open class Module(
@@ -97,7 +97,7 @@ open class Module(
 
             // Play sound and add notification
             if (!isStarting) {
-                mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("random.click"), 1F))
+                if (value) FuguriBeta.tipSoundManager.enableSound.asyncPlay(volume) else FuguriBeta.tipSoundManager.disableSound.asyncPlay(volume)
                 addNotification(Notification(name,"${if (value) "Enabled" else "Disabled"} §r$name", if (value) Type.SUCCESS else Type.ERROR, 1000))
             }
 

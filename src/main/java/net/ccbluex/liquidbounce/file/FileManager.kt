@@ -53,6 +53,11 @@ object FileManager : MinecraftInstance() {
     var nowConfig = "default"
 
     /**
+     * The Sounds dir.
+     */
+    val soundsDir: File = File(dir, "sound")
+
+    /**
      * Setup folder
      */
     fun setupFolder() {

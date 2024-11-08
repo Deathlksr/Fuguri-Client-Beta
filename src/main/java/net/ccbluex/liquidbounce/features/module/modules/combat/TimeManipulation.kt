@@ -58,7 +58,7 @@ object TimeManipulation : Module("TimeManipulation", Category.COMBAT, hideModule
     private val reverseDelay = IntegerValue("ReverseDelay", 5, 0..20)
     private val reverseTargetMaxHurtTime = IntegerValue("ReverseTargetMaxHurtTime", 10, 0..10)
     private var reverseAuraClicks = BoolValue("ReverseAuraClick",  true)
-    private val reverseAuraClick = ListValue("ReverseAuraMode", arrayOf("BeforeTeleport", "AfterTeleport"), "BeforeTeleport")
+    private val reverseAuraClick = ListValue("ReverseAuraMode", arrayOf("BeforeTeleport", "AfterTeleport"), "BeforeTeleport") { reverseAuraClicks.get() }
 
     private val killAura: KillAura = KillAura
 
@@ -84,6 +84,9 @@ object TimeManipulation : Module("TimeManipulation", Category.COMBAT, hideModule
         val screen = mc.currentScreen
         if (screen is GuiInventory) return
         if (screen is GuiContainer) return
+        if (mc.thePlayer.isInWater) return
+        if (mc.thePlayer.isInLava) return
+        if (mc.thePlayer.isInWeb) return
         if (!MovementUtils.isMoving) return
         if (Scaffold.state) return
         Blink.state = blink.get()
@@ -250,6 +253,9 @@ object TimeManipulation : Module("TimeManipulation", Category.COMBAT, hideModule
         if (cooldown > 0) --cooldown
         return false
     }
+
+    override val tag
+        get() = "${maxTimeValue.get()} : $reverseTickTime"
 
     @JvmStatic
     fun freezeAnimation(): Boolean {

@@ -48,6 +48,7 @@
     "network.MixinNetworkManager",
     "network.MixinNetworkPlayerInfo",
     "packets.MixinC00Handshake",
+    "packets.MixinTimer",
     "render.MixinEffectRenderer",
     "render.MixinEntityRenderer",
     "render.MixinFontRenderer",
@@ -72,7 +73,6 @@
     "tweaks.MixinMinecraftServer",
     "world.MixinChunk",
     "world.MixinWorld",
-    "packets.MixinTimer",
     "world.MixinWorldClient"
   ],
   "client": [

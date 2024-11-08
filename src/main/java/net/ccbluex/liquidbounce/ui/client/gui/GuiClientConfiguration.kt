@@ -7,25 +7,21 @@ package net.ccbluex.liquidbounce.ui.client.gui
 
 import net.ccbluex.liquidbounce.FuguriBeta.clientTitle
 import net.ccbluex.liquidbounce.FuguriBeta.background
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.file.FileManager.backgroundImageFile
 import net.ccbluex.liquidbounce.file.FileManager.backgroundShaderFile
 import net.ccbluex.liquidbounce.file.FileManager.saveConfig
 import net.ccbluex.liquidbounce.file.FileManager.valuesConfig
 import net.ccbluex.liquidbounce.handler.lang.LanguageManager
-import net.ccbluex.liquidbounce.handler.lang.translationMenu
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.Background
 import net.ccbluex.liquidbounce.utils.MinecraftInstance.Companion.mc
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils
 import net.ccbluex.liquidbounce.utils.render.IconUtils
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraftforge.fml.client.config.GuiSlider
 import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.Display
-import java.awt.Color
 import java.nio.file.Files
 
 class GuiClientConfiguration(val prevGui: GuiScreen) : GuiScreen() {

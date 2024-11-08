@@ -34,6 +34,8 @@ object ClickGUIModule : Module("ClickGUI", Category.CLIENT, Keyboard.KEY_RSHIFT,
     val spacedModules by BoolValue("SpacedModules", false)
     val panelsForcedInBoundaries by BoolValue("PanelsForcedInBoundaries", false)
 
+    val volume by FloatValue("Volume", 1F, 0F..1F)
+
     private val colorRainbowValue = BoolValue("Rainbow", false)
     private val colorRed by IntegerValue("R", 0, 0..255)
     private val colorGreen by IntegerValue("G", 160, 0..255)

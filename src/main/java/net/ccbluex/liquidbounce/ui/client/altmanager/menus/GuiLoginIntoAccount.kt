@@ -8,19 +8,16 @@ package net.ccbluex.liquidbounce.ui.client.altmanager.menus
 import me.liuli.elixir.account.CrackedAccount
 import net.ccbluex.liquidbounce.event.EventManager.callEvent
 import net.ccbluex.liquidbounce.event.SessionEvent
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.file.FileManager.accountsConfig
 import net.ccbluex.liquidbounce.file.FileManager.saveConfig
 import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils.randomUsername
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiTextField
 import net.minecraft.util.Session
 import org.lwjgl.input.Keyboard
-import java.awt.Color
 import java.io.IOException
 
 class GuiLoginIntoAccount(private val prevGui: GuiAltManager, val directLogin: Boolean = false) : GuiScreen() {
@@ -65,8 +62,6 @@ class GuiLoginIntoAccount(private val prevGui: GuiAltManager, val directLogin: B
 
         if (username.text.isEmpty() && !username.isFocused)
             Fonts.font40.drawCenteredStringWithShadow("§7Username", width / 2 - 72f, height / 2 - 84f, 0xffffff)
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }

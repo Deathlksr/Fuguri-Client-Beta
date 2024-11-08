@@ -5,17 +5,14 @@
  */
 package net.ccbluex.liquidbounce.ui.client.altmanager.menus
 
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.login.LoginUtils
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawRect
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiTextField
 import org.lwjgl.input.Keyboard
-import java.awt.Color
 import kotlin.concurrent.thread
 
 class GuiSessionLogin(private val prevGui: GuiAltManager) : GuiScreen() {
@@ -70,8 +67,6 @@ class GuiSessionLogin(private val prevGui: GuiAltManager) : GuiScreen() {
 
         if (sessionTokenField.text.isEmpty() && !sessionTokenField.isFocused)
             Fonts.font40.drawCenteredStringWithShadow("§7Session Token", width / 2f - 60f, height / 2 - 84f, 0xffffff)
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
 
         // Call sub method
         super.drawScreen(mouseX, mouseY, partialTicks)

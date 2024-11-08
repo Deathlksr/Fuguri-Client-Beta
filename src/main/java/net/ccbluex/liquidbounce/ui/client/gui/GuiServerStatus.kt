@@ -5,11 +5,9 @@
  */
 package net.ccbluex.liquidbounce.ui.client.gui
 
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.handler.lang.translationMenu
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.misc.HttpUtils.responseCode
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawRect
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
@@ -69,8 +67,6 @@ class GuiServerStatus(private val prevGui: GuiScreen) : GuiScreen() {
         }
 
         Fonts.fontBold180.drawCenteredString(translationMenu("serverStatus"), width / 2F, height / 8f + 5F, 4673984, true)
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }

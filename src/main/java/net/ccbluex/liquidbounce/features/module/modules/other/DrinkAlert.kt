@@ -1,28 +1,47 @@
 package net.ccbluex.liquidbounce.features.module.modules.other
 
+import net.ccbluex.liquidbounce.event.EventState
+import net.ccbluex.liquidbounce.event.EventTarget
+import net.ccbluex.liquidbounce.event.MotionEvent
+import net.ccbluex.liquidbounce.event.WorldEvent
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
+import net.ccbluex.liquidbounce.utils.timing.MSTimer
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.item.ItemPotion
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 object DrinkAlert : Module("DrinkAlert", Category.OTHER, hideModule = false) {
+    private val alertTimer = MSTimer()
+    private val drinkers = arrayListOf<EntityLivingBase>()
 
-    @SubscribeEvent
-    fun onPlayerUseItem(event: PlayerUseItemEvent.Finish) {
-        val itemStack = event.item
-        if (itemStack.item is ItemPotion) {
-            val potionItem = itemStack.item as ItemPotion
-            val effects = potionItem.getEffects(itemStack)
-            if (effects != null && effects.isNotEmpty()) {
-                val player = event.entityPlayer
-                val playerName = player.name
+    override fun onDisable() {
+        clearDrag()
+    }
 
-                for (effect in effects) {
-                    displayChatMessage("§e$playerName§r is drinking: ${effect.effectName}")
+    @EventTarget
+    fun onWorld(event: WorldEvent) {
+        clearDrag()
+    }
+
+    @EventTarget
+    fun onMotion(event: MotionEvent) {
+        if (event.eventState == EventState.PRE) {
+            for (player in mc.theWorld.playerEntities) {
+                if (player !in drinkers && player != mc.thePlayer && player.isUsingItem && player.heldItem != null && player.heldItem.item is ItemPotion) {
+                    displayChatMessage("§e" + player.name + "§r is drinking!")
+                    drinkers.add(player)
+                    alertTimer.reset()
                 }
             }
+            if (alertTimer.hasTimePassed(3000L) && drinkers.isNotEmpty()) {
+                clearDrag()
+            }
         }
+    }
+
+    private fun clearDrag() {
+        drinkers.clear()
+        alertTimer.reset()
     }
 }

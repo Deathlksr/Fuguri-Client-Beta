@@ -6,7 +6,6 @@
 package net.ccbluex.liquidbounce.ui.client.gui
 
 import net.ccbluex.liquidbounce.features.module.modules.client.ClientSpoofer.possibleBrands
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.handler.payload.ClientFixes.blockFML
 import net.ccbluex.liquidbounce.handler.payload.ClientFixes.blockPayloadPackets
 import net.ccbluex.liquidbounce.handler.payload.ClientFixes.blockProxyPacket
@@ -15,11 +14,9 @@ import net.ccbluex.liquidbounce.handler.payload.ClientFixes.fmlFixesEnabled
 import net.ccbluex.liquidbounce.file.FileManager.saveConfig
 import net.ccbluex.liquidbounce.file.FileManager.valuesConfig
 import net.ccbluex.liquidbounce.ui.font.Fonts
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
-import java.awt.Color
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList

@@ -14,7 +14,6 @@ import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule
 import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule.scale
 import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule.scrolls
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.file.FileManager.clickGuiConfig
 import net.ccbluex.liquidbounce.file.FileManager.saveConfig
 import net.ccbluex.liquidbounce.ui.client.clickgui.elements.ButtonElement
@@ -30,7 +29,6 @@ import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
 import net.ccbluex.liquidbounce.utils.SettingsUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.deltaTime
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawImage
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.client.gui.GuiScreen
@@ -40,7 +38,6 @@ import net.minecraft.util.ResourceLocation
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11.glScaled
-import java.awt.Color
 import kotlin.math.roundToInt
 
 object ClickGui : GuiScreen() {
@@ -188,8 +185,6 @@ object ClickGui : GuiScreen() {
         glScaled(1.0, 1.0, 1.0)
 
         assumeNonVolatile = false
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }

@@ -7,7 +7,6 @@ package net.ccbluex.liquidbounce.injection.forge.mixins.gui;
 
 import net.ccbluex.liquidbounce.features.command.CommandManager;
 import net.ccbluex.liquidbounce.features.module.modules.client.ChatControl;
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule;
 import net.ccbluex.liquidbounce.file.FileManager;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.client.gui.Gui;
@@ -177,8 +176,6 @@ public abstract class MixinGuiChat extends MixinGuiScreen {
 
         IChatComponent ichatcomponent =
                 mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-
-        RenderUtils.INSTANCE.drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, new Color(HUDModule.INSTANCE.getGuiColor()));
 
         if (ichatcomponent != null)
             handleComponentHover(ichatcomponent, mouseX, mouseY);

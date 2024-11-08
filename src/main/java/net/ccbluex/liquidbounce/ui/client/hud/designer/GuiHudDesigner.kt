@@ -5,16 +5,13 @@
  */
 package net.ccbluex.liquidbounce.ui.client.hud.designer
 
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.file.FileManager.hudConfig
 import net.ccbluex.liquidbounce.file.FileManager.saveConfig
 import net.ccbluex.liquidbounce.ui.client.hud.HUD
 import net.ccbluex.liquidbounce.ui.client.hud.element.Element
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
-import java.awt.Color
 import kotlin.math.min
 
 class GuiHudDesigner : GuiScreen() {
@@ -48,8 +45,6 @@ class GuiHudDesigner : GuiScreen() {
                 }
             }
         }
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {

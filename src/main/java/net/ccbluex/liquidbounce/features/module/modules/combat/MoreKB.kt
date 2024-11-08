@@ -22,18 +22,22 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
     // Timing and tick controls
     private val mindelay by IntegerValue("MinDelayTicks", 4, 0..10) { mode in arrayOf("LegitFast") }
     private val maxdelay by IntegerValue("MaxDelayTicks", 8, 0..10) { mode in arrayOf("LegitFast") }
-    private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast", "WTap") }
-    private val maxlfticks by IntegerValue("MaxTicks", 3, 1..10) { mode in arrayOf("LegitFast", "WTap") }
+    private val minlfticks by IntegerValue("MinTicks", 1, 1..10) { mode in arrayOf("LegitFast") }
+    private val maxlfticks by IntegerValue("MaxTicks", 3, 1..10) { mode in arrayOf("LegitFast") }
 
     // KillAura and misc settings
     private val onlyKillaura by BoolValue("OnlyKillAura", false) { mode in arrayOf("LegitFast") }
     private val falseclientsprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("LegitFast") }
     private val presssprint by BoolValue("PressSprint", true) { mode in arrayOf("LegitFast") }
     private val pressforward by BoolValue("PressForward", true) { mode in arrayOf("LegitFast") }
-    private val debuglf by BoolValue("Debug", false) { mode in arrayOf("LegitFast", "WTap") }
+    private val debuglf by BoolValue("Debug", false) { mode in arrayOf("LegitFast") }
 
     // Internal timing variables for WTap and LegitFast modes
     private var legitfastTicks = 0
+
+    // Init KillAura and CombatManager
+    private var ka = KillAura
+    private var cm = CombatManager
 
     // Resets on module toggle
     override fun onToggle(state: Boolean) {
@@ -58,22 +62,22 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false) {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        if (!MovementUtils.isMoving) return
         when (mode) {
             "LegitFast" -> handleLegitFast()
         }
     }
 
     private fun handleLegitFast() {
-        if (!MovementUtils.isMoving) return
         if (onlyKillaura) {
-            if (KillAura.target?.hurtTime == 10) {
+            if (ka.target?.hurtTime == 10) {
                 TimeUtils.delay(nextInt(mindelay, maxdelay)) {
                     if (debuglf) displayChatMessage("Start-False-Sprint")
                     legitfastTicks = nextInt(minlfticks, maxlfticks)
                 }
             }
         } else {
-            if (CombatManager.target?.hurtTime == 10) {
+            if (cm.target?.hurtTime == 10) {
                 TimeUtils.delay(nextInt(mindelay, maxdelay)) {
                     if (debuglf) displayChatMessage("Start-False-Sprint")
                     legitfastTicks = nextInt(minlfticks, maxlfticks)

@@ -8,6 +8,7 @@ package net.ccbluex.liquidbounce.injection.forge.mixins.client;
 import net.ccbluex.liquidbounce.FuguriBeta;
 import net.ccbluex.liquidbounce.features.module.modules.combat.TimeManipulation;
 import net.ccbluex.liquidbounce.features.module.modules.combat.TimerRange;
+import net.ccbluex.liquidbounce.injection.forge.SplashProgressLock;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.Entity;
@@ -19,7 +20,6 @@ import net.ccbluex.liquidbounce.features.module.modules.combat.AutoClicker;
 import net.ccbluex.liquidbounce.features.module.modules.exploit.AbortBreaking;
 import net.ccbluex.liquidbounce.features.module.modules.exploit.MultiActions;
 import net.ccbluex.liquidbounce.features.module.modules.other.FastPlace;
-import net.ccbluex.liquidbounce.injection.forge.SplashProgressLock;
 import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration;
 import net.ccbluex.liquidbounce.ui.client.gui.GuiMainMenu;
 import net.ccbluex.liquidbounce.ui.client.gui.GuiUpdate;
@@ -159,6 +159,7 @@ public abstract class MixinMinecraft {
             }
         }
     }
+
     @Redirect(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;runTick()V"))
     private void skipTicksCheck(Minecraft instance) {
         FuguriBeta.INSTANCE.getModuleManager().getModule(TimerRange.class);
@@ -168,9 +169,7 @@ public abstract class MixinMinecraft {
         this.runTick();
     }
 
-
-
-        @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;displayGuiScreen(Lnet/minecraft/client/gui/GuiScreen;)V", shift = At.Shift.AFTER))
+    @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;displayGuiScreen(Lnet/minecraft/client/gui/GuiScreen;)V", shift = At.Shift.AFTER))
     private void afterMainScreen(CallbackInfo callbackInfo) {
         if (ClientUpdate.INSTANCE.hasUpdate()) {
             displayGuiScreen(new GuiUpdate());

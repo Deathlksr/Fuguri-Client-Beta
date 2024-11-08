@@ -17,7 +17,6 @@ import net.ccbluex.liquidbounce.script.ScriptManager.scriptsFolder
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiSlot
@@ -56,8 +55,6 @@ class GuiScripts(private val prevGui: GuiScreen) : GuiScreen() {
         list.drawScreen(mouseX, mouseY, partialTicks)
 
         Fonts.font40.drawCenteredStringWithShadow("§9§lScripts", width / 2f, 28f, 0xffffff)
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }

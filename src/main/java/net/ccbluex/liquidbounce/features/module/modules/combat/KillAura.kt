@@ -551,30 +551,30 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
      */
     @EventTarget
     fun onRender2D(event: Render2DEvent) {
-            if (displayDebug.get()) {
-                val sr = ScaledResolution(mc)
-                val blockingStatus = blockStatus
-                val maxRange = this.maxRange
+        if (displayDebug.get()) {
+            val sr = ScaledResolution(mc)
+            val blockingStatus = blockStatus
+            val maxRange = this.maxRange
 
-                val reach = if (target != null) {
-                    mc.thePlayer.getDistanceToEntityBox(target!!)
-                } else {
-                    0.0
-                }
+            val reach = if (target != null) {
+                mc.thePlayer.getDistanceToEntityBox(target!!)
+            } else {
+                0.0
+            }
 
-                val formattedReach = String.format("%.2f", reach)
+            val formattedReach = String.format("%.2f", reach)
 
-                val rangeString = "Range: $maxRange"
-                val reachString = "Reach: $formattedReach"
+            val rangeString = "Range: $maxRange"
+            val reachString = "Reach: $formattedReach"
 
-                val cpsString = textElement.getReplacement("cps")
-                val status = "Blocking: ${if (blockingStatus) "Yes" else "No"}, CPS: $cpsString, $reachString, $rangeString"
-                Fonts.minecraftFont.drawStringWithShadow(
-                    status,
-                    sr.scaledWidth / 2f - Fonts.minecraftFont.getStringWidth(status) / 2f,
-                    sr.scaledHeight / 2f - 60f,
-                    Color.orange.rgb
-                )
+            val cpsString = textElement.getReplacement("cps")
+            val status = "Blocking: ${if (blockingStatus) "Yes" else "No"}, CPS: $cpsString, $reachString, $rangeString"
+            Fonts.minecraftFont.drawStringWithShadow(
+                status,
+                sr.scaledWidth / 2f - Fonts.minecraftFont.getStringWidth(status) / 2f,
+                sr.scaledHeight / 2f - 60f,
+                Color.orange.rgb
+            )
         }
     }
 
@@ -606,12 +606,12 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
         // Randomize cooldown
         val hurtTime = nextInt(minhurtTime, maxhurtTime)
 
-            if (hittable) {
-                if (currentTarget.hurtTime < hurtTime || (mc.thePlayer.hurtTime > 0 && SmartAttack)) {
-                } else {
-                    return
-                }
+        if (hittable) {
+            if (currentTarget.hurtTime < hurtTime || (mc.thePlayer.hurtTime > 0 && SmartAttack)) {
+            } else {
+                return
             }
+        }
 
         // Check if enemy is not hittable
         if (!hittable && !noRotation) {

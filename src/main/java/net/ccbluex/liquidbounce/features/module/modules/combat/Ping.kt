@@ -4,9 +4,11 @@ import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
+import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
 import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacket
 import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.glColor
 import net.ccbluex.liquidbounce.utils.timing.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
@@ -28,7 +30,10 @@ import java.awt.Color
 
 object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule = false) {
 
-    private val delay by IntegerValue("Delay", 500, 0..1000)
+    private val randomdelay by BoolValue("RandomDelay", false)
+    private val delay by IntegerValue("Delay", 500, 0..1000) { !randomdelay }
+    private val mindelay = IntegerValue("MinDelay", 500, 0..1000) { randomdelay }
+    private val maxdelay = IntegerValue("MaxDelay", 520, 0..1000) { randomdelay }
     private val recoildelay by IntegerValue("Recoil-Delay", 0, 0..250)
     private val ticksexxisted by BoolValue("Ticks-Existed", true)
     private val minticksalive by IntegerValue("Max-Ticks-Existed", 15, 0..60) { ticksexxisted }
@@ -43,6 +48,8 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val flushuseitem by BoolValue("Flush-UsingItem", false)
     private val flushback by BoolValue("Flush-Back", false)
     private val flushclickgui by BoolValue("Flush-Click-Gui", false)
+    private val debugreset by BoolValue("Debug-Reset", false)
+    private val debug by BoolValue("Debug-Ping", false)
     private val packetQueue = LinkedHashMap<Packet<*>, Long>()
     private val positions = LinkedHashMap<Vec3, Long>()
     private val resetTimer = MSTimer()
@@ -54,6 +61,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val blue by FloatValue("blue", 1.0F, 0.0F..1.0F) { line }
 
     private var ticksFlag = 0
+    private var randomdelays = 0
 
     override fun onDisable() {
         if (mc.thePlayer == null) {
@@ -65,12 +73,17 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     @EventTarget
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
+        val serverData = mc.currentServerData
 
         if (!handleEvents())
             return
 
         if (mc.thePlayer == null || mc.thePlayer.isDead)
             return
+
+        if (mc.isIntegratedServerRunning || serverData == null) {
+            return
+        }
 
         if (ticksexxisted) {
             if (mc.thePlayer.ticksExisted < minticksalive) {
@@ -203,6 +216,11 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+       randomdelays = RandomUtils.nextInt(mindelay.get(), maxdelay.get())
+       if (debug) {
+           if (randomdelay) displayChatMessage("Delayed to $randomdelays mc")
+           if (!randomdelay) displayChatMessage("Delayed to $delay mc")
+       }
         if (ticksFlag > 0) {
             ticksFlag--
         }
@@ -219,7 +237,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     fun onGameLoop(event: GameLoopEvent) {
         mc.thePlayer ?: return
 
-        if (!resetTimer.hasTimePassed(0))
+        if (!resetTimer.hasTimePassed(recoildelay))
             return
 
         handlePackets()
@@ -275,12 +293,13 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         packetQueue.clear()
         positions.clear()
         ignoreWholeTick = true
+        if (debugreset) displayChatMessage("Reset-ed")
     }
 
     private fun handlePackets() {
         synchronized(packetQueue) {
             packetQueue.entries.removeAll { (packet, timestamp) ->
-                if (timestamp <= System.currentTimeMillis() - delay) {
+                if (timestamp <= System.currentTimeMillis() - if (randomdelay) randomdelays else delay) {
                     sendPacket(packet, false)
                     true
                 } else false
@@ -288,7 +307,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         }
 
         synchronized(positions) {
-            positions.entries.removeAll { (_, timestamp) -> timestamp <= System.currentTimeMillis() - delay }
+            positions.entries.removeAll { (_, timestamp) -> timestamp <= System.currentTimeMillis() - if (randomdelay) randomdelays else delay }
         }
     }
 }

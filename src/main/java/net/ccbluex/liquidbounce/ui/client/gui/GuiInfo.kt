@@ -5,16 +5,11 @@
  */
 package net.ccbluex.liquidbounce.ui.client.gui
 
-import net.ccbluex.liquidbounce.features.module.modules.client.HUDModule.guiColor
 import net.ccbluex.liquidbounce.utils.APIConnecter
-import net.ccbluex.liquidbounce.utils.APIConnecter.donate
-import net.ccbluex.liquidbounce.utils.URLComponent
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawBloom
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
-import java.awt.Color
 
 class GuiInfo(private val prevGui: GuiScreen) : GuiScreen() {
 
@@ -38,8 +33,6 @@ class GuiInfo(private val prevGui: GuiScreen) : GuiScreen() {
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         drawDefaultBackground()
-
-        drawBloom(mouseX - 5, mouseY - 5, 10, 10, 16, Color(guiColor))
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }

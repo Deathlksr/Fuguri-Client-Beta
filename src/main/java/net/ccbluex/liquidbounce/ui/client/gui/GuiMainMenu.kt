@@ -5,6 +5,8 @@ import net.ccbluex.liquidbounce.FuguriBeta.clientVersionText
 import net.ccbluex.liquidbounce.ui.client.gui.button.ImageButton
 import net.ccbluex.liquidbounce.ui.client.gui.button.QuitButton
 import net.ccbluex.liquidbounce.ui.font.Fonts.minecraftFont
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawShadow
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawShadowRect
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
@@ -31,13 +33,13 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         btnClientOptions = GuiButton(2, width / 2 - 66, height / 2 - 80 + 120 - 4, buttonWidth, buttonHeight, "Settings")
 
         btnMinecraftOptions = ImageButton(
-            "MINECRAFT SETTINGS",
+            "Minecraft Settings",
             ResourceLocation("fdpclient/mainmenu/cog.png"),
             width / 2 - 10,
             yPos
         )
         btnForgeModList = ImageButton(
-            "FORGE MODS",
+            "Forge Mods",
             ResourceLocation("fdpclient/mainmenu/forge.png"),
             width / 2 + 5,
             yPos
@@ -73,6 +75,23 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         drawBackground(0)
 
         GlStateManager.pushMatrix()
+
+        drawShadowRect(
+            (width / 2 - 70).toFloat(),
+            (height / 2 - 15).toFloat(),
+            (width / 2 + 71).toFloat(),
+            (height / 2 + 60).toFloat(),
+            0F,
+            Color(0, 0, 0, 50).rgb.toFloat().toInt()
+        )
+
+        drawShadow(
+            (width / 2 - 70).toFloat(),
+            (height / 2 - 15).toFloat(),
+            141F,
+            75F,
+        )
+
         GlStateManager.disableAlpha()
         GlStateManager.enableAlpha()
         GlStateManager.enableBlend()

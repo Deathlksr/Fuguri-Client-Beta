@@ -49,7 +49,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
     private val modeAuraClick = ListValue("ModeAuraClick", arrayOf("BeforeTimer", "AfterTimer"), "BeforeTimer") { auraClick.get() }
     private val onlyPlayer = BoolValue("OnlyPlayer", true)
     private val debug = BoolValue("Debug", false)
-    private val betterAnimation = BoolValue("BetterAnimation", true)
+    private val betterAnimation = BoolValue("BetterAnimation", true) { !freezeAnim }
     val freezeAnim by BoolValue("FixAnimation", true)
     private val killAura: KillAura = KillAura
 
@@ -70,6 +70,9 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
         val screen = mc.currentScreen
         if (screen is GuiInventory) return
         if (screen is GuiContainer) return
+        if (mc.thePlayer.isInWater) return
+        if (mc.thePlayer.isInLava) return
+        if (mc.thePlayer.isInWeb) return
         if (!MovementUtils.isMoving) return
         if (Scaffold.state) return
         Blink.state = blink.get()
@@ -202,6 +205,9 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
         if (cooldown > 0) --cooldown
         return false
     }
+
+    override val tag
+        get() = "${maxTimeValue.get()}"
 
     @JvmStatic
     fun freezeAnimation(): Boolean {

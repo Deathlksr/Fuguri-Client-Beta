@@ -1,12 +1,12 @@
 package net.ccbluex.liquidbounce.ui.client.clickgui.style
 
+import net.ccbluex.liquidbounce.FuguriBeta
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule.volume
 import net.ccbluex.liquidbounce.ui.client.clickgui.Panel
 import net.ccbluex.liquidbounce.ui.client.clickgui.elements.ButtonElement
 import net.ccbluex.liquidbounce.ui.client.clickgui.elements.ModuleElement
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
 import net.ccbluex.liquidbounce.value.Value
-import net.minecraft.client.audio.PositionedSoundRecord
-import net.minecraft.util.ResourceLocation
 import org.lwjgl.input.Mouse
 import java.awt.Color
 import java.math.BigDecimal
@@ -24,9 +24,9 @@ abstract class Style : MinecraftInstance() {
     abstract fun drawButtonElement(mouseX: Int, mouseY: Int, buttonElement: ButtonElement)
     abstract fun drawModuleElementAndClick(mouseX: Int, mouseY: Int, moduleElement: ModuleElement, mouseButton: Int?): Boolean
 
-    fun clickSound() = mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("gui.button.press"), 1f))
+    fun clickSound() = FuguriBeta.tipSoundManager.enableSound.asyncPlay(volume)
 
-    fun showSettingsSound() = mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("random.bow"), 1f))
+    fun showSettingsSound() = FuguriBeta.tipSoundManager.popSound.asyncPlay(volume)
 
     protected fun round(v: Float): Float {
         var bigDecimal = BigDecimal(v.toString())
