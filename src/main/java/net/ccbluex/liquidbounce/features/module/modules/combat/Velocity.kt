@@ -25,14 +25,13 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
     )
 
     // Intave MotionXZ
-    private val reduce by BoolValue("Reduce", false)
-    private val Motionxz by FloatValue("XZ-SprintHit", 0.6F, 0F..1F) { mode in arrayOf("Intave") && reduce }
-    private val MotionnotSprintxz by FloatValue("XZ-Hit", 1.0F, 0F..1F) { mode in arrayOf("Intave") && reduce }
+    private val Motionxz by FloatValue("XZ-SprintHit", 0.6F, 0F..1F) { mode in arrayOf("Intave") }
+    private val MotionnotSprintxz by FloatValue("XZ-Hit", 1.0F, 0F..1F) { mode in arrayOf("Intave") }
 
     // Intave Settings
-    private val falsesprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("Intave") && reduce }
-    private val debugmotion by BoolValue("DebugSprintHit", false) { mode in arrayOf("Intave") && reduce }
-    private val debugmotionhit by BoolValue("DebugHit", false) { mode in arrayOf("Intave") && reduce }
+    private val falsesprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("Intave") }
+    private val debugmotion by BoolValue("DebugSprintHit", false) { mode in arrayOf("Intave") }
+    private val debugmotionhit by BoolValue("DebugHit", false) { mode in arrayOf("Intave") }
 
     // Intave Jump
     private val intavejump by BoolValue("Jump", false) { mode in arrayOf("Intave") }
@@ -56,18 +55,16 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
     fun onAttack(event: AttackEvent) {
         when (mode.lowercase()) {
             "intave" -> {
-                if (reduce) {
-                    if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.isSprinting) {
-                        mc.thePlayer.motionX *= Motionxz
-                        mc.thePlayer.motionZ *= Motionxz
-                        if (debugmotion) displayChatMessage("ReducedSprintHit")
-                        if (falsesprint) mc.thePlayer.isSprinting = false
-                    } else if (mc.thePlayer.hurtTime > 0) {
-                        mc.thePlayer.motionX *= MotionnotSprintxz
-                        mc.thePlayer.motionZ *= MotionnotSprintxz
-                        if (debugmotionhit) displayChatMessage("ReducedHit")
-                        if (falsesprint) mc.thePlayer.isSprinting = false
-                    }
+                if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.isSprinting) {
+                    mc.thePlayer.motionX *= Motionxz
+                    mc.thePlayer.motionZ *= Motionxz
+                    if (debugmotion) displayChatMessage("ReducedSprintHit")
+                    if (falsesprint) mc.thePlayer.isSprinting = false
+                } else if (mc.thePlayer.hurtTime > 0) {
+                    mc.thePlayer.motionX *= MotionnotSprintxz
+                    mc.thePlayer.motionZ *= MotionnotSprintxz
+                    if (debugmotionhit) displayChatMessage("ReducedHit")
+                    if (falsesprint) mc.thePlayer.isSprinting = false
                 }
             }
         }

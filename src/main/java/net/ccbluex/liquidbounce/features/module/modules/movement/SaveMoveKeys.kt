@@ -25,7 +25,7 @@ import net.minecraft.client.settings.KeyBinding
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 
-object SaveMoveKeys : Module("InventoryMove", Category.MOVEMENT, gameDetecting = false, hideModule = false) {
+object SaveMoveKeys : Module("SaveMoveKeys", Category.MOVEMENT, gameDetecting = false, hideModule = false) {
 
     private val fullMovements by BoolValue("FullMovements", false)
     private val notInChests by BoolValue("NotInChests", false)

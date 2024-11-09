@@ -14,8 +14,12 @@ import net.ccbluex.liquidbounce.utils.timing.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
+import net.minecraft.client.gui.GuiChat
+import net.minecraft.client.gui.GuiNewChat
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.gui.inventory.GuiInventory
+import net.minecraft.entity.EntityLiving
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.network.Packet
 import net.minecraft.network.handshake.client.C00Handshake
 import net.minecraft.network.play.client.*
@@ -40,6 +44,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val flushflag by BoolValue("Flush-Flag", true)
     private val tickflag by IntegerValue("Ticks-Flag", 3, 0..60) { flushflag }
     private val flushoninv by BoolValue("Flush-Inventory", true)
+    private val flushchat by BoolValue("Flush-Chat", true)
     private val flushoncontainer by BoolValue("Flush-Container", false)
     private val flushonattack by BoolValue("Flush-Attack", true)
     private val flushblock by BoolValue("Flush-Blocking", true)
@@ -48,8 +53,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val flushuseitem by BoolValue("Flush-UsingItem", false)
     private val flushback by BoolValue("Flush-Back", false)
     private val flushclickgui by BoolValue("Flush-Click-Gui", false)
-    private val debugreset by BoolValue("Debug-Reset", false)
-    private val debug by BoolValue("Debug-Ping", false)
     private val packetQueue = LinkedHashMap<Packet<*>, Long>()
     private val positions = LinkedHashMap<Vec3, Long>()
     private val resetTimer = MSTimer()
@@ -149,6 +152,13 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
         val screen = mc.currentScreen
 
+        if (flushchat) {
+            if (screen is GuiChat) {
+                blink()
+                return
+            }
+        }
+
         if (flushoninv) {
             if (screen is GuiInventory) {
                 blink()
@@ -217,10 +227,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
        randomdelays = RandomUtils.nextInt(mindelay.get(), maxdelay.get())
-       if (debug) {
-           if (randomdelay) displayChatMessage("Delayed to $randomdelays mc")
-           if (!randomdelay) displayChatMessage("Delayed to $delay mc")
-       }
+
         if (ticksFlag > 0) {
             ticksFlag--
         }
@@ -228,7 +235,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
     @EventTarget
     fun onWorld(event: WorldEvent) {
-        // Clear packets on disconnect only
         if (event.worldClient == null)
             blink(false)
     }
@@ -293,7 +299,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         packetQueue.clear()
         positions.clear()
         ignoreWholeTick = true
-        if (debugreset) displayChatMessage("Reset-ed")
     }
 
     private fun handlePackets() {
