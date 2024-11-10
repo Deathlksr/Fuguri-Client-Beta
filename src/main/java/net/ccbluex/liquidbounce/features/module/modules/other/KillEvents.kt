@@ -9,7 +9,6 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.EnumParticleTypes
 import java.util.*
 
 object KillEvents: Module("KillEvents", Category.PLAYER) {
@@ -18,10 +17,10 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
     private var BedWars by BoolValue("Bedwars Mode", false) { insult }
 
     private var particle by BoolValue("Particle", false)
-    private var mode by ListValue("Particle", arrayOf("Lava", "Smoke", "Cloud", "Flame"), "Flame") { particle }
+    private var mode by ListValue("Particles", arrayOf("Lava", "Smoke", "Cloud", "Flame"), "Flame") { particle }
 
     private var killSound by BoolValue("Sound", false)
-    private val sound by ListValue("Sound", arrayOf("None", "Hit", "Amogus", "Totem", "Explode", "Orb", "Pop", "Splash", "Lightning"), "Pop") { killSound }
+    private val sound by ListValue("Sounds", arrayOf("None", "Hit", "Amogus", "Totem", "Explode", "Orb", "Pop", "Splash", "Lightning"), "Pop") { killSound }
     private val volume by FloatValue("Volume", 1f, 0.1f.. 5f) { killSound }
     private val pitch by FloatValue("Pitch", 1f, 0.1f..5f) { killSound }
 
@@ -102,26 +101,6 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
     @EventTarget
     fun onKillEvent(event: EntityKilledEvent) {
         val target = event.targetEntity
-
-        if (particle) {
-            when (mode.lowercase(Locale.getDefault())) {
-                "lava" -> {
-                    mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.LAVA)
-                }
-
-                "smoke" -> {
-                    mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.REDSTONE)
-                }
-
-                "cloud" -> {
-                    mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.CLOUD)
-                }
-
-                "flame" -> {
-                    mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.FLAME)
-                }
-            }
-        }
 
         if (target !is EntityPlayer)
             return

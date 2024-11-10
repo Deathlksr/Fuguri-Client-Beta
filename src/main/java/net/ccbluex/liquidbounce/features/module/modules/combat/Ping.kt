@@ -38,7 +38,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val delay by IntegerValue("Delay", 500, 0..1000) { !randomdelay }
     private val mindelay = IntegerValue("MinDelay", 500, 0..1000) { randomdelay }
     private val maxdelay = IntegerValue("MaxDelay", 520, 0..1000) { randomdelay }
-    private val recoildelay by IntegerValue("Recoil-Delay", 0, 0..250)
+    private val recoildelay by IntegerValue("Recoil-Delay", 0, 0..500)
     private val ticksexxisted by BoolValue("Ticks-Existed", true)
     private val minticksalive by IntegerValue("Max-Ticks-Existed", 15, 0..60) { ticksexxisted }
     private val flushflag by BoolValue("Flush-Flag", true)

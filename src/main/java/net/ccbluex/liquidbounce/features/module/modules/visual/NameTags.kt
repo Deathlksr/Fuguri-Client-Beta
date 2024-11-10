@@ -88,6 +88,71 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         glColor4f(1F, 1F, 1F, 1F)
     }
 
+    private val ownerList = arrayOf(
+        "zasolinne",
+        "Aliderequod",
+        "Deathlksr",
+        "DeathlksrF",
+        "SweetAsssss",
+        "SweetAssssss",
+        "SweetAsssssss",
+        "SweetAssssssss",
+        "SweetAsssssssss",
+        "SweetAssssssssss",
+        "MKY_PEDURFILE",
+        "MKY_PEDOFILE",
+        "AsarLong",
+        "TheDayUranus93",
+        "TheDayUranus94",
+        "VerLouF",
+        "SSDxsLuFioiD",
+        "waltonxcostxxx",
+        "WaltonxNeverxxx",
+        "KillAuraxIHVILIX",
+    )
+
+    private val userList = arrayOf(
+        "Kikatilo_1",
+        "Kikatilo_2",
+        "Kikatilo_3",
+        "Kikatilo_4",
+        "Kikatilo_5",
+        "Kikatilo_6",
+        "Kikatilo_7",
+        "Kikatilo_8",
+        "Kikatilo_9",
+        "Kikatilo_10",
+        "Kikatilo_11",
+        "Kikatilo_12",
+        "Kikatilo_13",
+        "Kikatilo_14",
+        "Kikatilo_15",
+        "Kikatilo_16",
+        "Kikatilo_17",
+        "Kikatilo_18",
+        "Kikatilo_19",
+        "Kikatilo_20",
+        "Kikatilo_21",
+        "Kikatilo_22",
+        "Kikatilo_23",
+        "Kikatilo_24",
+        "Kikatilo_25",
+        "Kikatilo_26",
+        "Kikatilo_27",
+        "Kikatilo_28",
+        "Kikatilo_29",
+        "Kikatilo_30",
+        "Kikatilo_01",
+        "Kikatilo_02",
+        "bastard_daaoo",
+        "SJ_Mealisene",
+        "Wakandr",
+        "ЧухЧухЧухЛиза",
+        "SJ_daaoo",
+        "TESTRANPO",
+        "EdogawaRanpo",
+    )
+
     private fun renderNameTag2D(entity: EntityLivingBase, name: String) {
         var tag = name
         val fontRenderer = mc.fontRendererObj
@@ -101,111 +166,16 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
             (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * mc.timer.renderPartialTicks - mc.renderManager.renderPosZ).toFloat()
         )
 
-        var lastUsed = 0
-
-        val phraseListowner = arrayOf(
-            "SweetAsssss",
-            "Aliderequod",
-            "Deathlksr",
-            "DeathlksrF",
-            "Deathlksrl",
-            "SweetAsssss",
-            "SweetAssssss",
-            "SweetAsssssss",
-            "SweetAssssssss",
-            "SweetAsssssssss",
-            "SweetAssssssssss",
-            "MKY_PEDURFILE",
-            "MKY_PEDOFILE",
-            "Aliderequod",
-            "zasolinne",
-            "AsarLong",
-            "TheDayUranus93",
-            "TheDayUranus94",
-            "VerLouF",
-            "SSDxsLuFioiD",
-            "waltonxcostxxx",
-            "WaltonxNeverxxx",
-            "KillAuraxIHVILIX",
-            )
-        val phraseListUser = arrayOf(
-            "TestRanpo",
-            "EdogawaRanpo",
-            "Kikatilo_01",
-            "Kikatilo_02",
-            "Kikatilo_1",
-            "Kikatilo_2",
-            "Kikatilo_3",
-            "Kikatilo_4",
-            "Kikatilo_5",
-            "Kikatilo_6",
-            "Kikatilo_7",
-            "Kikatilo_8",
-            "Kikatilo_9",
-            "Kikatilo_10",
-            "Kikatilo_11",
-            "Kikatilo_12",
-            "Kikatilo_13",
-            "Kikatilo_14",
-            "Kikatilo_15",
-            "Kikatilo_16",
-            "Kikatilo_17",
-            "Kikatilo_18",
-            "Kikatilo_19",
-            "Kikatilo_20",
-            "Kikatilo_21",
-            "Kikatilo_22",
-            "Kikatilo_23",
-            "Kikatilo_24",
-            "Kikatilo_25",
-            "Kikatilo_26",
-            "Kikatilo_27",
-            "Kikatilo_28",
-            "Kikatilo_29",
-            "Kikatilo_30",
-            "bastard_daaoo",
-            "SJ_Mealisene",
-            "Wakandr",
-            "ЧухЧухЧухЛиза",
-            "SJ_daaoo",
-            )
-        fun randomPhraseowner(): String {
-            val rand = Random()
-
-            var randInt: Int
-            randInt = rand.nextInt(phraseListowner.size)
-            while (lastUsed == randInt) {
-                randInt = rand.nextInt(phraseListowner.size)
-            }
-
-            lastUsed = randInt
-            return phraseListowner[randInt]
-        }
-
-        fun randomPhraseUser(): String {
-            val rand = Random()
-
-            var randInt: Int
-            randInt = rand.nextInt(phraseListUser.size)
-            while (lastUsed == randInt) {
-                randInt = rand.nextInt(phraseListUser.size)
-            }
-
-            lastUsed = randInt
-            return phraseListUser[randInt]
-        }
-
             var ownertext = ""
             if (entity is EntityPlayer) {
-                val ownerlest: EntityPlayer = entity
-                if (ownerlest.displayNameString == randomPhraseowner()) {
+                if (ownerList.contains(entity.displayNameString)) {
                     ownertext = "§5[Fuguri Owner] "
                 }
             }
+
             var usertext = ""
             if (entity is EntityPlayer) {
-                val userlest: EntityPlayer = entity
-                if (userlest.displayNameString == randomPhraseUser()) {
+                if (userList.contains(entity.displayNameString)) {
                     usertext = "§5[Fuguri User] "
                 }
             }
