@@ -5,7 +5,6 @@
  */
 package net.ccbluex.liquidbounce.ui.client.gui
 
-import net.ccbluex.liquidbounce.utils.APIConnecter
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
@@ -46,7 +45,7 @@ class GuiInfo(private val prevGui: GuiScreen) : GuiScreen() {
 
     override fun actionPerformed(button: GuiButton) {
         when (button.id) {
-            1 -> MiscUtils.showURL(APIConnecter.discord)
+            1 -> MiscUtils.showURL("https://discord.gg/mwy9JcKFmB")
             2 -> mc.displayGuiScreen(GuiServerStatus(this))
             3 -> mc.displayGuiScreen(GuiScripts(this))
             4 -> mc.displayGuiScreen(GuiClientConfiguration(this))

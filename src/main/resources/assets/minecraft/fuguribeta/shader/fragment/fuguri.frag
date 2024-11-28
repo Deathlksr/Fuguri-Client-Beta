@@ -5,7 +5,7 @@ precision highp float;
 uniform float time;
 uniform vec2 resolution;
 
-const float COUNT = 12.0;
+const float COUNT = 10.0;
 
 void main( void ) {
     vec2 uPos = ( gl_FragCoord.xy / resolution.y );//normalize wrt y axis

@@ -12,6 +12,7 @@ class TipSoundManager {
     var shutdownSound: TipSoundPlayer
     var amogusSound: TipSoundPlayer
     var totemSound: TipSoundPlayer
+    var edogawaSound: TipSoundPlayer
 
     init {
         val enableSoundFile = File(FuguriBeta.fileManager.soundsDir, "enable.wav")
@@ -21,21 +22,24 @@ class TipSoundManager {
         val shutDownSoundFile = File(FuguriBeta.fileManager.soundsDir,  "shutdown.wav")
         val amogusSoundFile = File(FuguriBeta.fileManager.soundsDir, "imposter.wav")
         val totemSoundFile = File(FuguriBeta.fileManager.soundsDir, "totem.wav")
+        val edogawaSoundFile = File(FuguriBeta.fileManager.soundsDir, "edogawa.wav")
 
         if (!enableSoundFile.exists())
-            FileUtils.unpackFile(enableSoundFile, "assets/minecraft/fdpclient/sound/enable.wav")
+            FileUtils.unpackFile(enableSoundFile, "assets/minecraft/fuguribeta/sound/enable.wav")
         if (!popSoundFile.exists())
-            FileUtils.unpackFile(popSoundFile, "assets/minecraft/fdpclient/sound/pop.wav")
+            FileUtils.unpackFile(popSoundFile, "assets/minecraft/fuguribeta/sound/pop.wav")
         if (!disableSoundFile.exists())
-            FileUtils.unpackFile(disableSoundFile, "assets/minecraft/fdpclient/sound/disable.wav")
+            FileUtils.unpackFile(disableSoundFile, "assets/minecraft/fuguribeta/sound/disable.wav")
         if (!startUpSoundFile.exists())
-            FileUtils.unpackFile(startUpSoundFile, "assets/minecraft/fdpclient/sound/startup.wav")
+            FileUtils.unpackFile(startUpSoundFile, "assets/minecraft/fuguribeta/sound/startup.wav")
         if (!shutDownSoundFile.exists())
-            FileUtils.unpackFile(shutDownSoundFile, "assets/minecraft/fdpclient/sound/shutdown.wav")
+            FileUtils.unpackFile(shutDownSoundFile, "assets/minecraft/fuguribeta/sound/shutdown.wav")
         if (!amogusSoundFile.exists())
-            FileUtils.unpackFile(amogusSoundFile, "assets/minecraft/fdpclient/sound/imposter.wav")
+            FileUtils.unpackFile(amogusSoundFile, "assets/minecraft/fuguribeta/sound/imposter.wav")
         if (!totemSoundFile.exists())
-            FileUtils.unpackFile(totemSoundFile, "assets/minecraft/fdpclient/sound/totem.wav")
+            FileUtils.unpackFile(totemSoundFile, "assets/minecraft/fuguribeta/sound/totem.wav")
+        if (!edogawaSoundFile.exists())
+            FileUtils.unpackFile(edogawaSoundFile, "assets/minecraft/fuguribeta/sound/edogawa.wav")
 
         enableSound = TipSoundPlayer(enableSoundFile)
         popSound = TipSoundPlayer(popSoundFile)
@@ -44,5 +48,6 @@ class TipSoundManager {
         shutdownSound = TipSoundPlayer(shutDownSoundFile)
         amogusSound = TipSoundPlayer(amogusSoundFile)
         totemSound = TipSoundPlayer(totemSoundFile)
+        edogawaSound = TipSoundPlayer(edogawaSoundFile)
     }
 }

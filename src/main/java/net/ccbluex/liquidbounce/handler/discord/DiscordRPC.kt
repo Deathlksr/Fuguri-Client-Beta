@@ -8,7 +8,6 @@ import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_VERSION
 import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
 import net.ccbluex.liquidbounce.utils.ServerUtils
-import net.minecraft.client.gui.GuiMultiplayer
 import java.time.OffsetDateTime
 import kotlin.concurrent.thread
 

@@ -26,7 +26,7 @@ import java.awt.datatransfer.StringSelection
 import java.io.File
 import java.io.IOException
 
-object SettingsCommand : Command("autosettings", "autosetting", "settings", "setting", "config") {
+object SettingsCommand : Command("autosettings", "autosetting", "settings", "setting") {
 
     /**
      * Execute commands with provided [args]

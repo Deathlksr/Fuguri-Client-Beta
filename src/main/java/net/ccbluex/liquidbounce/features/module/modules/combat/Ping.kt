@@ -4,7 +4,6 @@ import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
-import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
 import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacket
 import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
@@ -15,11 +14,8 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.gui.GuiChat
-import net.minecraft.client.gui.GuiNewChat
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.gui.inventory.GuiInventory
-import net.minecraft.entity.EntityLiving
-import net.minecraft.entity.EntityLivingBase
 import net.minecraft.network.Packet
 import net.minecraft.network.handshake.client.C00Handshake
 import net.minecraft.network.play.client.*
@@ -35,14 +31,15 @@ import java.awt.Color
 object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule = false) {
 
     private val randomdelay by BoolValue("RandomDelay", false)
+    private val synchronize by BoolValue("Synchronize-Position", false) { randomdelay }
     private val delay by IntegerValue("Delay", 500, 0..1000) { !randomdelay }
     private val mindelay = IntegerValue("MinDelay", 500, 0..1000) { randomdelay }
     private val maxdelay = IntegerValue("MaxDelay", 520, 0..1000) { randomdelay }
-    private val recoildelay by IntegerValue("Recoil-Delay", 0, 0..500)
+    private val recoildelay by IntegerValue("Recoil-Delay", 0, 0..1000)
     private val ticksexxisted by BoolValue("Ticks-Existed", true)
     private val minticksalive by IntegerValue("Max-Ticks-Existed", 15, 0..60) { ticksexxisted }
     private val flushflag by BoolValue("Flush-Flag", true)
-    private val tickflag by IntegerValue("Ticks-Flag", 3, 0..60) { flushflag }
+    private val tickflag by IntegerValue("Ticks-Flag", 5, 0..60) { flushflag }
     private val flushoninv by BoolValue("Flush-Inventory", true)
     private val flushchat by BoolValue("Flush-Chat", true)
     private val flushoncontainer by BoolValue("Flush-Container", false)
@@ -304,7 +301,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private fun handlePackets() {
         synchronized(packetQueue) {
             packetQueue.entries.removeAll { (packet, timestamp) ->
-                if (timestamp <= System.currentTimeMillis() - if (randomdelay) randomdelays else delay) {
+                if (timestamp <= System.currentTimeMillis() - if (randomdelay) { if (!synchronize) { RandomUtils.nextInt(mindelay.get(), maxdelay.get()) } else randomdelays } else delay) {
                     sendPacket(packet, false)
                     true
                 } else false
@@ -312,7 +309,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         }
 
         synchronized(positions) {
-            positions.entries.removeAll { (_, timestamp) -> timestamp <= System.currentTimeMillis() - if (randomdelay) randomdelays else delay }
+            positions.entries.removeAll { (_, timestamp) -> timestamp <= System.currentTimeMillis() - if (randomdelay) { if (!synchronize) { RandomUtils.nextInt(mindelay.get(), maxdelay.get()) } else randomdelays } else delay }
         }
     }
 }

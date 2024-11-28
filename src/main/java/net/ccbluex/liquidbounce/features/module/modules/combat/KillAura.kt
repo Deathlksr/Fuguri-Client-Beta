@@ -74,6 +74,9 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
     private val simulateCooldown by BoolValue("SimulateCooldown", false)
     private val simulateDoubleClicking by BoolValue("SimulateDoubleClicking", false) { !simulateCooldown }
 
+    private val clickValue by ListValue("ClickMode", arrayOf("Delay", "HurtTime"), "Delay")
+    private val attackMode by ListValue("AttackMode", arrayOf("Legit", "Rage"), "Rage")
+
     // CPS - Attack speed
     private val maxCPSValue = object : IntegerValue("MaxCPS", 8, 1..20) {
         override fun onChange(oldValue: Int, newValue: Int) = newValue.coerceAtLeast(minCPS)
@@ -97,12 +100,17 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
         override fun isSupported() = !maxCPSValue.isMinimal() && !simulateCooldown
     }
 
-    private val minhurtTime by IntegerValue("MinCooldown", 2, 0..10) { !simulateCooldown }
-    private val maxhurtTime by IntegerValue("MaxCooldown", 3, 0..10) { !simulateCooldown }
+    private val minhurtTime by IntegerValue("MinHurtTime", 2, 0..10) { !simulateCooldown && clickValue == "HurtTime" }
+    private val maxhurtTime by IntegerValue("MaxHurtTime", 3, 0..10) { !simulateCooldown && clickValue == "HurtTime" }
 
-    private val SmartAttack by BoolValue("SmartClicking", false)
+    private val minafterdelay by IntegerValue("MinAfterDelay", 9, 0..10) { !simulateCooldown && clickValue == "Delay" }
+    private val maxafterdelay by IntegerValue("MaxAfterDelay", 9, 0..10) { !simulateCooldown && clickValue == "Delay" }
+
+    private val SmartAttack by BoolValue("SmartClicking", false) { !simulateCooldown && clickValue == "HurtTime" }
 
     private val clickOnly by BoolValue("ClickOnly", false)
+
+    private var afterdelay = 0
 
     // Range
     // TODO: Make block range independent from attack range
@@ -120,7 +128,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
         "Priority", arrayOf(
             "Health",
             "Distance",
-            "Direction",
+            "Fov",
             "LivingTime",
             "Armor",
             "HurtResistance",
@@ -503,14 +511,35 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
 
             val maxClicks = clicks + extraClicks
 
-            repeat(maxClicks) {
-                val wasBlocking = blockStatus
+            if (clickValue == "Delay") {
+                if (afterdelay > 0) {
+                    afterdelay--
+                }
+                if (target?.hurtResistantTime!! <= 10 || afterdelay == 0 || mc.thePlayer.hurtTime != 0) {
+                    repeat(maxClicks) {
+                        val wasBlocking = blockStatus
+                        runAttack(it + 1 == maxClicks)
 
-                runAttack(it + 1 == maxClicks)
-                clicks--
+                        if (wasBlocking && !blockStatus && (releaseAutoBlock && !ignoreTickRule || autoBlock == "Off")) {
+                            return
+                        }
+                    }
+                }
+                if (mc.thePlayer.hurtTime != 0)
+                    afterdelay = 0
+                clicks = 0
+            }
 
-                if (wasBlocking && !blockStatus && (releaseAutoBlock && !ignoreTickRule || autoBlock == "Off")) {
-                    return
+            if (clickValue == "HurtTime") {
+                repeat(maxClicks) {
+                    val wasBlocking = blockStatus
+
+                    runAttack(it + 1 == maxClicks)
+                    clicks--
+
+                    if (wasBlocking && !blockStatus && (releaseAutoBlock && !ignoreTickRule || autoBlock == "Off")) {
+                        return
+                    }
                 }
             }
         } else {
@@ -605,11 +634,14 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
 
         // Randomize cooldown
         val hurtTime = nextInt(minhurtTime, maxhurtTime)
+        afterdelay = nextInt(minafterdelay, maxafterdelay)
 
         if (hittable) {
-            if (currentTarget.hurtTime < hurtTime || (mc.thePlayer.hurtTime > 0 && SmartAttack)) {
-            } else {
-                return
+            if (clickValue == "HurtTime") {
+                if (currentTarget.hurtTime < hurtTime || (mc.thePlayer.hurtTime > 0 && SmartAttack)) {
+                } else {
+                    return
+                }
             }
         }
 
@@ -648,15 +680,20 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
                     }
 
                     if (!shouldDelayClick(it.typeOfHit)) {
-                        if (it.typeOfHit.isEntity) {
-                            val entity = it.entityHit
+                        if (attackMode == "Rage") {
+                            if (it.typeOfHit.isEntity) {
+                                val entity = it.entityHit
 
-                            // Use own function instead of clickMouse() to maintain keep sprint, auto block, etc
-                            if (entity is EntityLivingBase) {
-                                attackEntity(entity, isLastClick)
+                                // Use own function instead of clickMouse() to maintain keep sprint, auto block, etc
+                                if (entity is EntityLivingBase) {
+                                    attackEntity(entity, isLastClick)
+                                }
+                            } else {
+                                // Imitate game click
+                                mc.clickMouse()
                             }
-                        } else {
-                            // Imitate game click
+                        }
+                        if (attackMode == "Legit") {
                             mc.clickMouse()
                         }
                         attackTickTimes += it to runTimeTicks
@@ -769,7 +806,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
                 }
             }
 
-            "direction" -> targets.sortBy {
+            "fov" -> targets.sortBy {
                 var result = 0f
 
                 Backtrack.runWithNearestTrackedDistance(it) {

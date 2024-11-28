@@ -21,7 +21,7 @@ import static net.ccbluex.liquidbounce.utils.render.RenderUtils.drawRoundOutline
 public class QuitButton extends ImageButton {
 
 	public QuitButton(int x, int y) {
-		super("QUIT", new ResourceLocation("fdpclient/mainmenu/exit.png"), x, y);
+		super("QUIT", new ResourceLocation("fuguribeta/mainmenu/exit.png"), x, y);
 	}
 
 	@Override

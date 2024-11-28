@@ -45,7 +45,7 @@ object LanguageManager : MinecraftInstance() {
     fun loadLanguages() {
         for (language in knownLanguages) {
             runCatching {
-                val languageFile = javaClass.getResourceAsStream("/assets/minecraft/fdpclient/lang/$language.json")
+                val languageFile = javaClass.getResourceAsStream("/assets/minecraft/fuguribeta/lang/$language.json")
                 val languageJson = PRETTY_GSON.fromJson(languageFile.bufferedReader(), Language::class.java)
                 languageMap[language] = languageJson
             }.onSuccess {

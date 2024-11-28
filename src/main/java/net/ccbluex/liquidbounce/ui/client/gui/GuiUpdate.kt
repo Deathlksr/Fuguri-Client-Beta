@@ -47,7 +47,7 @@ class GuiUpdate : GuiScreen() {
     override fun actionPerformed(button: GuiButton) {
         when (button.id) {
             1 -> mc.displayGuiScreen(GuiMainMenu())
-            2 -> MiscUtils.showURL("https://fdpinfo.github.io/download")
+            2 -> MiscUtils.showURL("https://github.com/VerLouF/Fuguri-Client-Beta")
         }
     }
 

@@ -6,7 +6,7 @@
 package net.ccbluex.liquidbounce.ui.client.clickgui
 
 import kotlinx.coroutines.*
-import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME2
+import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME
 import net.ccbluex.liquidbounce.FuguriBeta.moduleManager
 import net.ccbluex.liquidbounce.handler.api.ClientApi
 import net.ccbluex.liquidbounce.handler.api.autoSettingsList
@@ -43,7 +43,7 @@ import kotlin.math.roundToInt
 object ClickGui : GuiScreen() {
 
     val panels = mutableListOf<Panel>()
-    private val hudIcon = ResourceLocation("${CLIENT_NAME2.lowercase()}/custom_hud_icon.png")
+    private val hudIcon = ResourceLocation("${CLIENT_NAME.lowercase()}/hud_designer.png")
     var style: Style = BlackStyle
     private var mouseX = 0
         set(value) {

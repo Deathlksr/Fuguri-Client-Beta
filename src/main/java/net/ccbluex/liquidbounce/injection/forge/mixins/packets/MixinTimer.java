@@ -77,7 +77,7 @@ public class MixinTimer {
         if (this.elapsedTicks > 10) {
             this.elapsedTicks = 10;
         }
-        if (TimerRange.INSTANCE.getFreezeAnim()) {
+        if (!TimerRange.INSTANCE.getFreezeAnim()) {
             if (!TimerRange.freezeAnimation()) this.renderPartialTicks = this.elapsedPartialTicks;
         } else {
             this.renderPartialTicks = this.elapsedPartialTicks;

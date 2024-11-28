@@ -2,12 +2,8 @@ package net.ccbluex.liquidbounce.utils.render
 
 import com.jhlabs.image.GaussianFilter
 import net.ccbluex.liquidbounce.event.Render3DEvent
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.doAnimation
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.gradientlies
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.heihgtlies
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloBlueValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloGreenValue
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.jelloRedValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesalpha
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesalphatwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorBlue
@@ -19,14 +15,13 @@ import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescol
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorgix
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.speedcolorlies
 import net.ccbluex.liquidbounce.ui.font.Fonts
-import net.ccbluex.liquidbounce.utils.ClientThemesUtils.getColor
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
 import net.ccbluex.liquidbounce.utils.UIEffectRenderer.drawTexturedRect
 import net.ccbluex.liquidbounce.utils.block.BlockUtils.getBlock
 import net.ccbluex.liquidbounce.utils.extensions.hitBox
 import net.ccbluex.liquidbounce.utils.extensions.toRadians
-import net.ccbluex.liquidbounce.utils.render.ColorUtils.mixColors
 import net.ccbluex.liquidbounce.utils.render.ColorUtils.setColour
+import net.ccbluex.liquidbounce.utils.render.animation.AnimationUtil.easeInOutQuadX
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.*
@@ -45,12 +40,10 @@ import net.minecraft.item.ItemSword
 import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.BlockPos
 import net.minecraft.util.ResourceLocation
-import net.minecraft.util.Vec3
 import org.lwjgl.opengl.EXTFramebufferObject
 import org.lwjgl.opengl.EXTPackedDepthStencil
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL14
-import org.lwjgl.util.glu.Cylinder
 import java.awt.Color
 import java.awt.image.BufferedImage
 import kotlin.math.*
@@ -353,175 +346,6 @@ object RenderUtils : MinecraftInstance() {
         glHint(3155, 4352)
     }
 
-
-    /**
-     * Draws an ESP (Extra Sensory Perception) effect around the given entity.
-     *
-     * @param entity The entity to draw the ESP effect around.
-     * @param color The color of the ESP effect.
-     * @param e The Render3DEvent containing partial ticks for interpolation.
-     */
-    fun drawCrystal(entity: EntityLivingBase, color: Int, e: Render3DEvent) {
-        val x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * e.partialTicks - mc.renderManager.renderPosX
-        val y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * e.partialTicks - mc.renderManager.renderPosY
-        val z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * e.partialTicks - mc.renderManager.renderPosZ
-        val radius = 0.15f
-        val side = 4
-
-        glPushMatrix()
-        glTranslated(x, y + 2, z)
-        glRotatef(-entity.width, 0.0f, 1.0f, 0.0f)
-
-        glColor(color)
-        enableSmoothLine(1.5f)
-
-        val c = Cylinder()
-        glRotatef(-90.0f, 1.0f, 0.0f, 0.0f)
-        c.drawStyle = 100012
-        glColor(if ((entity.hurtTime <= 0)) Color(80, 255, 80, 200) else Color(255, 0, 0, 200))
-        c.draw(0.0f, radius, 0.3f, side, 1)
-        c.drawStyle = 100012
-
-        glTranslated(0.0, 0.0, 0.3)
-        c.draw(radius, 0.0f, 0.3f, side, 1)
-
-        glRotatef(90.0f, 0.0f, 0.0f, 1.0f)
-        c.drawStyle = 100011
-
-        glTranslated(0.0, 0.0, -0.3)
-        glColor(color)
-        c.draw(0.0f, radius, 0.3f, side, 1)
-        c.drawStyle = 100011
-
-        glTranslated(0.0, 0.0, 0.3)
-        c.draw(radius, 0.0f, 0.3f, side, 1)
-
-        disableSmoothLine()
-        glPopMatrix()
-    }
-
-    /**
-     * Draws a jello-like effect around the given entity.
-     *
-     * @param entity The entity to draw the jello effect around.
-     * @param partialTicks The partial ticks for smooth rendering.
-     */
-
-    fun drawJello(entity: EntityLivingBase) {
-
-        val drawTime = (System.currentTimeMillis() % 2000).toInt()
-        val drawMode = drawTime > 1000
-        var drawPercent = drawTime / 1000.0
-
-        drawPercent = if (drawMode) drawPercent - 1 else 1 - drawPercent
-        drawPercent = doAnimation(drawPercent)
-
-        val bb = entity.entityBoundingBox
-        val radius = bb.maxX - bb.minX
-        val height = bb.maxY - bb.minY
-        val posX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * mc.timer.renderPartialTicks
-        var posY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * mc.timer.renderPartialTicks
-        posY += if (drawMode) -0.5 else 0.5
-        val posZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * mc.timer.renderPartialTicks
-
-        val points = mutableListOf<Vec3>()
-        for (i in 0..360 step 7) {
-            points.add(Vec3(
-                posX - sin(i * Math.PI / 180F) * radius,
-                posY + height * drawPercent,
-                posZ + cos(i * Math.PI / 180F) * radius
-            ))
-        }
-        points.add(points[0])
-
-        mc.entityRenderer.disableLightmap()
-        glPushMatrix()
-        glDisable(GL_TEXTURE_2D)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_LINE_SMOOTH)
-        glEnable(GL_BLEND)
-        glDisable(GL_DEPTH_TEST)
-        glBegin(GL_LINE_STRIP)
-
-        val baseMove = if (drawPercent > 0.5) 1 - drawPercent else drawPercent
-        val min = (height / 60) * 20 * (1 - baseMove) * (if (drawMode) -1 else 1)
-        for (i in 0..20) {
-            var moveFace = (height / 60F) * i * baseMove
-            if (drawMode) moveFace = -moveFace
-            val firstPoint = points[0]
-            glColor4f(jelloRedValue, jelloGreenValue, jelloBlueValue, 0F)
-            glVertex3d(
-                firstPoint.xCoord - mc.renderManager.viewerPosX,
-                firstPoint.yCoord - moveFace - min - mc.renderManager.viewerPosY,
-                firstPoint.zCoord - mc.renderManager.viewerPosZ
-            )
-            for (vec3 in points) {
-                glColor4f(jelloRedValue, jelloGreenValue, jelloBlueValue, 150F)
-                glVertex3d(
-                    vec3.xCoord - mc.renderManager.viewerPosX,
-                    vec3.yCoord - moveFace - min - mc.renderManager.viewerPosY,
-                    vec3.zCoord - mc.renderManager.viewerPosZ
-                )
-            }
-            glColor4f(0F,0F,0F,0F)
-        }
-
-        glEnd()
-        glEnable(GL_DEPTH_TEST)
-        glDisable(GL_LINE_SMOOTH)
-        glDisable(GL_BLEND)
-        glEnable(GL_TEXTURE_2D)
-        glPopMatrix()
-    }
-
-
-    fun drawFDP(entity: EntityLivingBase, event: Render3DEvent) {
-
-        val themeTextColor = getColor(1).rgb
-
-        val drawTime = (System.currentTimeMillis() % 1500).toInt()
-        val drawMode = drawTime > 750
-        var drawPercent = drawTime / 750.0
-        // true when goes up
-        if (!drawMode) {
-            drawPercent = 1 - drawPercent
-        } else {
-            drawPercent -= 1
-        }
-        drawPercent = doAnimation(drawPercent)
-        mc.entityRenderer.disableLightmap()
-        glPushMatrix()
-        glDisable(GL_TEXTURE_2D)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_LINE_SMOOTH)
-        glEnable(GL_BLEND)
-        glDisable(GL_DEPTH_TEST)
-
-        val bb = entity.entityBoundingBox
-        val radius = ((bb.maxX - bb.minX) + (bb.maxZ - bb.minZ)) * 0.5f
-        val height = bb.maxY - bb.minY
-        val x =
-            entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
-        val y =
-            (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY) + height * drawPercent
-        val z =
-            entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * event.partialTicks - mc.renderManager.viewerPosZ
-        mc.entityRenderer.disableLightmap()
-        glLineWidth((radius * 8f).toFloat())
-        glBegin(GL_LINE_STRIP)
-        for (i in 0..360 step 10) {
-            glColor(themeTextColor)
-            glVertex3d(x - sin(i * Math.PI / 180F) * radius, y, z + cos(i * Math.PI / 180F) * radius)
-        }
-        glEnd()
-
-        glEnable(GL_DEPTH_TEST)
-        glDisable(GL_LINE_SMOOTH)
-        glDisable(GL_BLEND)
-        glEnable(GL_TEXTURE_2D)
-        glPopMatrix()
-    }
-
     fun drawLies(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float) {
 
     val baseTime = 3000.0
@@ -530,12 +354,12 @@ object RenderUtils : MinecraftInstance() {
     val drawMode = drawTime > (everyTime / 2)
     var drawPercent = drawTime / (everyTime / 2.0)
 
-    if (!drawMode) {
-        drawPercent = 1 - drawPercent
-    } else {
-        drawPercent -= 1
-    }
-    drawPercent = doAnimation(drawPercent)
+        if (!drawMode) {
+            drawPercent = 1 - drawPercent
+        } else {
+            drawPercent -= 1
+        }
+        drawPercent = easeInOutQuadX(drawPercent)
 
     mc.entityRenderer.disableLightmap()
     glPushMatrix()
@@ -592,7 +416,7 @@ object RenderUtils : MinecraftInstance() {
     glDisable(GL_BLEND)
     glEnable(GL_TEXTURE_2D)
     glPopMatrix()
-}
+    }
 
     fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, liesstepvalue: Int) {
         glPushMatrix()
@@ -643,29 +467,6 @@ object RenderUtils : MinecraftInstance() {
             }
             glVertex3d(x1, (y1 + entity.height / 2) + (penis * trailLengthMultiplier), z1)
         }
-
-        glEnd()
-
-        glBegin(GL_QUAD_STRIP)
-
-        for (i in 0..360 step liesstepvalue) {
-            val x1 = x + sin(i * Math.PI / 180) * radiuslies
-            val z1 = z + cos(i * Math.PI / 180) * radiuslies
-            val y1 = y + penis
-
-            val color1 = Color(red, green, blue)
-            val color2 = Color(red2, green2, blue2)
-            val penis25 = (cos(i * Math.PI / 180 * speedcolorlies) + 1) / 2
-            val gradientcolor = ColorUtils.mixColorse(color1, color2, penis25.toFloat())
-
-            if (gradientlies) {
-                glColor4f(gradientcolor.red / 255F, gradientcolor.green / 255F, gradientcolor.blue / 255F, 1.0F)
-            } else {
-                glColor4f(liescolorRed, liescolorGreen, liescolorBlue, 1.0F)
-            }
-            glVertex3d(x1, y1 + entity.height / 2, z1)
-        }
-
         glEnd()
         glEnable(GL_CULL_FACE)
         glShadeModel(7424)
@@ -676,172 +477,6 @@ object RenderUtils : MinecraftInstance() {
         glEnable(GL_TEXTURE_2D)
         glPopMatrix()
     }
-
-    fun easeInSine(x: Double): Double {
-            return 1 - Math.cos((x * Math.PI) / 2)
-        }
-
-        fun easeOutSine(x: Double): Double {
-            return Math.sin((x * Math.PI) / 2)
-        }
-
-        fun easeInOutSine(x: Double): Double {
-            return -(Math.cos(Math.PI * x) - 1) / 2
-        }
-
-        fun easeInQuad(x: Double): Double {
-            return x * x
-        }
-
-        fun easeOutQuad(x: Double): Double {
-            return 1 - (1 - x) * (1 - x)
-        }
-
-        fun easeInOutQuad(x: Double): Double {
-            return if (x < 0.5) 2 * x * x else 1 - Math.pow(-2 * x + 2, 2.0) / 2
-        }
-
-        fun easeInCubic(x: Double): Double {
-            return x * x * x
-        }
-
-        fun easeOutCubic(x: Double): Double {
-            return 1 - Math.pow(1 - x, 3.0)
-        }
-
-        fun easeInOutCubic(x: Double): Double {
-            return if (x < 0.5) 4 * x * x * x else 1 - Math.pow(-2 * x + 2, 3.0) / 2
-        }
-
-        fun easeInQuart(x: Double): Double {
-            return x * x * x * x
-        }
-
-        fun easeOutQuart(x: Double): Double {
-            return 1 - Math.pow(1 - x, 4.0)
-        }
-
-        fun easeInOutQuart(x: Double): Double {
-            return if (x < 0.5) 8 * x * x * x * x else 1 - Math.pow(-2 * x + 2, 4.0) / 2
-        }
-
-        fun easeInQuint(x: Double): Double {
-            return x * x * x * x * x
-        }
-
-        fun easeOutQuint(x: Double): Double {
-            return 1 - Math.pow(1 - x, 5.0)
-        }
-
-        fun easeInOutQuint(x: Double): Double {
-            return if (x < 0.5) 16 * x * x * x * x * x else 1 - Math.pow(-2 * x + 2, 5.0) / 2
-        }
-
-        fun easeInExpo(x: Double): Double {
-            return if (x == 0.0) 0.0 else Math.pow(2.0, 10 * x - 10)
-        }
-
-        fun easeOutExpo(x: Double): Double {
-            return if (x == 1.0) 1.0 else 1 - Math.pow(2.0, -10 * x)
-        }
-
-        fun easeInOutExpo(x: Double): Double {
-            return when {
-                x == 0.0 -> 0.0
-                x == 1.0 -> 1.0
-                x < 0.5 -> Math.pow(2.0, 20 * x - 10) / 2
-                else -> (2 - Math.pow(2.0, -20 * x + 10)) / 2
-            }
-        }
-
-        fun easeInCirc(x: Double): Double {
-            return 1 - Math.sqrt(1 - Math.pow(x, 2.0))
-        }
-
-        fun easeOutCirc(x: Double): Double {
-            return Math.sqrt(1 - Math.pow(x - 1, 2.0))
-        }
-
-        fun easeInOutCirc(x: Double): Double {
-            return if (x < 0.5) (1 - Math.sqrt(1 - Math.pow(2 * x, 2.0))) / 2 else (Math.sqrt(
-                1 - Math.pow(
-                    -2 * x + 2,
-                    2.0
-                )
-            ) + 1) / 2
-        }
-
-        fun easeInBack(x: Double): Double {
-            val c1 = 1.70158
-            val c3 = c1 + 1
-            return c3 * x * x * x - c1 * x * x
-        }
-
-        fun easeOutBack(x: Double): Double {
-            val c1 = 1.70158
-            val c3 = c1 + 1
-            return 1 + c3 * Math.pow(x - 1, 3.0) + c1 * Math.pow(x - 1, 2.0)
-        }
-
-        fun easeInOutBack(x: Double): Double {
-            val c1 = 1.70158
-            val c2 = c1 * 1.525
-            return if (x < 0.5) (Math.pow(2 * x, 2.0) * ((c2 + 1) * 2 * x - c2)) / 2 else (Math.pow(
-                2 * x - 2,
-                2.0
-            ) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2
-        }
-
-        fun easeInElastic(x: Double): Double {
-            val c4 = (2 * Math.PI) / 3
-            return when {
-                x == 0.0 -> 0.0
-                x == 1.0 -> 1.0
-                else -> -Math.pow(2.0, 10 * x - 10) * Math.sin((x * 10 - 10.75) * c4)
-            }
-        }
-
-        fun easeOutElastic(x: Double): Double {
-            val c4 = (2 * Math.PI) / 3
-            return when {
-                x == 0.0 -> 0.0
-                x == 1.0 -> 1.0
-                else -> Math.pow(2.0, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1
-            }
-        }
-
-        fun easeInOutElastic(x: Double): Double {
-            val c5 = (2 * Math.PI) / 4.5
-            return when {
-                x == 0.0 -> 0.0
-                x == 1.0 -> 1.0
-                x < 0.5 -> -(Math.pow(2.0, 20 * x - 10) * Math.sin((20 * x - 11.125) * c5)) / 2
-                else -> (Math.pow(2.0, -20 * x + 10) * Math.sin((20 * x - 11.125) * c5)) / 2 + 1
-            }
-        }
-
-        fun easeInBounce(x: Double): Double {
-            return 1 - easeOutBounce(1 - x)
-        }
-
-        fun easeOutBounce(x: Double): Double {
-            val n1 = 7.5625
-            val d1 = 2.75
-            return when {
-                x < 1 / d1 -> n1 * x * x
-                x < 2 / d1 -> n1 * (x - 1.5 / d1) * (x - 1.5 / d1) + 0.75
-                x < 2.5 / d1 -> n1 * (x - 2.25 / d1) * (x - 2.25 / d1) + 0.9375
-                else -> n1 * (x - 2.625 / d1) * (x - 2.625 / d1) + 0.984375
-            }
-        }
-
-        fun easeInOutBounce(x: Double): Double {
-            return if (x < 0.5) (1 - easeOutBounce(1 - 2 * x)) / 2 else (1 + easeOutBounce(2 * x - 1)) / 2
-        }
-
-        fun linear(x: Double): Double {
-            return x
-        }
 
     /**
      * Draws a rectangle.

@@ -1,6 +1,6 @@
 package net.ccbluex.liquidbounce.features.module.modules.client
 
-import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME2
+import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME
 import net.ccbluex.liquidbounce.FuguriBeta.hud
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
@@ -155,9 +155,9 @@ object HUDModule : Module("HUD", Category.CLIENT, defaultInArray = false, gameDe
         if (mc.theWorld == null || mc.thePlayer == null) return
         if (state && blur && !mc.entityRenderer.isShaderActive && event.guiScreen != null &&
                 !(event.guiScreen is GuiChat || event.guiScreen is GuiHudDesigner)) mc.entityRenderer.loadShader(
-            ResourceLocation(CLIENT_NAME2.lowercase() + "/blur.json")
+            ResourceLocation(CLIENT_NAME.lowercase() + "/blur.json")
         ) else if (mc.entityRenderer.shaderGroup != null &&
-            "fdpclient/blur.json" in mc.entityRenderer.shaderGroup.shaderGroupName) mc.entityRenderer.stopUseShader()
+            "fuguribeta/blur.json" in mc.entityRenderer.shaderGroup.shaderGroupName) mc.entityRenderer.stopUseShader()
     }
 
     init {

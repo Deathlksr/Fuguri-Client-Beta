@@ -3,7 +3,6 @@ package net.ccbluex.liquidbounce.features.module.modules.combat
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.Category
-import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
 import net.ccbluex.liquidbounce.utils.extensions.toDegrees
 import net.ccbluex.liquidbounce.utils.extensions.tryJump
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils.nextInt
@@ -20,21 +19,22 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
 
     private val mode by ListValue(
         "Mode", arrayOf(
-            "Intave"
+            "Intave", "IntaveReduce"
         ), "Intave"
     )
 
+    // Intave HurtTime
+    private val hurtTime by IntegerValue("HurtTime", 6, 0..10) { mode in arrayOf("IntaveReduce") }
+
     // Intave MotionXZ
     private val Motionxz by FloatValue("XZ-SprintHit", 0.6F, 0F..1F) { mode in arrayOf("Intave") }
-    private val MotionnotSprintxz by FloatValue("XZ-Hit", 1.0F, 0F..1F) { mode in arrayOf("Intave") }
+    private val MotionnotSprintxz by FloatValue("XZ-Hit", 1.0F, 0F..1F) { mode in arrayOf("Intave", "IntaveReduce") }
 
     // Intave Settings
     private val falsesprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("Intave") }
-    private val debugmotion by BoolValue("DebugSprintHit", false) { mode in arrayOf("Intave") }
-    private val debugmotionhit by BoolValue("DebugHit", false) { mode in arrayOf("Intave") }
 
     // Intave Jump
-    private val intavejump by BoolValue("Jump", false) { mode in arrayOf("Intave") }
+    private val intavejump by BoolValue("Jump", false) { mode in arrayOf("Intave", "IntaveReduce") }
 
     // Intave Chance
     private val chance by IntegerValue("Chance", 100, 0..100) { intavejump }
@@ -58,13 +58,17 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
                 if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.isSprinting) {
                     mc.thePlayer.motionX *= Motionxz
                     mc.thePlayer.motionZ *= Motionxz
-                    if (debugmotion) displayChatMessage("ReducedSprintHit")
                     if (falsesprint) mc.thePlayer.isSprinting = false
                 } else if (mc.thePlayer.hurtTime > 0) {
                     mc.thePlayer.motionX *= MotionnotSprintxz
                     mc.thePlayer.motionZ *= MotionnotSprintxz
-                    if (debugmotionhit) displayChatMessage("ReducedHit")
                     if (falsesprint) mc.thePlayer.isSprinting = false
+                }
+            }
+            "intavereduce" -> {
+                if (mc.thePlayer.hurtTime == hurtTime) {
+                    mc.thePlayer.motionX *= MotionnotSprintxz
+                    mc.thePlayer.motionZ *= MotionnotSprintxz
                 }
             }
         }
@@ -120,6 +124,36 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
                         hasReceivedVelocity = true
                 }
             }
+
+            "intavereduce" -> {
+                if (intavejump) {
+                    // TODO: Recode and make all velocity modes support velocity direction checks
+                    var packetDirection = 0.0
+                    when (packet) {
+                        is S12PacketEntityVelocity -> {
+                            val motionX = packet.motionX.toDouble()
+                            val motionZ = packet.motionZ.toDouble()
+
+                            packetDirection = atan2(motionX, motionZ)
+                        }
+
+                        is S27PacketExplosion -> {
+                            val motionX = thePlayer.motionX + packet.field_149152_f
+                            val motionZ = thePlayer.motionZ + packet.field_149159_h
+
+                            packetDirection = atan2(motionX, motionZ)
+                        }
+                    }
+                    val degreePlayer = getDirection()
+                    val degreePacket = Math.floorMod(packetDirection.toDegrees().toInt(), 360).toDouble()
+                    var angle = abs(degreePacket + degreePlayer)
+                    val threshold = 120.0
+                    angle = Math.floorMod(angle.toInt(), 360).toDouble()
+                    val inRange = angle in 180 - threshold / 2..180 + threshold / 2
+                    if (inRange)
+                        hasReceivedVelocity = true
+                }
+            }
         }
     }
 
@@ -127,7 +161,7 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
     fun onStrafe(event: StrafeEvent) {
         val player = mc.thePlayer ?: return
 
-        if (mode == "Intave" && hasReceivedVelocity && intavejump) {
+        if (mode == "Intave" || mode == "IntaveReduce" && hasReceivedVelocity && intavejump) {
             if (!player.isJumping && nextInt(endExclusive = 100) < chance && shouldJump() && player.isSprinting && player.onGround && player.hurtTime == 9) {
                 player.tryJump()
                 limitUntilJump = 0

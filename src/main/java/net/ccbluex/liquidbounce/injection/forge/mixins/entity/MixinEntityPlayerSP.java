@@ -241,7 +241,8 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer {
     }
 
     /**
-     * @author CCBlueX
+     * @author Deathlksr
+     * @reason Penis
      */
     @Overwrite
     public void onLivingUpdate() {

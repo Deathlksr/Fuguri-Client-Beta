@@ -5,7 +5,7 @@
  */
 package net.ccbluex.liquidbounce.utils.render
 
-import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME2
+import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import java.io.IOException
@@ -20,9 +20,9 @@ object IconUtils {
     fun getFavicon() =
         IconUtils::class.java.runCatching {
             arrayOf(
-                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME2.lowercase()}/32.png")),
-                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME2.lowercase()}/32.png")),
-                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME2.lowercase()}/64.png"))
+                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME.lowercase()}/32.png")),
+                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME.lowercase()}/32.png")),
+                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME.lowercase()}/64.png"))
             )
         }.onFailure {
             it.printStackTrace()

@@ -66,6 +66,6 @@ class GuiCommitInfo : GuiScreen() {
     }
 
     companion object {
-        val gitImage: ResourceLocation = ResourceLocation("fdpclient/mainmenu/github.png")
+        val gitImage: ResourceLocation = ResourceLocation("fuguribeta/mainmenu/github.png")
     }
 }

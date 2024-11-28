@@ -52,7 +52,7 @@ object APIConnecter {
             if (i == image && l == location)
                 return s
         }
-        return ResourceLocation("fdpclient/temp.png")
+        return ResourceLocation("fuguribeta/temp.png")
     }
 
     fun loadPictures() {

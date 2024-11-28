@@ -19,7 +19,7 @@ import java.awt.Desktop
 import java.io.File
 import java.io.IOException
 
-object LocalSettingsCommand : Command("localsettings", "localsetting", "localconfig") {
+object LocalSettingsCommand : Command("localsettings", "localsetting", "localconfig", "config") {
 
     /**
      * Execute commands with provided [args]

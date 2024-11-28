@@ -5,7 +5,7 @@
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.entity;
 
-import net.ccbluex.liquidbounce.features.module.modules.client.CustomCape;
+import net.ccbluex.liquidbounce.features.module.modules.visual.Cosmetics;
 import net.ccbluex.liquidbounce.handler.cape.CapeAPI;
 import net.ccbluex.liquidbounce.handler.cape.CapeInfo;
 import net.ccbluex.liquidbounce.features.module.modules.visual.NameProtect;
@@ -40,8 +40,8 @@ public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer {
                 return null;
             });
         }
-        if (CustomCape.INSTANCE.getCustomCape() && getGameProfile().getName().equalsIgnoreCase(MinecraftInstance.mc.thePlayer.getGameProfile().getName()))
-            callbackInfoReturnable.setReturnValue(CustomCape.INSTANCE.getCapeLocation(CustomCape.INSTANCE.getStyleValue().get()));
+        if (Cosmetics.INSTANCE.getCustomCape() && getGameProfile().getName().equalsIgnoreCase(MinecraftInstance.mc.thePlayer.getGameProfile().getName()))
+            callbackInfoReturnable.setReturnValue(Cosmetics.INSTANCE.getCapeLocation(Cosmetics.INSTANCE.getStyleValue().get()));
 
         if (capeInfo != null && capeInfo.isCapeAvailable()) {
             callbackInfoReturnable.setReturnValue(capeInfo.getResourceLocation());

@@ -116,7 +116,6 @@ class OneSevenAnimation : Animation("OneSeven") {
         doBlockTransformations()
         translate(-0.5f, 0.2f, 0f)
     }
-
 }
 
 class OldAnimation : Animation("Old") {

@@ -8,6 +8,7 @@ package net.ccbluex.liquidbounce.features.module.modules.movement
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.Category
+import net.ccbluex.liquidbounce.features.module.modules.combat.MoreKB.stopPenis
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
 import net.ccbluex.liquidbounce.ui.client.hud.designer.GuiHudDesigner
 import net.ccbluex.liquidbounce.utils.MovementUtils
@@ -64,6 +65,8 @@ object SaveMoveKeys : Module("SaveMoveKeys", Category.MOVEMENT, gameDetecting = 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         val screen = mc.currentScreen
+
+        if (stopPenis) return
 
         if (!fullMovements && (screen is GuiChat || screen is GuiIngameMenu)) return
 
@@ -155,7 +158,4 @@ object SaveMoveKeys : Module("SaveMoveKeys", Category.MOVEMENT, gameDetecting = 
             GameSettings.isKeyDown(keyBinding)
         }
     }
-
-    override val tag
-        get() = if (aacAdditionPro) "AACAdditionPro" else null
 }

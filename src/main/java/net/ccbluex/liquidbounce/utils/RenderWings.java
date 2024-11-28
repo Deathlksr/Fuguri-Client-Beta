@@ -5,8 +5,7 @@
  */
 package net.ccbluex.liquidbounce.utils;
 
-import net.ccbluex.liquidbounce.features.module.modules.client.Wings;
-import net.ccbluex.liquidbounce.utils.render.ColorUtils;
+import net.ccbluex.liquidbounce.features.module.modules.visual.Cosmetics;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -22,7 +21,7 @@ public class RenderWings extends ModelBase {
     private final ModelRenderer wing;
     private final ModelRenderer wingTip;
     private final boolean playerUsesFullHeight = true;
-    private final Wings wingsModule = Wings.INSTANCE;
+    private final Cosmetics wingsModule = Cosmetics.INSTANCE;
 
     public RenderWings() {
         updateWingTexture();

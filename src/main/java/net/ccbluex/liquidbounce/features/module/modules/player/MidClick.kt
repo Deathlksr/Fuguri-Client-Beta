@@ -16,7 +16,7 @@ import org.lwjgl.input.Mouse
 object MidClick : Module("MidClick", Category.PLAYER, subjective = true, gameDetecting = false, hideModule = false) {
     private var wasDown = false
     private val distanceraytrace by FloatValue("Distance", 100F, 3F..1000F)
-    val reverse by BoolValue("Reverse Friends", false)
+    val reverse by BoolValue("ReverseFriends", false)
     private val debug by BoolValue("Debug", false)
 
     @EventTarget
@@ -52,9 +52,9 @@ object MidClick : Module("MidClick", Category.PLAYER, subjective = true, gameDet
                         }
                     } else {
                         friendsConfig.removeFriend(playerName)
-                            if (debug) {
-                                displayChatMessage("§a§l[$playerName]§c Friend deleted.")
-                            }
+                        if (debug) {
+                            displayChatMessage("§a§l[$playerName]§c Friend deleted.")
+                        }
                     }
                 }
             } else if (debug) {

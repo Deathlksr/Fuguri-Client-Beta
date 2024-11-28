@@ -8,7 +8,7 @@ import java.io.File
 import java.io.IOException
 
 class BackgroundShader : Shader {
-    constructor() : super("background.frag")
+    constructor() : super("fuguri.frag")
 
     @Throws(IOException::class)
     constructor(fragmentShader: File) : super(fragmentShader)

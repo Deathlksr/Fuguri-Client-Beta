@@ -16,7 +16,7 @@ object PacketDebuggerCommand : Command("packetdebugger", "debug") {
 
     init {
         runCatching {
-            javaClass.getResourceAsStream("/assets/minecraft/fdpclient/packets.txt")!!.bufferedReader().use {
+            javaClass.getResourceAsStream("/assets/minecraft/fuguribeta/packets.txt")!!.bufferedReader().use {
                 packetList = it.readLines().toSet()
             }
         }.onFailure {

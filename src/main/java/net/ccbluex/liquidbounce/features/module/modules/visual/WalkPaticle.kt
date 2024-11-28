@@ -8,9 +8,9 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.utils.render.Particle3D
 import net.ccbluex.liquidbounce.value.IntegerValue
 import java.awt.Color
-import javax.vecmath.Vector3d
+import javax.vecmath.Vector3f
 
-object WalkPaticle : Module("WalkParticle", Category.VISUAL, hideModule = false) {
+object WalkPaticle : Module("WalkParticle", Category.VISUAL, hideModule = false, canBeEnabled = false) {
 
     private val lifetime = IntegerValue("LifeTime", 2000, 1000..5000)
     private val particleAmount = IntegerValue("Amount", 2, 1..10)
@@ -19,24 +19,18 @@ object WalkPaticle : Module("WalkParticle", Category.VISUAL, hideModule = false)
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        val playerPos = Vector3d(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ)
+        val playerPos = Vector3f(mc.thePlayer.posX.toFloat(), mc.thePlayer.posY.toFloat(), mc.thePlayer.posZ.toFloat())
         repeat(particleAmount.get()) {
-            particles.add(Particle3D(playerPos))
+            //particles.add(Particle3D(playerPos))
         }
     }
 
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         for (particle in particles) {
-            val ratio = (System.currentTimeMillis() - particle.getSpawnTime()) / lifetime.get().toFloat()
-            val inverseRatio = 1.0 - ratio
-
-            if (inverseRatio < 0) continue
-
-            val color = Color(255, 255, 255, (inverseRatio * 100).toInt())
-            particle.render(color)
+            val color = Color(1f, 1f, 1f, 1f)
+                //particle.render(color)
         }
-
-        particles.removeIf { (System.currentTimeMillis() - it.getSpawnTime()) / lifetime.get() >= 1.0 }
+        //particles.removeIf { (System.currentTimeMillis() - it.spawnTime) / lifetime.get() >= 1.0 }
     }
 }

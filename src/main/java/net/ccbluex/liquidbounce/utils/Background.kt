@@ -6,7 +6,7 @@
 package net.ccbluex.liquidbounce.utils
 
 import kotlinx.coroutines.*
-import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME2
+import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_NAME
 import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.MinecraftInstance.Companion.mc
 import net.ccbluex.liquidbounce.utils.render.shader.Shader
@@ -48,7 +48,7 @@ abstract class Background(val backgroundFile: File) {
 
 class ImageBackground(backgroundFile: File) : Background(backgroundFile) {
 
-    private val resourceLocation = ResourceLocation("${CLIENT_NAME2.lowercase()}/background/background.png")
+    private val resourceLocation = ResourceLocation("${CLIENT_NAME.lowercase()}/background/background.png")
 
     override fun initBackground() {
         val image = ImageIO.read(backgroundFile.inputStream())

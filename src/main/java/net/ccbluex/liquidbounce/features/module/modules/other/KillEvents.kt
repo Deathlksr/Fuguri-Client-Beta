@@ -8,7 +8,10 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.effect.EntityLightningBolt
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.network.play.server.S2CPacketSpawnGlobalEntity
 import java.util.*
 
 object KillEvents: Module("KillEvents", Category.PLAYER) {
@@ -16,11 +19,12 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
     private var insult by BoolValue("Insult", false)
     private var BedWars by BoolValue("Bedwars Mode", false) { insult }
 
-    private var particle by BoolValue("Particle", false)
-    private var mode by ListValue("Particles", arrayOf("Lava", "Smoke", "Cloud", "Flame"), "Flame") { particle }
+    private val effects by BoolValue("Effect", false)
+
+    private val effect by ListValue("Effects", arrayOf("Lighting"), "Lighting") { effects }
 
     private var killSound by BoolValue("Sound", false)
-    private val sound by ListValue("Sounds", arrayOf("None", "Hit", "Amogus", "Totem", "Explode", "Orb", "Pop", "Splash", "Lightning"), "Pop") { killSound }
+    private val sound by ListValue("Sounds", arrayOf("None", "Hit", "Amogus", "Totem", "Edogawa", "Explode", "Orb", "Pop", "Splash", "Lightning"), "Pop") { killSound }
     private val volume by FloatValue("Volume", 1f, 0.1f.. 5f) { killSound }
     private val pitch by FloatValue("Pitch", 1f, 0.1f..5f) { killSound }
 
@@ -37,7 +41,6 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
         ", Ты мне отсоси давай позорница ебаная",
         ", Луф убил твоего отца когда он работал на трассе",
         ", Андрей убил твою мертвую бабку на том свете и теперь она работает как ебаный светофор",
-        ", Я ебал твою бабку она сосала мой хуй под столом и ты ебаный прыщь у которого отец умер в сво",
         ", Ты инвалидка ебаная соси мне тут яйца",
         ", Вчера побил твою обьебанную бабку под столом",
         ", Всей шайкай мать твою уебали жирним дилдаком дилика который у него в жопе",
@@ -56,7 +59,6 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
         ", У меня самая лучшая шаверма гурма в горадэ",
         ", Я насадил твою мамашу на дуло Доры(800-мм пушка) и она улетела в космос",
         ", Я тапнул топором по ебалу твоей мамаши сын дуба ебаного",
-        ", Тыж понимаешь что ты щас сакаешь мой жирный хуй что у тебя аж твой ебаный вздувшийся кишечник рвется нахуй на 2 части",
         ", Я в анус твоей мамаши запихал снаряд 80 см размером как мой хуй",
         ", Я насадил твою дохлую маманю на шампур и сделал из нее кэбаб",
         ", Я твою мамашу посадил на электрический стул и у нее пизда нахуй поджарилась",
@@ -92,14 +94,13 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
         ", Гуд гейм убил твоего отца и посадил его на буж халиф",
         ", Кишки твоей матери на свой адепт член намотал и после все это дело вставил в анал твоего отца",
         ", Я манипулирую временем как пиздой твоей матери",
-        ", Ты давай мне тут не махинируй своими свиноподобными копытцами в чате, чтобы дать мне какой-либо минимизированный отпор",
         ", А ну быстро нахуй делай акробатический элемент на моем адепт члене",
         ", Я твою ебучку тут зассу шуганый сын шлюхи ты на кого тут вздумал рыпатся",
         ", Ебучку закрой и соси мне тут слоняра паршивая",
         )
 
     @EventTarget
-    fun onKillEvent(event: EntityKilledEvent) {
+    fun onKill(event: EntityKilledEvent) {
         val target = event.targetEntity
 
         if (target !is EntityPlayer)
@@ -108,12 +109,14 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
         if (insult) {
             if (BedWars) {
                 mc.thePlayer.sendChatMessage("!" + target.name + randomPhrase())
-                doSound()
             } else {
                 mc.thePlayer.sendChatMessage(target.name + randomPhrase())
-                doSound()
             }
         }
+
+        if (effects) doEffect(target)
+
+        if (killSound) doSound()
     }
 
     private fun randomPhrase(): String {
@@ -142,6 +145,21 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
             "Explode" -> player.playSound("random.explode", volume, pitch)
             "Amogus" -> tsp.amogusSound.asyncPlay(volume)
             "Totem" -> tsp.totemSound.asyncPlay(volume)
+            "Edogawa" -> tsp.edogawaSound.asyncPlay(volume)
         }
+    }
+
+    private fun doEffect(target: EntityLivingBase) {
+        when (effect) {
+            "Lighting" -> spawnLightning(target)
+        }
+    }
+
+    private fun spawnLightning(target: EntityLivingBase) {
+        mc.netHandler.handleSpawnGlobalEntity(
+            S2CPacketSpawnGlobalEntity(
+                EntityLightningBolt(mc.theWorld, target.posX, target.posY, target.posZ)
+            )
+        )
     }
 }

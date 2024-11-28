@@ -16,7 +16,6 @@ void main() {
     vec2 pos = gl_FragCoord.xy * strength;
     float param = fract(pos.x + pos.y + offset * speed);
 
-    // Divide the range [0, 1] into 4 segments
     float segment = 0.25;
     float index = param / segment;
     int idx1 = int(index);

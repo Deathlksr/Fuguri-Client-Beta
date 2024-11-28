@@ -327,11 +327,11 @@ class Notification(
             GL11.glColor4f(1F, 1F, 1F, 1F)
             val pn = ResourceLocation(
                 when (type.name) {
-                    "SUCCESS" -> "fdpclient/notifications/checkmark.png"
-                    "ERROR" -> "fdpclient/notifications/error.png"
-                    "WARNING" -> "fdpclient/notifications/warning.png"
-                    "INFO" -> "fdpclient/notifications/info.png"
-                    else -> "fdpclient/notifications/error.png"
+                    "SUCCESS" -> "fuguribeta/notifications/checkmark.png"
+                    "ERROR" -> "fuguribeta/notifications/error.png"
+                    "WARNING" -> "fuguribeta/notifications/warning.png"
+                    "INFO" -> "fuguribeta/notifications/info.png"
+                    else -> "fuguribeta/notifications/error.png"
                 }
             )
             RenderUtils.drawImage(pn, -textLength - 11, -y + 2, 7, 7)

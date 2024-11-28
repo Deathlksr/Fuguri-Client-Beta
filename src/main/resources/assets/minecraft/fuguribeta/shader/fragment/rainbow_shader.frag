@@ -11,4 +11,3 @@ void main() {
     ) - vec3(1.0, 1.0, 1.0)), 0.0, 1.0), 1.0);
     gl_FragColor = tmpvar_2;
 }
-

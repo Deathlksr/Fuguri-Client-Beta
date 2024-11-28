@@ -181,6 +181,7 @@ class Text(x: Double = 10.0, y: Double = 10.0, scale: Float = 1F, side: Side = S
             "pps_sent" -> return PPSCounter.getPPS(PPSCounter.PacketType.SEND)
             "pps_received" -> return PPSCounter.getPPS(PPSCounter.PacketType.RECEIVED)
             "flagc" -> return FlagDetector.flagCount
+            "pashalka" -> return "Я ТЕ МАТЬ ЕБАЛ НАХУЙ СЫН ТВАРИ ЕБАНОЙ НАХУЙ тЫ БЛЯТЬ НАХУЙ ТЫ ПИШЕШЬ ПАСХАЛКА СУКА ДАУН ТУПОГОЛОВЫЙ НАХУЙ!!!"
             else -> null // Null = don't replace
         }
     }

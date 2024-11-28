@@ -6,44 +6,8 @@ import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.modules.combat.Criticals
 import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura
 import net.ccbluex.liquidbounce.handler.combat.CombatManager
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawCrystal
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawEntityBox
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawFDP
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawJello
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawLies
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawLiesNew
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInSine
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutSine
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutSine
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInQuad
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutQuad
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutQuad
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInCubic
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutCubic
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutCubic
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInQuart
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutQuart
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutQuart
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInQuint
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutQuint
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutQuint
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInExpo
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutExpo
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutExpo
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInCirc
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutCirc
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutCirc
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInBack
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutBack
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutBack
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInElastic
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutElastic
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutElastic
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInBounce
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeOutBounce
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.easeInOutBounce
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.linear
-import net.ccbluex.liquidbounce.utils.render.animation.AnimationUtil.easeInOutQuadX
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
@@ -51,7 +15,6 @@ import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.potion.Potion
-import java.awt.Color
 import java.util.*
 
 object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subjective = true) {
@@ -61,16 +24,13 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     }
 
     // Mark - TargetESP
-    private val markValue by ListValue("MarkMode", arrayOf("None", "Jello", "Lies", "New", "FDP", "Sims", "RoundBox",), "LiesNew")
+    private val markValue by ListValue("TargetMode", arrayOf("None", "Lies", "New"), "New")
 
     override val tag
         get() = markValue
 
     private val onlykillauratargetesp by BoolValue("Only-KillAura", false)
 
-    val jelloRedValue by FloatValue("Jello-Red", 1F, 0F..1F) { markValue in arrayOf("Jello") }
-    val jelloGreenValue by FloatValue("Jello-Green", 1F, 0F..1F) { markValue in arrayOf("Jello") }
-    val jelloBlueValue by FloatValue("Jello-Blue", 1F, 0F..1F) { markValue in arrayOf("Jello") }
     val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New" ) }
     val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
@@ -87,22 +47,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     val liescolorgix by BoolValue("Lies-Color-Fix", true) { markValue in arrayOf("New") }
     private val liesstepvalue by IntegerValue("Lies-Step-Value", 10, 10..180) { markValue in arrayOf("New") }
     val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
-    val mode by ListValue("AnimationType", arrayOf(
-        "easeInSine", "easeOutSine", "easeInOutSine",
-        "easeInQuad", "easeOutQuad", "easeInOutQuad",
-        "easeInCubic", "easeOutCubic", "easeInOutCubic",
-        "easeInQuart", "easeOutQuart", "easeInOutQuart",
-        "easeInQuint", "easeOutQuint", "easeInOutQuint",
-        "easeInExpo", "easeOutExpo", "easeInOutExpo",
-        "easeInCirc", "easeOutCirc", "easeInOutCirc",
-        "easeInBack", "easeOutBack", "easeInOutBack",
-        "easeInElastic", "easeOutElastic", "easeInOutElastic",
-        "easeInBounce", "easeOutBounce", "easeInOutBounce",
-        "easeInOutQuadX", "linear"
-    ), "easeInOutQuadX") { markValue in arrayOf("Lies", "Jello", "FDP") }
-
-    private val hurt by BoolValue("Mark-HurtTime", true) { markValue in arrayOf("Sims", "RoundBox") }
-    private val boxOutline by BoolValue("Mark-Outline", true, subjective = true) { markValue == "RoundBox" }
 
     // fake sharp
     private val fakeSharp by BoolValue("FakeSharp", true, subjective = true)
@@ -140,35 +84,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
         (entityLivingBase.lastTickPosZ + (entityLivingBase.posZ - entityLivingBase.lastTickPosZ) * mc.timer.renderPartialTicks
                 - renderManager.renderPosZ)
         when (markValue.lowercase()) {
-            "roundbox" -> drawEntityBox(
-                entityLivingBase,
-                if (hurt && entityLivingBase.hurtTime > 3)
-                    Color(37, 126, 255, 70)
-                else
-                    Color(255, 0, 0, 70),
-                boxOutline
-            )
-
-            "sims" -> drawCrystal(
-                entityLivingBase,
-                if ((hurt && entityLivingBase.hurtTime <= 0)) Color(80, 255, 80, 200).rgb else Color(
-                    255,
-                    0,
-                    0,
-                    200
-                ).rgb,
-                event
-            )
-
-            "jello" -> drawJello(
-                entityLivingBase
-            )
-
-            "fdp" -> drawFDP(
-                entityLivingBase,
-                event
-            )
-
             "lies" -> drawLies(
                 entityLivingBase,
                 event,
@@ -176,7 +91,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 lenghtlies.toDouble(),
                 radiuslies,
             )
-
             "new" -> drawLiesNew(
                 entityLivingBase,
                 event,
@@ -197,7 +111,7 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        if (killaura.target?.hurtTime == 10) {
+        if (combat.target?.hurtTime == 10) {
             doSound()
         }
     }
@@ -224,44 +138,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
             ) {
                 thePlayer.onEnchantmentCritical(entity)
             }
-        }
-    }
-
-    fun doAnimation(drawPercent: Double): Double {
-        return when (mode) {
-            "easeInSine" -> easeInSine(drawPercent)
-            "easeOutSine" -> easeOutSine(drawPercent)
-            "easeInOutSine" -> easeInOutSine(drawPercent)
-            "easeInQuad" -> easeInQuad(drawPercent)
-            "easeOutQuad" -> easeOutQuad(drawPercent)
-            "easeInOutQuad" -> easeInOutQuad(drawPercent)
-            "easeInCubic" -> easeInCubic(drawPercent)
-            "easeOutCubic" -> easeOutCubic(drawPercent)
-            "easeInOutCubic" -> easeInOutCubic(drawPercent)
-            "easeInQuart" -> easeInQuart(drawPercent)
-            "easeOutQuart" -> easeOutQuart(drawPercent)
-            "easeInOutQuart" -> easeInOutQuart(drawPercent)
-            "easeInQuint" -> easeInQuint(drawPercent)
-            "easeOutQuint" -> easeOutQuint(drawPercent)
-            "easeInOutQuint" -> easeInOutQuint(drawPercent)
-            "easeInExpo" -> easeInExpo(drawPercent)
-            "easeOutExpo" -> easeOutExpo(drawPercent)
-            "easeInOutExpo" -> easeInOutExpo(drawPercent)
-            "easeInCirc" -> easeInCirc(drawPercent)
-            "easeOutCirc" -> easeOutCirc(drawPercent)
-            "easeInOutCirc" -> easeInOutCirc(drawPercent)
-            "easeInBack" -> easeInBack(drawPercent)
-            "easeOutBack" -> easeOutBack(drawPercent)
-            "easeInOutBack" -> easeInOutBack(drawPercent)
-            "easeInElastic" -> easeInElastic(drawPercent)
-            "easeOutElastic" -> easeOutElastic(drawPercent)
-            "easeInOutElastic" -> easeInOutElastic(drawPercent)
-            "easeInBounce" -> easeInBounce(drawPercent)
-            "easeOutBounce" -> easeOutBounce(drawPercent)
-            "easeInOutBounce" -> easeInOutBounce(drawPercent)
-            "easeInOutQuadX" -> easeInOutQuadX(drawPercent)
-            "linear" -> linear(drawPercent)
-            else -> easeInOutQuadX(drawPercent)
         }
     }
 

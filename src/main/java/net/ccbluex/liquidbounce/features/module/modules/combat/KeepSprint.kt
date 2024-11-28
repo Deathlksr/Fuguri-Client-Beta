@@ -9,5 +9,5 @@ object KeepSprint : Module("KeepSprint", Category.COMBAT, hideModule = false) {
     private val motionAfterAttackInAir by FloatValue("MotionAfterAttackInAir", 1.0f, 0.0f..1f)
 
     val motionAfterAttack
-        get() = if (mc.gameSettings.keyBindJump.isKeyDown) motionAfterAttackInAir else motionAfterAttackOnGround
+        get() = if (!mc.thePlayer.onGround) motionAfterAttackInAir else motionAfterAttackOnGround
 }

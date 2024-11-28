@@ -9,9 +9,6 @@ plugins {
     id "maven-publish"
 }
 
-
-
-
 repositories {
     mavenLocal()
     mavenCentral()
@@ -39,7 +36,7 @@ minecraft {
     runDir = "run"
     mappings = "stable_22"
     makeObfSourceJar = false
-    clientJvmArgs += ["-Dfml.coreMods.load=net.ccbluex.liquidbounce.injection.forge.MixinLoader", "-Xmx4096m", "-Xms1024m", "-Ddev-mode"]
+    clientJvmArgs += ["-Dfml.coreMods.load=net.ccbluex.liquidbounce.injection.forge.MixinLoader", "-Xmx2048m", "-Xms2048m", "-Ddev-mode"]
 }
 
 configurations {
@@ -135,7 +132,7 @@ jar {
             "FMLCorePlugin": "net.ccbluex.liquidbounce.injection.forge.MixinLoader",
             "FMLCorePluginContainsFMLMod": true,
             "ForceLoadAsMod": true,
-            "MixinConfigs": "fdpclient.forge.mixins.json",
+            "MixinConfigs": "fuguribeta.forge.mixins.json",
             "ModSide": "CLIENT",
             "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
             "TweakOrder": "0",
@@ -148,7 +145,7 @@ jar {
 mixin {
     disableRefMapWarning = true
     defaultObfuscationEnv searge
-    add sourceSets.main, "fdpclient.mixins.refmap.json"
+    add sourceSets.main, "fuguribeta.mixins.refmap.json"
 }
 
 reobf {

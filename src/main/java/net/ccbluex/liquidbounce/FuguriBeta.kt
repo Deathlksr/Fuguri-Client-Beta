@@ -58,11 +58,10 @@ object FuguriBeta {
      */
 
     const val CLIENT_NAME = "FuguriBeta"
-    const val CLIENT_NAME2 = "FDPClient"
     const val CLIENT_AUTHOR = "Deathlksr"
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
-    const val CLIENT_WEBSITE = "fdpclient.net"
-    const val CLIENT_VERSION = "B2.7"
+    const val CLIENT_WEBSITE = "fuguri.top"
+    const val CLIENT_VERSION = "B3.3"
 
     val clientVersionText = gitInfo["git.build.version"]?.toString() ?: "unknown"
     val clientVersionNumber = clientVersionText.substring(1).toIntOrNull() ?: 0 // version format: "b<VERSION>" on legacy
@@ -109,7 +108,7 @@ object FuguriBeta {
         isStarting = true
         isLoadingConfig = true
 
-        LOGGER.info("Starting Fuguri-Beta")
+        LOGGER.info("Starting Fuguri Beta")
 
         // Init SoundManager
         tipSoundManager = TipSoundManager()

@@ -27,7 +27,6 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
     private val fontShadow by BoolValue("Shadow", true)
     private val background by BoolValue("Background", true)
     private val bot by BoolValue("Bots", true)
-    private val clearNames by BoolValue("ClearNames", false)
     private val maxRenderDistance by object : IntegerValue("MaxRenderDistance", 100, 1..200) {
         override fun onUpdate(value: Int) {
             maxRenderDistanceSq = value.toDouble().pow(2.0)
@@ -67,13 +66,11 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
             if (onLook && !isLookingOnEntities(entity, maxAngleDifference.toDouble())) continue
             if (!thruBlocks && !RotationUtils.isVisible(Vec3(entity.posX, entity.posY, entity.posZ))) continue
 
-            val name = entity.displayName.unformattedText ?: continue
-
             val distanceSquared = mc.thePlayer.getDistanceSqToEntity(entity)
 
             if (distanceSquared <= maxRenderDistanceSq) {
                 when (typeValue.get().lowercase(Locale.getDefault())) {
-                    "2dtag" -> renderNameTag2D(entity, if (clearNames) ColorUtils.stripColor(name) else name)
+                    "2dtag" -> renderNameTag2D(entity)
                 }
             }
         }
@@ -93,6 +90,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         "Aliderequod",
         "Deathlksr",
         "DeathlksrF",
+        "Deathlksrl",
         "SweetAsssss",
         "SweetAssssss",
         "SweetAsssssss",
@@ -108,7 +106,8 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         "SSDxsLuFioiD",
         "waltonxcostxxx",
         "WaltonxNeverxxx",
-        "KillAuraxIHVILIX",
+        "KillAURAXIHVILIX",
+        "TouranDevDa",
     )
 
     private val userList = arrayOf(
@@ -149,16 +148,14 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         "Wakandr",
         "ЧухЧухЧухЛиза",
         "SJ_daaoo",
-        "TESTRANPO",
+        "TestRanpo",
         "EdogawaRanpo",
     )
 
-    private fun renderNameTag2D(entity: EntityLivingBase, name: String) {
-        var tag = name
+    private fun renderNameTag2D(entity: EntityLivingBase) {
         val fontRenderer = mc.fontRendererObj
         var scale = (mc.thePlayer.getDistanceToEntity(entity) / 2.5f).coerceAtLeast(4.0f)
         scale /= 200f
-        tag = entity.displayName.formattedText
         glPushMatrix()
         glTranslatef(
             (entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * mc.timer.renderPartialTicks - mc.renderManager.renderPosX).toFloat(),
@@ -190,6 +187,16 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
                 friendtext = ""
             }
 
+            var friendtextcolor = "§2${entity.displayName.formattedText}"
+            if (entity is EntityPlayer) {
+                val entityPlayer: EntityPlayer = entity
+                if (!entityPlayer.isClientFriend()) {
+                    friendtextcolor = entity.displayName.formattedText
+                }
+            } else {
+                friendtextcolor = entity.displayName.formattedText
+            }
+
             glNormal3f(0.0f, 1.0f, 0.0f)
             glRotatef(-mc.renderManager.playerViewY, 0.0f, 1.0f, 0.0f)
             glRotatef(mc.renderManager.playerViewX, 1.0f, 0.0f, 0.0f)
@@ -198,7 +205,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
             RenderUtils.setGLCap(GL_DEPTH_TEST, false)
             RenderUtils.setGLCap(GL_BLEND, true)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-            val text = usertext + ownertext + friendtext + tag
+            val text = usertext + ownertext + friendtext + friendtextcolor
             val stringWidth = fontRenderer.getStringWidth(text) / 2
             if (background) {
                 Gui.drawRect((-stringWidth - 1), -14, (stringWidth + 1), -4, Integer.MIN_VALUE)
