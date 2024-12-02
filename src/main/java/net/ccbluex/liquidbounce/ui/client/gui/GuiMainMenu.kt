@@ -1,10 +1,14 @@
 package net.ccbluex.liquidbounce.ui.client.gui
 
+import net.ccbluex.liquidbounce.FuguriBeta
+import net.ccbluex.liquidbounce.FuguriBeta.moduleManager
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule.volume
 import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager
 import net.ccbluex.liquidbounce.ui.client.gui.button.ImageButton
 import net.ccbluex.liquidbounce.ui.client.gui.button.QuitButton
 import net.ccbluex.liquidbounce.utils.login.UserUtils.isValidTokenOffline
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils
+import net.ccbluex.liquidbounce.utils.misc.sound.TipSoundManager
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
@@ -66,11 +70,26 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
 
     override fun actionPerformed(button: GuiButton) {
         when (button.id) {
-            0 -> mc.displayGuiScreen(GuiSelectWorld(this))
-            1 -> mc.displayGuiScreen(GuiMultiplayer(this))
-            2 -> mc.displayGuiScreen(GuiAltManager(this))
-            3 -> mc.displayGuiScreen(GuiInfo(this))
-            4 -> mc.displayGuiScreen(GuiOptions(this, mc.gameSettings))
+            0 ->{
+                mc.displayGuiScreen(GuiSelectWorld(this))
+                FuguriBeta.tipSoundManager.buttonpressSound.asyncPlay(volume)
+            }
+            1 ->{
+            mc.displayGuiScreen(GuiMultiplayer(this))
+                FuguriBeta.tipSoundManager.buttonpressSound.asyncPlay(volume)
+            }
+            2 ->{
+            mc.displayGuiScreen(GuiAltManager(this))
+                FuguriBeta.tipSoundManager.buttonpressSound.asyncPlay(volume)
+            }
+            3 ->{
+            mc.displayGuiScreen(GuiInfo(this))
+                FuguriBeta.tipSoundManager.buttonpressSound.asyncPlay(volume)
+            }
+            4 -> {
+            mc.displayGuiScreen(GuiOptions(this, mc.gameSettings))
+                FuguriBeta.tipSoundManager.buttonpressSound.asyncPlay(volume)
+            }
         }
     }
 
@@ -85,9 +104,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         drawModalRectWithCustomSizedTexture(width / 2 - 74, height / 2 - 140, 150f, 150f, 150, 150, 150f, 150f)
         this.drawString(
             mc.fontRendererObj, "§7Session: §5${mc.getSession().username}",
-            6,
-            6,
-            0xffffff
+            6, 6, 0xffffff
         )
         this.drawString(
             mc.fontRendererObj, "§7Type: §5${
@@ -95,9 +112,12 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
                         mc.getSession().token
                     )
                 ) "Microsoft" else "Cracked"
-            }", 6, 15, 0xffffff
+            }", 6, 16, 0xffffff
         )
-
+        this.drawString(
+            mc.fontRendererObj, "§7Modules: §5${moduleManager.modules.size}",
+            6, 26, 0xffffff
+        )
         listOf(btnForgeModList, btnGitHub, btnQuit).forEach {
             it.drawButton(mouseX, mouseY)
         }

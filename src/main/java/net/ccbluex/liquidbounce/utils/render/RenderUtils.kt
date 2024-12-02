@@ -1,19 +1,25 @@
 package net.ccbluex.liquidbounce.utils.render
 
+import akka.actor.Kill
 import com.jhlabs.image.GaussianFilter
 import net.ccbluex.liquidbounce.event.Render3DEvent
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.gradientlies
+import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.heihgtlies
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.hitcolorvalue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesalpha
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesalphatwo
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesbluehit
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorBlue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorBluetwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorGreen
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorGreentwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRed
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRedtwo
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorgix
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesgreenhit
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesredhit
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.penislistcolor
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.speedcolorlies
+import net.ccbluex.liquidbounce.handler.combat.CombatManager
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
 import net.ccbluex.liquidbounce.utils.UIEffectRenderer.drawTexturedRect
@@ -418,7 +424,7 @@ object RenderUtils : MinecraftInstance() {
     glPopMatrix()
     }
 
-    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float, liesstepvalue: Int) {
+    fun drawLiesNew(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, liesstepvalue: Int) {
         glPushMatrix()
         glDisable(GL_TEXTURE_2D)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -427,7 +433,7 @@ object RenderUtils : MinecraftInstance() {
         glDisable(GL_DEPTH_TEST)
         glDisable(GL_CULL_FACE)
         glShadeModel(7425)
-        if (liescolorgix) mc.entityRenderer.disableLightmap()
+        mc.entityRenderer.disableLightmap()
 
         val x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
         val y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY
@@ -435,37 +441,39 @@ object RenderUtils : MinecraftInstance() {
 
         glBegin(GL_QUAD_STRIP)
 
-        val penis = sin(System.currentTimeMillis() * 0.003 * speedMultiplier)
-        val red = liescolorRed
-        val green = liescolorGreen
-        val blue = liescolorBlue
-        val red2 = liescolorRedtwo
-        val green2 = liescolorGreentwo
-        val blue2 = liescolorBluetwo
+        val animation = sin(System.currentTimeMillis() * 0.003 * speedMultiplier)
 
         for (i in 0..360 step liesstepvalue) {
-            val x1 = x + sin(i * Math.PI / 180) * radiuslies
-            val z1 = z + cos(i * Math.PI / 180) * radiuslies
-            val y1 = y + penis
+            val x1 = x + sin(i * Math.PI / 180) * 0.7
+            val z1 = z + cos(i * Math.PI / 180) * 0.7
+            val y1 = y + animation
 
-            val color1 = Color(red, green, blue)
-            val color2 = Color(red2, green2, blue2)
-            val penis25 = (cos(i * Math.PI / 180 * speedcolorlies) + 1) / 2
-            val gradientcolor = ColorUtils.mixColorse(color1, color2, penis25.toFloat())
+            val color1 = Color(liescolorRed, liescolorGreen, liescolorBlue)
+            val color2 = Color(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo)
+            val gradientvalue = (cos(i * Math.PI / 180 * speedcolorlies) + 1) / 2
+            val gradientColor = ColorUtils.mixColorse(color1, color2, gradientvalue.toFloat())
 
-            if (gradientlies) {
-                glColor4f(gradientcolor.red / 255F, gradientcolor.green / 255F, gradientcolor.blue / 255F, liesalpha)
-            } else {
-                glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
+            when (penislistcolor) {
+                "Gradient" -> {
+                    glColor4f(gradientColor.red / 255F, gradientColor.green / 255F, gradientColor.blue / 255F, liesalpha)
+                    glVertex3d(x1, y1 + entity.height / 2, z1)
+                    glColor4f(gradientColor.red / 255F, gradientColor.green / 255F, gradientColor.blue / 255F, liesalphatwo)
+                    glVertex3d(x1, (y1 + entity.height / 2) + (animation * trailLengthMultiplier), z1)
+                }
+                "Custom" -> {
+                    if (KillAura.target?.hurtTime!! > 0 && hitcolorvalue) {
+                        glColor4f(liesredhit, liesgreenhit, liesbluehit, liesalpha)
+                        glVertex3d(x1, y1 + entity.height / 2, z1)
+                        glColor4f(liesredhit, liesgreenhit, liesbluehit, liesalphatwo)
+                        glVertex3d(x1, (y1 + entity.height / 2) + (animation * trailLengthMultiplier), z1)
+                    } else {
+                        glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalpha)
+                        glVertex3d(x1, y1 + entity.height / 2, z1)
+                        glColor4f(liescolorRed, liescolorGreen, liescolorBlue, liesalphatwo)
+                        glVertex3d(x1, (y1 + entity.height / 2) + (animation * trailLengthMultiplier), z1)
+                    }
+                }
             }
-            glVertex3d(x1, y1 + entity.height / 2, z1)
-
-            if (gradientlies) {
-                glColor4f(gradientcolor.red / 255F, gradientcolor.green / 255F, gradientcolor.blue / 255F, liesalphatwo)
-            } else {
-                glColor4f(liescolorRedtwo, liescolorGreentwo, liescolorBluetwo, liesalphatwo)
-            }
-            glVertex3d(x1, (y1 + entity.height / 2) + (penis * trailLengthMultiplier), z1)
         }
         glEnd()
         glEnable(GL_CULL_FACE)

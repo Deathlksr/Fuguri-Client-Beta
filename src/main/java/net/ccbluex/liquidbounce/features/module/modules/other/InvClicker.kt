@@ -3,7 +3,7 @@
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/SkidderMC/FDPClient/
  */
-package net.ccbluex.liquidbounce.features.module.modules.exploit
+package net.ccbluex.liquidbounce.features.module.modules.other
 
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.Render2DEvent
@@ -11,12 +11,12 @@ import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.gui.GuiScreen
-import net.minecraftforge.fml.relauncher.ReflectionHelper
+import net.minecraft.client.gui.inventory.GuiInventory
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import java.lang.reflect.InvocationTargetException
 
-object InvClicker : Module("InvClicker", Category.EXPLOIT, hideModule = false) {
+object InvClicker : Module("GuiClicker", Category.OTHER, hideModule = false, canBeEnabled = false) {
 
     private val delayValue by IntegerValue("Delay", 5, 0..10)
     private var mouseDown = 0
@@ -32,22 +32,12 @@ object InvClicker : Module("InvClicker", Category.EXPLOIT, hideModule = false) {
     }
 
     private fun inInvClick(guiScreen: GuiScreen) {
-        val mouseInGUIPosX = Mouse.getX() * guiScreen.width / mc.displayWidth
-        val mouseInGUIPosY = guiScreen.height - Mouse.getY() * guiScreen.height / mc.displayHeight - 1
 
         try {
             if (mouseDown >= delayValue) {
-                ReflectionHelper.findMethod<GuiScreen?>(
-                    GuiScreen::class.java,
-                    null,
-                    arrayOf(
-                        "func_73864_a",
-                        "mouseClicked"
-                    ),
-                    Integer.TYPE,
-                    Integer.TYPE,
-                    Integer.TYPE
-                ).invoke(guiScreen, mouseInGUIPosX, mouseInGUIPosY, 0)
+                if (guiScreen is GuiInventory) {
+
+                }
                 mouseDown = 0
             }
         } catch (ignored: IllegalAccessException) {

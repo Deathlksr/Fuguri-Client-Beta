@@ -132,7 +132,7 @@ jar {
             "FMLCorePlugin": "net.ccbluex.liquidbounce.injection.forge.MixinLoader",
             "FMLCorePluginContainsFMLMod": true,
             "ForceLoadAsMod": true,
-            "MixinConfigs": "fuguribeta.forge.mixins.json",
+            "MixinConfigs": "fdpclient.forge.mixins.json",
             "ModSide": "CLIENT",
             "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
             "TweakOrder": "0",
@@ -145,7 +145,7 @@ jar {
 mixin {
     disableRefMapWarning = true
     defaultObfuscationEnv searge
-    add sourceSets.main, "fuguribeta.mixins.refmap.json"
+    add sourceSets.main, "fdpclient.mixins.refmap.json"
 }
 
 reobf {

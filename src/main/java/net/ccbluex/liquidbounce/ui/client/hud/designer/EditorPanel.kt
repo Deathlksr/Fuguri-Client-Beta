@@ -331,7 +331,7 @@ class EditorPanel(private val hudDesigner: GuiHudDesigner, var x: Int, var y: In
                     if (Mouse.isButtonDown(0) && !mouseDown && mouseX in x..x + width && mouseY in y + height..y + height + 10) {
                         value.toggle()
                         element.updateElement()
-                        ClickGui.style.clickSound()
+                        
                     }
 
                     // Change pos
@@ -430,7 +430,7 @@ class EditorPanel(private val hudDesigner: GuiHudDesigner, var x: Int, var y: In
                         if (Mouse.isButtonDown(0) && !mouseDown && mouseX in x..x + width&& mouseY in y + height..y + height + 10) {
                             value.set(s)
                             element.updateElement()
-                            ClickGui.style.clickSound()
+                            
                         }
 
                         // Change pos
@@ -455,7 +455,7 @@ class EditorPanel(private val hudDesigner: GuiHudDesigner, var x: Int, var y: In
                         if (Mouse.isButtonDown(0)) value.next()
                         else value.previous()
                         element.updateElement()
-                        ClickGui.style.clickSound()
+                        
                     }
 
                     height += 10

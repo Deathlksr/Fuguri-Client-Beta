@@ -11,9 +11,11 @@ import me.liuli.elixir.account.CrackedAccount
 import me.liuli.elixir.account.MicrosoftAccount
 import me.liuli.elixir.account.MinecraftAccount
 import me.liuli.elixir.account.MojangAccount
+import net.ccbluex.liquidbounce.FuguriBeta
 import net.ccbluex.liquidbounce.FuguriBeta.CLIENT_CLOUD
 import net.ccbluex.liquidbounce.event.EventManager.callEvent
 import net.ccbluex.liquidbounce.event.SessionEvent
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule
 import net.ccbluex.liquidbounce.file.FileManager.accountsConfig
 import net.ccbluex.liquidbounce.file.FileManager.saveConfig
 import net.ccbluex.liquidbounce.ui.client.altmanager.menus.GuiLoginIntoAccount
@@ -148,6 +150,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
 
                     login(it, {
                         status = "§5Logged into ${mc.session.username}."
+                        FuguriBeta.tipSoundManager.loginSuccessfulSound.asyncPlay(ClickGUIModule.volume)
                     }, { exception ->
                         status = "§cLogin failed due to '${exception.message}'."
                     }, {
@@ -168,6 +171,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
 
                     login(it, {
                         status = "§5Logged into ${mc.session.username}."
+                        FuguriBeta.tipSoundManager.loginSuccessfulSound.asyncPlay(ClickGUIModule.volume)
                     }, { exception ->
                         status = "§cLogin failed due to '${exception.message}'."
                     }, {
@@ -182,6 +186,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
 
             5 -> { // Random name button
                 status = "§5Logged into ${randomAccount().name}."
+                FuguriBeta.tipSoundManager.loginSuccessfulSound.asyncPlay(ClickGUIModule.volume)
             }
 
             6 -> { // Direct login button
@@ -204,6 +209,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
 
                 saveConfig(accountsConfig)
                 status = "§5The accounts were imported successfully."
+                FuguriBeta.tipSoundManager.loginSuccessfulSound.asyncPlay(ClickGUIModule.volume)
             }
 
             12 -> { // Export button
@@ -232,6 +238,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
                     file.writeText(accounts)
 
                     status = "§5Exported successfully!"
+                    FuguriBeta.tipSoundManager.loginSuccessfulSound.asyncPlay(ClickGUIModule.volume)
                 } catch (e: Exception) {
                     status = "§cUnable to export due to error: ${e.message}"
                 }
@@ -364,6 +371,7 @@ class GuiAltManager(private val prevGui: GuiScreen) : GuiScreen() {
 
                     login(it, {
                         status = "§5Logged into ${mc.session.username}."
+                        FuguriBeta.tipSoundManager.loginSuccessfulSound.asyncPlay(ClickGUIModule.volume)
                     }, { exception ->
                         status = "§cLogin failed due to '${exception.message}'."
                     }, {

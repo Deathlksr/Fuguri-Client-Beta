@@ -1,5 +1,6 @@
 package net.ccbluex.liquidbounce.injection.forge.mixins.client;
 
+import net.ccbluex.liquidbounce.features.module.modules.combat.MoreKB;
 import net.ccbluex.liquidbounce.features.module.modules.player.scaffolds.Scaffold;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.MovementInputFromOptions;

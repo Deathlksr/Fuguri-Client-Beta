@@ -5,7 +5,9 @@
  */
 package net.ccbluex.liquidbounce.features.command
 
+import net.ccbluex.liquidbounce.FuguriBeta
 import net.ccbluex.liquidbounce.FuguriBeta.commandManager
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule
 import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
@@ -62,5 +64,5 @@ abstract class Command(val command: String, vararg val alias: String) : Minecraf
     /**
      * Play edit sound
      */
-    protected fun playEdit() = mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("random.anvil_use"), 1F))
+    protected fun playEdit() = FuguriBeta.tipSoundManager.loginSuccessfulSound.asyncPlay(ClickGUIModule.volume)
 }

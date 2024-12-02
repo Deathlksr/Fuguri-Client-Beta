@@ -145,7 +145,7 @@ object BlackStyle : Style() {
 
                             if (mouseButton == 0 && mouseX in minX..maxX && mouseY in yPos..yPos + 12) {
                                 value.toggle()
-                                clickSound()
+                                
                                 return true
                             }
 
@@ -163,7 +163,7 @@ object BlackStyle : Style() {
 
                             if (mouseButton == 0 && mouseX in minX..maxX && mouseY in yPos..yPos + font35.fontHeight) {
                                 value.openList = !value.openList
-                                clickSound()
+                                
                                 return true
                             }
 
@@ -183,7 +183,7 @@ object BlackStyle : Style() {
                                 if (value.openList) {
                                     if (mouseButton == 0 && mouseX in minX..maxX && mouseY in yPos..yPos + 9) {
                                         value.set(valueOfList)
-                                        clickSound()
+                                        
                                         return true
                                     }
 
@@ -209,7 +209,7 @@ object BlackStyle : Style() {
 
                             if (mouseButton == 0 && mouseX in minX..maxX && mouseY in yPos..yPos + font35.fontHeight) {
                                 value.openList = !value.openList
-                                clickSound()
+                                
                                 return true
                             }
 
@@ -235,7 +235,7 @@ object BlackStyle : Style() {
                                         } else {
                                             value.changeValue(value.value + listOf(valueOfList))
                                         }
-                                        clickSound()
+                                        
                                         return true
                                     }
 
@@ -342,7 +342,7 @@ object BlackStyle : Style() {
                                 // Cycle to next font when left-clicked, previous when right-clicked.
                                 if (mouseButton == 0) value.next()
                                 else value.previous()
-                                clickSound()
+                                
                                 return true
                             }
 

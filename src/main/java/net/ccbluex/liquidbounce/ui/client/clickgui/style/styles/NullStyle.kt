@@ -97,7 +97,7 @@ object NullStyle : Style() {
                                 && mouseY in yPos + 2..yPos + 14
                             ) {
                                 value.toggle()
-                                clickSound()
+                                
                                 return true
                             }
 
@@ -119,7 +119,7 @@ object NullStyle : Style() {
                                 && mouseY in yPos + 2..yPos + 14
                             ) {
                                 value.openList = !value.openList
-                                clickSound()
+                                
                                 return true
                             }
 
@@ -142,7 +142,7 @@ object NullStyle : Style() {
                                         && mouseY in yPos + 2..yPos + 14
                                     ) {
                                         value.set(valueOfList)
-                                        clickSound()
+                                        
                                         return true
                                     }
 
@@ -230,7 +230,7 @@ object NullStyle : Style() {
                                 // Cycle to next font when left-clicked, previous when right-clicked.
                                 if (mouseButton == 0) value.next()
                                 else value.previous()
-                                clickSound()
+                                
                                 return true
                             }
 

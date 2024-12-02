@@ -5,6 +5,9 @@
  */
 package net.ccbluex.liquidbounce.ui.client.gui.button;
 
+import net.ccbluex.liquidbounce.FuguriBeta;
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule;
+import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui;
 import net.ccbluex.liquidbounce.ui.font.Fonts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -37,7 +40,9 @@ public class ImageButton extends ButtonState {
 
             drawHoverEffect();
         } else {
-            if (hoverFade > 0) hoverFade -= 10;
+            if (hoverFade > 0) {
+                hoverFade -= 10;
+            }
         }
 
         drawCustomShapeWithRadius(this.x - 1, this.y - 1, this.width + 2, this.height + 2, 2, new Color(30, 30, 30, 60));

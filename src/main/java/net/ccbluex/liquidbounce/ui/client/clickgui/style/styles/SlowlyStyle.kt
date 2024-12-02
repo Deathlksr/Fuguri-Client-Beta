@@ -113,7 +113,7 @@ object SlowlyStyle : Style() {
                                 && mouseY in yPos..yPos + 12
                             ) {
                                 value.toggle()
-                                clickSound()
+                                
                                 return true
                             }
 
@@ -133,7 +133,7 @@ object SlowlyStyle : Style() {
                                 && mouseY in yPos..yPos + font35.fontHeight
                             ) {
                                 value.openList = !value.openList
-                                clickSound()
+                                
                                 return true
                             }
 
@@ -154,7 +154,7 @@ object SlowlyStyle : Style() {
                                         && mouseY in yPos..yPos + 9
                                     ) {
                                         value.set(valueOfList)
-                                        clickSound()
+                                        
                                         return true
                                     }
 
@@ -252,7 +252,7 @@ object SlowlyStyle : Style() {
                                 // Cycle to next font when left-clicked, previous when right-clicked.
                                 if (mouseButton == 0) value.next()
                                 else value.previous()
-                                clickSound()
+                                
                                 return true
                             }
 

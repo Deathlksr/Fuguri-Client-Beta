@@ -12,7 +12,9 @@ class TipSoundManager {
     var shutdownSound: TipSoundPlayer
     var amogusSound: TipSoundPlayer
     var totemSound: TipSoundPlayer
-    var edogawaSound: TipSoundPlayer
+    var buttonpressSound: TipSoundPlayer
+    var fatalitySound: TipSoundPlayer
+    var loginSuccessfulSound: TipSoundPlayer
 
     init {
         val enableSoundFile = File(FuguriBeta.fileManager.soundsDir, "enable.wav")
@@ -22,7 +24,9 @@ class TipSoundManager {
         val shutDownSoundFile = File(FuguriBeta.fileManager.soundsDir,  "shutdown.wav")
         val amogusSoundFile = File(FuguriBeta.fileManager.soundsDir, "imposter.wav")
         val totemSoundFile = File(FuguriBeta.fileManager.soundsDir, "totem.wav")
-        val edogawaSoundFile = File(FuguriBeta.fileManager.soundsDir, "edogawa.wav")
+        val buttonpressSoundFile = File(FuguriBeta.fileManager.soundsDir, "buttonpress.wav")
+        val fatalitySoundFile = File(FuguriBeta.fileManager.soundsDir, "fatality.wav")
+        val loginSuccessfulSoundFile = File(FuguriBeta.fileManager.soundsDir, "loginSuccessful.wav")
 
         if (!enableSoundFile.exists())
             FileUtils.unpackFile(enableSoundFile, "assets/minecraft/fuguribeta/sound/enable.wav")
@@ -38,8 +42,12 @@ class TipSoundManager {
             FileUtils.unpackFile(amogusSoundFile, "assets/minecraft/fuguribeta/sound/imposter.wav")
         if (!totemSoundFile.exists())
             FileUtils.unpackFile(totemSoundFile, "assets/minecraft/fuguribeta/sound/totem.wav")
-        if (!edogawaSoundFile.exists())
-            FileUtils.unpackFile(edogawaSoundFile, "assets/minecraft/fuguribeta/sound/edogawa.wav")
+        if (!buttonpressSoundFile.exists())
+            FileUtils.unpackFile(buttonpressSoundFile, "assets/minecraft/fuguribeta/sound/buttonpress.wav")
+        if (!fatalitySoundFile.exists())
+            FileUtils.unpackFile(fatalitySoundFile, "assets/minecraft/fuguribeta/sound/fatality.wav")
+        if (!loginSuccessfulSoundFile.exists())
+            FileUtils.unpackFile(loginSuccessfulSoundFile, "assets/minecraft/fuguribeta/sound/loginSuccessful.wav")
 
         enableSound = TipSoundPlayer(enableSoundFile)
         popSound = TipSoundPlayer(popSoundFile)
@@ -48,6 +56,8 @@ class TipSoundManager {
         shutdownSound = TipSoundPlayer(shutDownSoundFile)
         amogusSound = TipSoundPlayer(amogusSoundFile)
         totemSound = TipSoundPlayer(totemSoundFile)
-        edogawaSound = TipSoundPlayer(edogawaSoundFile)
+        buttonpressSound = TipSoundPlayer(buttonpressSoundFile)
+        fatalitySound = TipSoundPlayer(fatalitySoundFile)
+        loginSuccessfulSound = TipSoundPlayer(loginSuccessfulSoundFile)
     }
 }

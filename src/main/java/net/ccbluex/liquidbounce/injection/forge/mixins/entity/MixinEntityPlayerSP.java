@@ -118,6 +118,8 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer {
     @Shadow
     protected abstract boolean isCurrentViewEntity();
 
+    @Shadow public abstract void swingItem();
+
     /**
      * @author CCBlueX
      */

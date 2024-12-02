@@ -17,7 +17,7 @@ import java.util.Map;
 public class MixinLoader implements IFMLLoadingPlugin {
 
     public MixinLoader() {
-        System.out.println("[FDPCLIENT] Injecting with IFMLLoadingPlugin.");
+        System.out.println("[FUGURIBETA] Injecting with IFMLLoadingPlugin.");
 
         MixinBootstrap.init();
         Mixins.addConfiguration("fdpclient.forge.mixins.json");

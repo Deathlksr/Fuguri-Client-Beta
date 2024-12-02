@@ -31,7 +31,6 @@ import java.awt.Color
 object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule = false) {
 
     private val randomdelay by BoolValue("RandomDelay", false)
-    private val synchronize by BoolValue("Synchronize-Position", false) { randomdelay }
     private val delay by IntegerValue("Delay", 500, 0..1000) { !randomdelay }
     private val mindelay = IntegerValue("MinDelay", 500, 0..1000) { randomdelay }
     private val maxdelay = IntegerValue("MaxDelay", 520, 0..1000) { randomdelay }
@@ -223,8 +222,6 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-       randomdelays = RandomUtils.nextInt(mindelay.get(), maxdelay.get())
-
         if (ticksFlag > 0) {
             ticksFlag--
         }
@@ -239,6 +236,9 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     @EventTarget
     fun onGameLoop(event: GameLoopEvent) {
         mc.thePlayer ?: return
+
+        if (!randomdelay)
+            randomdelays = delay
 
         if (!resetTimer.hasTimePassed(recoildelay))
             return
@@ -296,12 +296,13 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         packetQueue.clear()
         positions.clear()
         ignoreWholeTick = true
+        if (randomdelay) randomdelays = RandomUtils.nextInt(mindelay.get(), maxdelay.get())
     }
 
     private fun handlePackets() {
         synchronized(packetQueue) {
             packetQueue.entries.removeAll { (packet, timestamp) ->
-                if (timestamp <= System.currentTimeMillis() - if (randomdelay) { if (!synchronize) { RandomUtils.nextInt(mindelay.get(), maxdelay.get()) } else randomdelays } else delay) {
+                if (timestamp <= System.currentTimeMillis() - randomdelays ) {
                     sendPacket(packet, false)
                     true
                 } else false
@@ -309,7 +310,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         }
 
         synchronized(positions) {
-            positions.entries.removeAll { (_, timestamp) -> timestamp <= System.currentTimeMillis() - if (randomdelay) { if (!synchronize) { RandomUtils.nextInt(mindelay.get(), maxdelay.get()) } else randomdelays } else delay }
+            positions.entries.removeAll { (_, timestamp) -> timestamp <= System.currentTimeMillis() - randomdelays }
         }
     }
 }

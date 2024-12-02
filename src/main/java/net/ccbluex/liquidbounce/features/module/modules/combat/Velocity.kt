@@ -23,23 +23,12 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
         ), "Intave"
     )
 
-    // Intave HurtTime
     private val hurtTime by IntegerValue("HurtTime", 6, 0..10) { mode in arrayOf("IntaveReduce") }
-
-    // Intave MotionXZ
     private val Motionxz by FloatValue("XZ-SprintHit", 0.6F, 0F..1F) { mode in arrayOf("Intave") }
     private val MotionnotSprintxz by FloatValue("XZ-Hit", 1.0F, 0F..1F) { mode in arrayOf("Intave", "IntaveReduce") }
-
-    // Intave Settings
     private val falsesprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("Intave") }
-
-    // Intave Jump
     private val intavejump by BoolValue("Jump", false) { mode in arrayOf("Intave", "IntaveReduce") }
-
-    // Intave Chance
     private val chance by IntegerValue("Chance", 100, 0..100) { intavejump }
-
-    // Intave Jump
     private val jumpCooldownMode by ListValue("JumpCooldownMode", arrayOf("Ticks", "ReceivedHits"), "Ticks")
     { intavejump }
     private val ticksUntilJump by IntegerValue("TicksUntilJump", 4, 0..20)
@@ -161,7 +150,7 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
     fun onStrafe(event: StrafeEvent) {
         val player = mc.thePlayer ?: return
 
-        if (mode == "Intave" || mode == "IntaveReduce" && hasReceivedVelocity && intavejump) {
+        if (mode == "Intave" && hasReceivedVelocity && intavejump || mode == "IntaveReduce" && hasReceivedVelocity && intavejump) {
             if (!player.isJumping && nextInt(endExclusive = 100) < chance && shouldJump() && player.isSprinting && player.onGround && player.hurtTime == 9) {
                 player.tryJump()
                 limitUntilJump = 0

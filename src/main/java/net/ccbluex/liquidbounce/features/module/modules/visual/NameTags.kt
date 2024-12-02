@@ -1,16 +1,23 @@
 package net.ccbluex.liquidbounce.features.module.modules.visual
 
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.IOException
 import net.ccbluex.liquidbounce.event.EventTarget
+import net.ccbluex.liquidbounce.event.GameLoopEvent
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.modules.client.AntiBot.isBot
+import net.ccbluex.liquidbounce.features.module.modules.client.IRCModule
+import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.EntityUtils.isLookingOnEntities
 import net.ccbluex.liquidbounce.utils.EntityUtils.isSelected
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.extensions.isClientFriend
-import net.ccbluex.liquidbounce.utils.render.ColorUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
+import net.ccbluex.liquidbounce.utils.timing.TimeUtils
 import net.ccbluex.liquidbounce.value.*
 import net.minecraft.client.gui.Gui
 import net.minecraft.entity.Entity
@@ -33,10 +40,17 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         }
     }
 
+    private var updateRepository by BoolValue("UpdateRepository", false)
     private val onLook by BoolValue("OnLook", false)
     private val maxAngleDifference by FloatValue("MaxAngleDifference", 90f, 5.0f..90f) { onLook }
 
     private val thruBlocks by BoolValue("ThruBlocks", true)
+
+    private const val GITHUBRAWURL = "https://raw.githubusercontent.com/VerLouF/Lists-Furugi/refs/heads/main"
+
+    private lateinit var ownerList: List<String>
+    private lateinit var bonanList: List<String>
+    private lateinit var userList: List<String>
 
     private var maxRenderDistanceSq = 0.0
         set(value) {
@@ -46,6 +60,15 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         if (mc.theWorld == null || mc.thePlayer == null) return
+
+        if (updateRepository) {
+            runBlocking {
+                getListsFromGitHub()
+            }
+            TimeUtils.delay(40) {
+                updateRepository = false
+            }
+        }
 
         glPushAttrib(GL_ENABLE_BIT)
         glPushMatrix()
@@ -85,72 +108,31 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         glColor4f(1F, 1F, 1F, 1F)
     }
 
-    private val ownerList = arrayOf(
-        "zasolinne",
-        "Aliderequod",
-        "Deathlksr",
-        "DeathlksrF",
-        "Deathlksrl",
-        "SweetAsssss",
-        "SweetAssssss",
-        "SweetAsssssss",
-        "SweetAssssssss",
-        "SweetAsssssssss",
-        "SweetAssssssssss",
-        "MKY_PEDURFILE",
-        "MKY_PEDOFILE",
-        "AsarLong",
-        "TheDayUranus93",
-        "TheDayUranus94",
-        "VerLouF",
-        "SSDxsLuFioiD",
-        "waltonxcostxxx",
-        "WaltonxNeverxxx",
-        "KillAURAXIHVILIX",
-        "TouranDevDa",
-    )
+    suspend fun getListsFromGitHub() {
+        withContext(Dispatchers.IO) {
+            try {
+                ownerList = getListFromGitHub("$GITHUBRAWURL/ownerList.txt")
+                bonanList = getListFromGitHub("$GITHUBRAWURL/bonanList.txt")
+                userList = getListFromGitHub("$GITHUBRAWURL/userList.txt")
+            } catch (e: IOException) {
+                LOGGER.info("Ошибка при получении данных с GitHub: ${e.message}")
+                ownerList = emptyList()
+                bonanList = emptyList()
+                userList = emptyList()
+            }
+        }
+    }
 
-    private val userList = arrayOf(
-        "Kikatilo_1",
-        "Kikatilo_2",
-        "Kikatilo_3",
-        "Kikatilo_4",
-        "Kikatilo_5",
-        "Kikatilo_6",
-        "Kikatilo_7",
-        "Kikatilo_8",
-        "Kikatilo_9",
-        "Kikatilo_10",
-        "Kikatilo_11",
-        "Kikatilo_12",
-        "Kikatilo_13",
-        "Kikatilo_14",
-        "Kikatilo_15",
-        "Kikatilo_16",
-        "Kikatilo_17",
-        "Kikatilo_18",
-        "Kikatilo_19",
-        "Kikatilo_20",
-        "Kikatilo_21",
-        "Kikatilo_22",
-        "Kikatilo_23",
-        "Kikatilo_24",
-        "Kikatilo_25",
-        "Kikatilo_26",
-        "Kikatilo_27",
-        "Kikatilo_28",
-        "Kikatilo_29",
-        "Kikatilo_30",
-        "Kikatilo_01",
-        "Kikatilo_02",
-        "bastard_daaoo",
-        "SJ_Mealisene",
-        "Wakandr",
-        "ЧухЧухЧухЛиза",
-        "SJ_daaoo",
-        "TestRanpo",
-        "EdogawaRanpo",
-    )
+    private fun getListFromGitHub(url: String): List<String> {
+        val client = OkHttpClient()
+        val request = Request.Builder().url(url).build()
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                throw IOException("Ошибка: ${response.code}")
+            }
+            return response.body?.string()?.lines()?.map { it.trim().lowercase() } ?: emptyList()
+        }
+    }
 
     private fun renderNameTag2D(entity: EntityLivingBase) {
         val fontRenderer = mc.fontRendererObj
@@ -163,64 +145,71 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
             (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * mc.timer.renderPartialTicks - mc.renderManager.renderPosZ).toFloat()
         )
 
-            var ownertext = ""
-            if (entity is EntityPlayer) {
-                if (ownerList.contains(entity.displayNameString)) {
-                    ownertext = "§5[Fuguri Owner] "
-                }
+        var ownertext = ""
+        if (entity is EntityPlayer) {
+            if (ownerList.contains(entity.displayNameString.lowercase())) {
+                ownertext = "§4[Fuguri Owner] "
             }
+        }
 
-            var usertext = ""
-            if (entity is EntityPlayer) {
-                if (userList.contains(entity.displayNameString)) {
-                    usertext = "§5[Fuguri User] "
-                }
+        var usertext = ""
+        if (entity is EntityPlayer) {
+            if (userList.contains(entity.displayNameString.lowercase())) {
+                usertext = "§5[Fuguri User] "
             }
+        }
 
-            var friendtext = "§2[Friend] "
-            if (entity is EntityPlayer) {
-                val entityPlayer: EntityPlayer = entity
-                if (!entityPlayer.isClientFriend()) {
-                    friendtext = ""
-                }
-            } else {
+        var penisbaban = ""
+        if (entity is EntityPlayer) {
+            if (bonanList.contains(entity.displayNameString.lowercase())) {
+                penisbaban = "§6[Bonan Entwickler] "
+            }
+        }
+
+        var friendtext = "§2[Friend] "
+        if (entity is EntityPlayer) {
+            val entityPlayer: EntityPlayer = entity
+            if (!entityPlayer.isClientFriend()) {
                 friendtext = ""
             }
+        } else {
+            friendtext = ""
+        }
 
-            var friendtextcolor = "§2${entity.displayName.formattedText}"
-            if (entity is EntityPlayer) {
-                val entityPlayer: EntityPlayer = entity
-                if (!entityPlayer.isClientFriend()) {
-                    friendtextcolor = entity.displayName.formattedText
-                }
-            } else {
+        var friendtextcolor = "§a${entity.displayName.formattedText}"
+        if (entity is EntityPlayer) {
+            val entityPlayer: EntityPlayer = entity
+            if (!entityPlayer.isClientFriend()) {
                 friendtextcolor = entity.displayName.formattedText
             }
-
-            glNormal3f(0.0f, 1.0f, 0.0f)
-            glRotatef(-mc.renderManager.playerViewY, 0.0f, 1.0f, 0.0f)
-            glRotatef(mc.renderManager.playerViewX, 1.0f, 0.0f, 0.0f)
-            glScalef(-scale, -scale, scale)
-            RenderUtils.setGLCap(GL_LIGHTING, false)
-            RenderUtils.setGLCap(GL_DEPTH_TEST, false)
-            RenderUtils.setGLCap(GL_BLEND, true)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-            val text = usertext + ownertext + friendtext + friendtextcolor
-            val stringWidth = fontRenderer.getStringWidth(text) / 2
-            if (background) {
-                Gui.drawRect((-stringWidth - 1), -14, (stringWidth + 1), -4, Integer.MIN_VALUE)
-            }
-            fontRenderer.drawString(
-                text,
-                (-stringWidth).toFloat(),
-                (fontRenderer.FONT_HEIGHT - 22).toFloat(),
-                16777215,
-                fontShadow
-            )
-            RenderUtils.revertAllCaps()
-            glColor4f(1f, 1f, 1f, 1f)
-            glPopMatrix()
+        } else {
+            friendtextcolor = entity.displayName.formattedText
         }
+
+        glNormal3f(0.0f, 1.0f, 0.0f)
+        glRotatef(-mc.renderManager.playerViewY, 0.0f, 1.0f, 0.0f)
+        glRotatef(mc.renderManager.playerViewX, 1.0f, 0.0f, 0.0f)
+        glScalef(-scale, -scale, scale)
+        RenderUtils.setGLCap(GL_LIGHTING, false)
+        RenderUtils.setGLCap(GL_DEPTH_TEST, false)
+        RenderUtils.setGLCap(GL_BLEND, true)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        val text = usertext + penisbaban + ownertext + friendtext + friendtextcolor
+        val stringWidth = fontRenderer.getStringWidth(text) / 2
+        if (background) {
+            Gui.drawRect((-stringWidth - 1), -14, (stringWidth + 1), -4, Integer.MIN_VALUE)
+        }
+        fontRenderer.drawString(
+            text,
+            (-stringWidth).toFloat(),
+            (fontRenderer.FONT_HEIGHT - 22).toFloat(),
+            16777215,
+            fontShadow
+        )
+        RenderUtils.revertAllCaps()
+        glColor4f(1f, 1f, 1f, 1f)
+        glPopMatrix()
+    }
 
     fun shouldRenderNameTags(entity: Entity) =
         handleEvents() && entity is EntityLivingBase && (ESP.handleEvents() && ESP.renderNameTags || isSelected(

@@ -76,7 +76,6 @@ object ModuleManager : Listenable {
     @SafeVarargs
     fun registerModules(vararg modules: Class<out Module>) = modules.forEach(this::registerModule)
 
-
     /**
      * Register a list of modules
      */

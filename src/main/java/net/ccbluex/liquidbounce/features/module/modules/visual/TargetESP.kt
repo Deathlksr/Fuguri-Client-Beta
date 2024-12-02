@@ -31,25 +31,28 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
 
     private val onlykillauratargetesp by BoolValue("Only-KillAura", false)
 
-    val liescolorRed by FloatValue("Lies-Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New" ) }
-    val liescolorGreen by FloatValue("Lies-Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
-    val liescolorBlue by FloatValue("Lies-Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
-    val liesalpha by FloatValue("Lies-Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
-    val liescolorRedtwo by FloatValue("Lies-Red2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
-    val liescolorGreentwo by FloatValue("Lies-Green2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
-    val liescolorBluetwo by FloatValue("Lies-Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") }
-    val liesalphatwo by FloatValue("Lies-Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
-    private val speedlies by FloatValue("Lies-Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies", "New") }
-    private val lenghtlies by FloatValue("Lies-Length", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
-    private val radiuslies by FloatValue("Lies-Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies", "New") }
-    val gradientlies by BoolValue("Lies-Gradient", false) { markValue in arrayOf("New") }
-    val speedcolorlies by IntegerValue("Lies-Color-Value", 9, 1..9) { markValue in arrayOf("New") }
-    val liescolorgix by BoolValue("Lies-Color-Fix", true) { markValue in arrayOf("New") }
-    private val liesstepvalue by IntegerValue("Lies-Step-Value", 10, 10..180) { markValue in arrayOf("New") }
-    val heihgtlies by BoolValue("Lies-Height-Fix-UseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
+    val penislistcolor by ListValue("ColorType", arrayOf("Gradient", "Custom"), "Gradient") { markValue in arrayOf("New") }
+    val hitcolorvalue by BoolValue("HitColorChange", false) { penislistcolor in arrayOf("Custom") }
+    val liesredhit by FloatValue("HitRed", 1F, 0F..1F) { markValue in arrayOf("New") && penislistcolor in arrayOf("Custom") && hitcolorvalue }
+    val liesgreenhit by FloatValue("HitGreen", 0F, 0F..1F) { markValue in arrayOf("New") && penislistcolor in arrayOf("Custom") && hitcolorvalue }
+    val liesbluehit by FloatValue("HitBlue", 0F, 0F..1F) { markValue in arrayOf("New") && penislistcolor in arrayOf("Custom") && hitcolorvalue }
+    val liescolorRed by FloatValue("Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
+    val liescolorGreen by FloatValue("Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
+    val liescolorBlue by FloatValue("Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
+    val liesalpha by FloatValue("Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
+    val liescolorRedtwo by FloatValue("Red2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient") }
+    val liescolorGreentwo by FloatValue("Green2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient") }
+    val liescolorBluetwo by FloatValue("Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient") }
+    val liesalphatwo by FloatValue("Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
+    private val speedlies by FloatValue("Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies", "New") }
+    private val lenghtlies by FloatValue("Length", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
+    private val radiuslies by FloatValue("Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies") }
+    val speedcolorlies by IntegerValue("Color-Value", 9, 1..9) { markValue in arrayOf("New") && penislistcolor in arrayOf("Gradient") }
+    private val liesstepvalue by IntegerValue("Step-Value", 10, 10..180) { markValue in arrayOf("New") }
+    val heihgtlies by BoolValue("HeightFixUseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
 
     // fake sharp
-    private val fakeSharp by BoolValue("FakeSharp", true, subjective = true)
+    private val fakeSharp by BoolValue("AlwaysSharp", true, subjective = true)
 
     // Sound
     private val sound by ListValue("Sound", arrayOf("None", "Hit", "Explode", "Orb", "Pop", "Splash", "Lightning"), "Pop")
@@ -96,7 +99,6 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
                 event,
                 speedlies.toDouble(),
                 lenghtlies.toDouble(),
-                radiuslies,
                 liesstepvalue,
             )
         }

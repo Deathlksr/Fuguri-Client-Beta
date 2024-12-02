@@ -26,14 +26,10 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false, forcedDesc
 
     // KillAura and misc settings
     private val onlyKillaura by BoolValue("OnlyKillAura", false) { mode in arrayOf("LegitFast", "Legit", "LegitSneak") }
-    private val falseclientsprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("LegitFast") }
-    private val presssprint by BoolValue("PressSprint", true) { mode in arrayOf("LegitFast") }
-    private val pressforward by BoolValue("PressForward", true) { mode in arrayOf("LegitFast") }
 
     // Internal timing variables for WTap and LegitFast modes
     private var legitfastTicks = 0
-    private var wtapTicks = 0
-    private var sneakTicks = 0
+    private var ticks = 0
 
     // Init KillAura and CombatManager
     private var ka = KillAura
@@ -45,8 +41,7 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false, forcedDesc
     // Resets on module toggle
     override fun onToggle(state: Boolean) {
         legitfastTicks = 0
-        wtapTicks = 0
-        sneakTicks = 0
+        ticks = 0
         stopPenis = false
     }
 
@@ -56,10 +51,8 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false, forcedDesc
         when (mode) {
             "LegitFast" -> {
                 if (legitfastTicks > 0 && mc.thePlayer.isSprinting) {
-                    if (falseclientsprint) mc.thePlayer.isSprinting = false
+                    mc.thePlayer.isSprinting = false
                     mc.thePlayer.serverSprintState = false
-                    if (pressforward) mc.gameSettings.keyBindForward.pressed = false
-                    if (presssprint) mc.gameSettings.keyBindSprint.pressed = false
                     legitfastTicks--
                 }
             }
@@ -71,27 +64,27 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false, forcedDesc
         when (mode) {
             "LegitFast" -> handleLegitFast()
             "Legit" -> {
-                handleWTap()
-                if (wtapTicks > 1) {
+                handleOther()
+                if (ticks > 1) {
                     stopPenis = true
                     mc.gameSettings.keyBindForward.pressed = false
-                    wtapTicks--
-                } else if (wtapTicks == 1) {
-                    mc.gameSettings.keyBindForward.pressed = true
+                    ticks--
+                } else if (ticks == 1) {
                     stopPenis = false
-                    wtapTicks--
+                    mc.gameSettings.keyBindForward.pressed = true
+                    ticks--
                 }
             }
             "LegitSneak" -> {
-                handleLegitSneak()
-                if (sneakTicks > 1) {
+                handleOther()
+                if (ticks > 1) {
                     stopPenis = true
                     mc.gameSettings.keyBindSneak.pressed = true
-                    sneakTicks--
-                } else if (sneakTicks == 1) {
+                    ticks--
+                } else if (ticks == 1) {
                     stopPenis = false
                     mc.gameSettings.keyBindSneak.pressed = false
-                    sneakTicks--
+                    ticks--
                 }
             }
         }
@@ -113,33 +106,17 @@ object MoreKB : Module("MoreKB", Category.COMBAT, hideModule = false, forcedDesc
         }
     }
 
-    private fun handleWTap() {
+    private fun handleOther() {
         if (onlyKillaura) {
             if (ka.target?.hurtTime == 10) {
                 TimeUtils.delay(nextInt(mindelay, maxdelay)) {
-                    wtapTicks = nextInt(minlfticks, maxlfticks) + 1
+                    ticks = nextInt(minlfticks, maxlfticks) + 1
                 }
             }
         } else {
             if (cm.target?.hurtTime == 10) {
                 TimeUtils.delay(nextInt(mindelay, maxdelay)) {
-                    wtapTicks = nextInt(minlfticks, maxlfticks) + 1
-                }
-            }
-        }
-    }
-
-    private fun handleLegitSneak() {
-        if (onlyKillaura) {
-            if (ka.target?.hurtTime == 10) {
-                TimeUtils.delay(nextInt(mindelay, maxdelay)) {
-                    sneakTicks = nextInt(minlfticks, maxlfticks) + 1
-                }
-            }
-        } else {
-            if (cm.target?.hurtTime == 10) {
-                TimeUtils.delay(nextInt(mindelay, maxdelay)) {
-                    sneakTicks = nextInt(minlfticks, maxlfticks) + 1
+                    ticks = nextInt(minlfticks, maxlfticks) + 1
                 }
             }
         }

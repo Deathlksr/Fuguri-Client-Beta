@@ -85,7 +85,7 @@ object Fireball : FlyMode("Fireball") {
 
         if (isMoving) {
             TickedActions.TickScheduler(Flight) += {
-                if (Flight.swing) player.swingItem() else sendPacket(C0APacketAnimation())
+                if (Flight.swing) sendPacket(C0APacketAnimation())
 
                 // NOTE: You may increase max try to `2` if fireball doesn't work. (Ex: BlocksMC)
                 repeat(Flight.fireballTry) {

@@ -5,6 +5,9 @@
  */
 package net.ccbluex.liquidbounce.ui.client.gui.button;
 
+import net.ccbluex.liquidbounce.FuguriBeta;
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule;
+
 public class ButtonState {
     public int x, y;
     public int width, height;
@@ -25,7 +28,10 @@ public class ButtonState {
         if (hovered) {
             if (hoverFade < 40) hoverFade += 10;
         } else {
-            if (hoverFade > 0) hoverFade -= 10;
+            if (hoverFade > 0) {
+                hoverFade -= 10;
+                FuguriBeta.INSTANCE.getTipSoundManager().getButtonpressSound().asyncPlay(ClickGUIModule.INSTANCE.getVolume());
+            }
         }
 
         return hovered;

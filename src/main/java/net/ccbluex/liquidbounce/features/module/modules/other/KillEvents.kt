@@ -5,6 +5,7 @@ import net.ccbluex.liquidbounce.event.EntityKilledEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
+import net.ccbluex.liquidbounce.utils.extensions.isClientFriend
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.ListValue
@@ -24,7 +25,7 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
     private val effect by ListValue("Effects", arrayOf("Lighting"), "Lighting") { effects }
 
     private var killSound by BoolValue("Sound", false)
-    private val sound by ListValue("Sounds", arrayOf("None", "Hit", "Amogus", "Totem", "Edogawa", "Explode", "Orb", "Pop", "Splash", "Lightning"), "Pop") { killSound }
+    private val sound by ListValue("Sounds", arrayOf("None", "Hit", "Amogus", "Totem", "Explode", "Orb", "Pop", "Splash", "Lightning"), "Pop") { killSound }
     private val volume by FloatValue("Volume", 1f, 0.1f.. 5f) { killSound }
     private val pitch by FloatValue("Pitch", 1f, 0.1f..5f) { killSound }
 
@@ -88,7 +89,7 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
         ", Яж твою мамашу уебал прикладом AK-47",
         ", В твоей мамаше было столько хуев что обозримой вселенной звезд будет меньше",
         ", Я насрал на еблет твоей тупой ебаной мамаши нахуй",
-        ", В фугури есть евент onDeathYourMother он вызывается быстрее чем onTick",
+        ", В фугури есть евент onDeathYourMother он вызывается быстрее чем runGameLoop",
         ", Я твою мамашу оттрахаю своим членом чурка ты ебаная сын хуйни",
         ", Я те мамашу ебашу своим членом дура ты ебучая",
         ", Гуд гейм убил твоего отца и посадил его на буж халиф",
@@ -97,6 +98,12 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
         ", А ну быстро нахуй делай акробатический элемент на моем адепт члене",
         ", Я твою ебучку тут зассу шуганый сын шлюхи ты на кого тут вздумал рыпатся",
         ", Ебучку закрой и соси мне тут слоняра паршивая",
+        ", Модули моего клиента выебут тебя во все возможные шели",
+        ", Разнесу твоего отца своим тайм манипулейшеном в 7 тиков нахуй",
+        ", Устрою пробежку по трупу твоей матери со спринтом!",
+        ", Чипи чипи чапа чапа я твою маманю трахал",
+        ", Мне 13 я мелстрой я ебал тебя горой!",
+        ", Совери бриз новое видео хач клиент он оставил двойное мнение видос качай читы и давай пиздится",
         )
 
     @EventTarget
@@ -104,6 +111,9 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
         val target = event.targetEntity
 
         if (target !is EntityPlayer)
+            return
+
+        if (target.isClientFriend())
             return
 
         if (insult) {
@@ -145,7 +155,6 @@ object KillEvents: Module("KillEvents", Category.PLAYER) {
             "Explode" -> player.playSound("random.explode", volume, pitch)
             "Amogus" -> tsp.amogusSound.asyncPlay(volume)
             "Totem" -> tsp.totemSound.asyncPlay(volume)
-            "Edogawa" -> tsp.edogawaSound.asyncPlay(volume)
         }
     }
 

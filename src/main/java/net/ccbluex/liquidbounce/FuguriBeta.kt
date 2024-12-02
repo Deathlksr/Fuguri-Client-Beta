@@ -1,5 +1,6 @@
 package net.ccbluex.liquidbounce
 
+import kotlinx.coroutines.runBlocking
 import net.ccbluex.liquidbounce.event.ClientShutdownEvent
 import net.ccbluex.liquidbounce.event.EventManager
 import net.ccbluex.liquidbounce.event.EventManager.callEvent
@@ -11,6 +12,7 @@ import net.ccbluex.liquidbounce.features.module.ModuleManager
 import net.ccbluex.liquidbounce.features.module.ModuleManager.registerModules
 import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule.volume
 import net.ccbluex.liquidbounce.features.module.modules.player.scaffolds.Tower
+import net.ccbluex.liquidbounce.features.module.modules.visual.NameTags.getListsFromGitHub
 import net.ccbluex.liquidbounce.file.FileManager
 import net.ccbluex.liquidbounce.file.FileManager.loadAllConfigs
 import net.ccbluex.liquidbounce.file.FileManager.saveAllConfigs
@@ -61,7 +63,7 @@ object FuguriBeta {
     const val CLIENT_AUTHOR = "Deathlksr"
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
     const val CLIENT_WEBSITE = "fuguri.top"
-    const val CLIENT_VERSION = "B3.3"
+    const val CLIENT_VERSION = "B3.5"
 
     val clientVersionText = gitInfo["git.build.version"]?.toString() ?: "unknown"
     val clientVersionNumber = clientVersionText.substring(1).toIntOrNull() ?: 0 // version format: "b<VERSION>" on legacy
@@ -133,6 +135,11 @@ object FuguriBeta {
                     registerListener(BPSUtils)
                     registerListener(Tower)
                     registerListener(WaitTickUtils)
+
+                    // Get Repository GitHub
+                    runBlocking {
+                        getListsFromGitHub()
+                    }
 
                     // Load client fonts
                     loadFonts()

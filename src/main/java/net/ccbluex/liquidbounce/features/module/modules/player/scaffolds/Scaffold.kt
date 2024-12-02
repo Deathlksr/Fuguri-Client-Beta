@@ -1355,8 +1355,7 @@ object Scaffold : Module("Scaffold", Category.PLAYER, Keyboard.KEY_I, hideModule
                 }
             }
 
-            if (swing) thePlayer.swingItem()
-            else sendPacket(C0APacketAnimation())
+            if (swing) sendPacket(C0APacketAnimation())
 
             if (isManualJumpOptionActive && autoJump)
                 blocksPlacedUntilJump++

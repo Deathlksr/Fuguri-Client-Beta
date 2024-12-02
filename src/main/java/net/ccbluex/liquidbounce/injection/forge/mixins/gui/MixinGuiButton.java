@@ -5,9 +5,12 @@
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.gui;
 
+import net.ccbluex.liquidbounce.FuguriBeta;
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule;
 import net.ccbluex.liquidbounce.features.module.modules.client.ClientSpoofer;
 import net.ccbluex.liquidbounce.features.module.modules.client.button.AbstractButtonRenderer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraftforge.fml.relauncher.Side;
@@ -52,12 +55,17 @@ public abstract class MixinGuiButton extends Gui {
             return;
          }
 
-          // Render custom button renderer if available
+         // Render custom button renderer if available
          this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
          this.mouseDragged(mc, mouseX, mouseY);
          fDPClient$buttonRenderer.render(mouseX, mouseY, mc);
          fDPClient$buttonRenderer.drawButtonText(mc);
          ci.cancel();
       }
+   }
+   @Inject(method = "playPressSound", at = @At("HEAD"), cancellable = true)
+   private void modifyPlayPressSound(SoundHandler p_playPressSound_1_, CallbackInfo ci) {
+      FuguriBeta.INSTANCE.getTipSoundManager().getButtonpressSound().asyncPlay(ClickGUIModule.INSTANCE.getVolume());
+      ci.cancel();
    }
 }

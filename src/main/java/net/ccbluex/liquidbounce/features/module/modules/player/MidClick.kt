@@ -34,12 +34,12 @@ object MidClick : Module("MidClick", Category.PLAYER, subjective = true, gameDet
                     if (!friendsConfig.isFriend(playerName)) {
                         friendsConfig.addFriend(playerName)
                         if (debug) {
-                            displayChatMessage("§a§l[$playerName]§c Friend deleted.")
+                            displayChatMessage("§a§l[$playerName§l]§c Friend deleted.")
                         }
                     } else {
                         friendsConfig.removeFriend(playerName)
                         if (debug) {
-                            displayChatMessage("§a§l[$playerName]§c Friend added.")
+                            displayChatMessage("§a§l[$playerName§l]§c Friend added.")
                         }
                     }
                 }
@@ -48,12 +48,12 @@ object MidClick : Module("MidClick", Category.PLAYER, subjective = true, gameDet
                     if (!friendsConfig.isFriend(playerName)) {
                         friendsConfig.addFriend(playerName)
                         if (debug) {
-                            displayChatMessage("§a§l[$playerName]§c Friend added.")
+                            displayChatMessage("§a§l[$playerName§l]§c Friend added.")
                         }
                     } else {
                         friendsConfig.removeFriend(playerName)
                         if (debug) {
-                            displayChatMessage("§a§l[$playerName]§c Friend deleted.")
+                            displayChatMessage("§a§l[$playerName§l]§c Friend deleted.")
                         }
                     }
                 }

@@ -37,7 +37,6 @@ open class ButtonElement(
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Boolean {
         if (mouseButton == 0 && isHovered(mouseX, mouseY)) {
             buttonAction()
-            ClickGui.style.clickSound()
             return true
         }
 
