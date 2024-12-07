@@ -10,6 +10,7 @@ import net.minecraft.client.gui.ScaledResolution
 import net.ccbluex.liquidbounce.value.FontValue
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.render.animation.Animation2DUtils
+import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.TextValue
 import org.lwjgl.input.Keyboard
@@ -22,9 +23,10 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL, hideModule = false) {
 
     private val font by FontValue("Font", Fonts.font40)
     private val textkey by TextValue("Text", "KeyBinds")
+    private val radiuspenis by FloatValue("BorderRadius", 0f, 0f..15f)
 
-    private val posx by IntegerValue("PosX", 0, 0..2000)
-    private val posy by IntegerValue("PosY", 0, 0..2000)
+    private val posx by IntegerValue("PosX", 0, -2000..2000)
+    private val posy by IntegerValue("PosY", 0, -2000..2000)
 
     private val animation = Animation2DUtils(0F, 0F, 0F, 0F)
 
@@ -58,7 +60,7 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL, hideModule = false) {
             sc.scaledHeight / 2F - penisotstup,
             sc.scaledWidth / 2F + 50 + penisotstup + animation.x,
             sc.scaledHeight / 2F + penisotstup + animation.y,
-            4F,
+            radiuspenis,
             Color(15, 15, 15, 100).rgb,
             false
         )

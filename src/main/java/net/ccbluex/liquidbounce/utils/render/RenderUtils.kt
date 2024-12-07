@@ -1814,6 +1814,41 @@ object RenderUtils : MinecraftInstance() {
         glPopAttrib()
     }
 
+    fun customRotatedObject2D(oXpos: Float, oYpos: Float, oWidth: Float, oHeight: Float, rotate: Double) {
+        translate((oXpos + oWidth / 2).toDouble(), (oYpos + oHeight / 2).toDouble(), 0.0)
+        glRotated(rotate, 0.0, 0.0, 1.0)
+        translate(-(oXpos + oWidth / 2).toDouble(), -(oYpos + oHeight / 2).toDouble(), 0.0)
+    }
+
+    fun setupOrientationMatrix(x: Double, y: Double, z: Double) {
+        translate(x - mc.renderManager.viewerPosX, y - mc.renderManager.viewerPosY, z - mc.renderManager.viewerPosZ)
+    }
+
+    fun setupDrawCircles(render: Runnable) {
+        val lightingEnabled = glIsEnabled(GL_LIGHTING)
+        pushMatrix()
+        enableBlend()
+        enableAlpha()
+        alphaFunc(GL_GREATER, 0f)
+        depthMask(false)
+        disableCull()
+        if (lightingEnabled) disableLighting()
+        shadeModel(GL_SMOOTH)
+
+        blendFunc(770, 1)
+        setupOrientationMatrix(0.0, 0.0, 0.0)
+        render.run()
+        blendFunc(770, 771)
+        color(1f, 1f, 1f)
+        shadeModel(GL_FLAT)
+        if (lightingEnabled) enableLighting()
+        enableCull()
+        depthMask(true)
+        alphaFunc(GL_GREATER, .1f)
+        enableAlpha()
+        popMatrix()
+    }
+
     fun drawImage(image: ResourceLocation?, x: Int, y: Int, width: Int, height: Int) {
         glDisable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)

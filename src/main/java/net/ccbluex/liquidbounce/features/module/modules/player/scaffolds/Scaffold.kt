@@ -591,6 +591,8 @@ object Scaffold : Module("Scaffold", Category.PLAYER, Keyboard.KEY_I, hideModule
         }
     }
 
+    var penis = 0
+
     @EventTarget
     fun onTick(event: GameTickEvent) {
         val target = placeRotation?.placeInfo

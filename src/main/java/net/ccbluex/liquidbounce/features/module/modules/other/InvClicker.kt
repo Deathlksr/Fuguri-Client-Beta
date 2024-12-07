@@ -12,6 +12,7 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.inventory.GuiInventory
+import net.minecraftforge.fml.relauncher.ReflectionHelper
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import java.lang.reflect.InvocationTargetException
@@ -32,12 +33,22 @@ object InvClicker : Module("GuiClicker", Category.OTHER, hideModule = false, can
     }
 
     private fun inInvClick(guiScreen: GuiScreen) {
+        val mouseInGUIPosX = Mouse.getX() * guiScreen.width / mc.displayWidth
+        val mouseInGUIPosY = guiScreen.height - Mouse.getY() * guiScreen.height / mc.displayHeight - 1
 
         try {
             if (mouseDown >= delayValue) {
-                if (guiScreen is GuiInventory) {
-
-                }
+                ReflectionHelper.findMethod<GuiScreen?>(
+                    GuiScreen::class.java,
+                    null,
+                    arrayOf(
+                        "func_73864_a",
+                        "mouseClicked"
+                    ),
+                    Integer.TYPE,
+                    Integer.TYPE,
+                    Integer.TYPE
+                ).invoke(guiScreen, mouseInGUIPosX, mouseInGUIPosY, 0)
                 mouseDown = 0
             }
         } catch (ignored: IllegalAccessException) {

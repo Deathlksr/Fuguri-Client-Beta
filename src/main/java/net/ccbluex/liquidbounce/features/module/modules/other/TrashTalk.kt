@@ -609,6 +609,16 @@ object TrashTalk : Module("TrashTalk", Category.OTHER, hideModule = false) {
         "а ну покажи тут всю силу на моем члене",
         "медленный сын бляди с атрофированием пальцев который тут мне в хуй выписывает чет найдись",
         )
+
+    private val emotionsList = arrayOf(
+        ")",
+        ":D",
+        ":3",
+        ":d",
+        ":(",
+        "(:",
+        "-.-",
+        )
     private var lastUsed = 0
     private val msTimer: MSTimer = MSTimer()
 
@@ -616,10 +626,10 @@ object TrashTalk : Module("TrashTalk", Category.OTHER, hideModule = false) {
     fun onUpdate(event: UpdateEvent?) {
         if (msTimer.hasTimePassed((delayValue.get() * 1000).toLong())) {
             if (emotionsValue.get()) {
-                mc.thePlayer.sendChatMessage(if (names.get()) userName.get() + " " else " " + randomPhrase())
+                mc.thePlayer.sendChatMessage(if (names.get()) userName.get() + " " + randomPhrase() else  " " + randomPhrase() + randomEmotions())
                 msTimer.reset()
             } else if (msTimer.hasTimePassed((delayValue.get() * 1000).toLong())) {
-                mc.thePlayer.sendChatMessage(if (names.get()) userName.get() + " " else " " + randomPhrase())
+                mc.thePlayer.sendChatMessage(if (names.get()) userName.get() + " " + randomPhrase() else " " + randomPhrase())
                 msTimer.reset()
             }
         }
@@ -636,5 +646,18 @@ object TrashTalk : Module("TrashTalk", Category.OTHER, hideModule = false) {
 
         lastUsed = randInt
         return phraseList[randInt]
+    }
+
+    private fun randomEmotions(): String {
+        val rand = Random()
+
+        var randInt: Int
+        randInt = rand.nextInt(emotionsList.size)
+        while (lastUsed == randInt) {
+            randInt = rand.nextInt(emotionsList.size)
+        }
+
+        lastUsed = randInt
+        return emotionsList[randInt]
     }
 }

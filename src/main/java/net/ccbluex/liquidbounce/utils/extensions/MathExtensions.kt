@@ -120,6 +120,14 @@ fun AxisAlignedBB.lerpWith(value: Double) = lerpWith(value, value, value)
 val AxisAlignedBB.center
     get() = lerpWith(0.5)
 
+fun randomizeDouble(min: Double, max: Double): Double {
+    return Math.random() * (max - min) + min
+}
+
+fun lerp(min: Float, max: Float, delta: Float): Float {
+    return min + (max - min) * delta
+}
+
 fun Block.lerpWith(x: Double, y: Double, z: Double) = Vec3(
     blockBoundsMinX + (blockBoundsMaxX - blockBoundsMinX) * x,
     blockBoundsMinY + (blockBoundsMaxY - blockBoundsMinY) * y,

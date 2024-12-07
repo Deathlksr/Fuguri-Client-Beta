@@ -5,12 +5,10 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
 import net.ccbluex.liquidbounce.event.EventTarget
-import net.ccbluex.liquidbounce.event.GameLoopEvent
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.modules.client.AntiBot.isBot
-import net.ccbluex.liquidbounce.features.module.modules.client.IRCModule
 import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
 import net.ccbluex.liquidbounce.utils.EntityUtils.isLookingOnEntities
 import net.ccbluex.liquidbounce.utils.EntityUtils.isSelected
@@ -65,9 +63,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
             runBlocking {
                 getListsFromGitHub()
             }
-            TimeUtils.delay(40) {
-                updateRepository = false
-            }
+            updateRepository = false
         }
 
         glPushAttrib(GL_ENABLE_BIT)
@@ -114,6 +110,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
                 ownerList = getListFromGitHub("$GITHUBRAWURL/ownerList.txt")
                 bonanList = getListFromGitHub("$GITHUBRAWURL/bonanList.txt")
                 userList = getListFromGitHub("$GITHUBRAWURL/userList.txt")
+                LOGGER.info("Successful connect to GitHub!")
             } catch (e: IOException) {
                 LOGGER.info("Ошибка при получении данных с GitHub: ${e.message}")
                 ownerList = emptyList()
@@ -148,21 +145,21 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         var ownertext = ""
         if (entity is EntityPlayer) {
             if (ownerList.contains(entity.displayNameString.lowercase())) {
-                ownertext = "§4[Fuguri Owner] "
+                ownertext = "§4Fuguri Owner "
             }
         }
 
         var usertext = ""
         if (entity is EntityPlayer) {
             if (userList.contains(entity.displayNameString.lowercase())) {
-                usertext = "§5[Fuguri User] "
+                usertext = "§5Fuguri User "
             }
         }
 
         var penisbaban = ""
         if (entity is EntityPlayer) {
             if (bonanList.contains(entity.displayNameString.lowercase())) {
-                penisbaban = "§6[Bonan Entwickler] "
+                penisbaban = "§6Bonan Entwickler "
             }
         }
 
@@ -207,7 +204,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
             fontShadow
         )
         RenderUtils.revertAllCaps()
-        glColor4f(1f, 1f, 1f, 1f)
+        glColor4f(1f, 0f, 0f, 1f)
         glPopMatrix()
     }
 

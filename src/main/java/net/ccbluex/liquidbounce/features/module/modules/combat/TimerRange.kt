@@ -19,9 +19,11 @@ import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.client.entity.EntityOtherPlayerMP
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.gui.inventory.GuiInventory
+import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
+import kotlin.math.min
 
 object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
 
@@ -37,6 +39,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
         }
     }
 
+    private val mode = ListValue("Mode", arrayOf("RayCast", "Radius"), "RayCast")
     private val rangeMode = ListValue("RangeMode", arrayOf("Setting", "Smart"), "Smart")
     private val maxTimeValue = IntegerValue("Ticks", 3, 0..20)
     private val delayValue = IntegerValue("Delay", 5, 0..20)
@@ -110,7 +113,13 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
         if (event.eventState == EventState.PRE) return // post event mean player's tick is done
         val thePlayer = mc.thePlayer ?: return
         if (onlyKillAura.get() && !killAura.state) return
-            val entity = RaycastTimerRange.raycastEntity(maxDistance.get() + 1.0) { entity -> entity != null && entity is EntityLivingBase && (!onlyPlayer.get() || entity is EntityPlayer) }
+        if (mode.get() == "RayCast") {
+            val entity =
+                RaycastTimerRange.raycastEntity(maxDistance.get() + 1.0, object : RaycastTimerRange.IEntityFilter {
+                    override fun canRaycast(entity: Entity?): Boolean {
+                        return entity != null && entity is EntityLivingBase && (!onlyPlayer.get() || entity is EntityPlayer)
+                    }
+                })
             if (entity == null || entity !is EntityLivingBase) {
                 lastNearest = 10.0
                 return
@@ -151,7 +160,67 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
                 foundTarget()
             }
             lastNearest = range
+        } else if (mode.get() == "Radius") {
+            val entityList = mc.theWorld.getEntitiesWithinAABBExcludingEntity(
+                thePlayer,
+                thePlayer.entityBoundingBox.expands(maxDistance.get() + 1.0)
+            )
+            if (entityList.isNotEmpty()) {
+                val vecEyes = thePlayer.getPositionEyes(1f)
+                val afterEyes = if (rangeMode.get() == "Smart") {
+                    thePlayer.getPositionEyes(maxTimeValue.get() + 1f)
+                } else thePlayer.getPositionEyes(3f)
+                var targetFound = false
+                var targetInRange = false
+                var nearest = 10.0
+                for (entity in entityList) {
+                    if (entity !is EntityLivingBase) continue
+                    if (onlyPlayer.get() && entity !is EntityPlayer) continue
+                    if (!EntityUtils.isSelected(entity, true)) continue
+                    val entityBox = entity.entityBoundingBox.expands(entity.collisionBorderSize.toDouble())
+                    val box = getNearestPointBB(
+                        vecEyes,
+                        entityBox
+                    )
+                    val box2 = getNearestPointBB(
+                        afterEyes,
+                        if (entity is EntityOtherPlayerMP) {
+                            entityBox.offset(
+                                entity.otherPlayerMPX - entity.posX,
+                                entity.otherPlayerMPY - entity.posY,
+                                entity.otherPlayerMPZ - entity.posZ
+                            )
+                        } else entityBox
+                    )
+                    val range = box.distanceTo(vecEyes)
+                    val afterRange = box2.distanceTo(afterEyes)
+                    if (!working && reverseValue) {
+                        if (range in minReverseRange..3F && cooldown <= 0 && entity.hurtTime <= reverseTargetMaxHurtTime.get()) {
+                            firstAnimation = false
+                            reverseFreeze = false
+                            return
+                        }
+                    }
+                    if (range < minDistance.get()) {
+                        targetInRange = true
+                        break
+                    } else if (range <= maxDistance.get() && afterRange < range && entity.hurtTime <= maxHurtTimeValue.get()) {
+                        targetFound = true
+                    }
+                    nearest = min(nearest, range)
+                }
+                if (targetInRange) {
+                    stopWorking = true
+                } else if (targetFound && nearest < lastNearest) {
+                    stopWorking = false
+                    foundTarget()
+                }
+                lastNearest = nearest
+            } else {
+                lastNearest = 10.0
+            }
         }
+    }
 
     private fun foundTarget() {
         if (cooldown > 0 || freezeTicks != 0 || maxTimeValue.get() == 0) return
