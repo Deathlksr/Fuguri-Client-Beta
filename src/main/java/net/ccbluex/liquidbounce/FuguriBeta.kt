@@ -18,7 +18,6 @@ import net.ccbluex.liquidbounce.file.FileManager.loadAllConfigs
 import net.ccbluex.liquidbounce.file.FileManager.saveAllConfigs
 import net.ccbluex.liquidbounce.handler.api.ClientUpdate.gitInfo
 import net.ccbluex.liquidbounce.handler.api.loadSettings
-import net.ccbluex.liquidbounce.handler.api.messageOfTheDay
 import net.ccbluex.liquidbounce.handler.cape.CapeService
 import net.ccbluex.liquidbounce.handler.combat.CombatManager
 import net.ccbluex.liquidbounce.handler.discord.DiscordRPC
@@ -63,7 +62,7 @@ object FuguriBeta {
     const val CLIENT_AUTHOR = "Deathlksr"
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
     const val CLIENT_WEBSITE = "fuguri.top"
-    const val CLIENT_VERSION = "B3.6"
+    const val CLIENT_VERSION = "B3.7"
 
     val clientVersionText = gitInfo["git.build.version"]?.toString() ?: "unknown"
     val clientVersionNumber = clientVersionText.substring(1).toIntOrNull() ?: 0 // version format: "b<VERSION>" on legacy
@@ -94,7 +93,6 @@ object FuguriBeta {
 
     // HUD & ClickGUI
     val hud = HUD
-
     val clickGui = ClickGui
 
     // Menu Background
@@ -115,135 +113,131 @@ object FuguriBeta {
         // Init SoundManager
         tipSoundManager = TipSoundManager()
 
+        runCatching {
+            // Load languages
+            loadLanguages()
+
+            // Register listeners
+            registerListener(RotationUtils)
+            registerListener(ClientFixes)
+
+            registerListener(CapeService)
+            registerListener(combatManager)
+            registerListener(macroManager)
+            registerListener(InventoryUtils)
+            registerListener(MiniMapRegister)
+            registerListener(TickedActions)
+            registerListener(MovementUtils)
+            registerListener(PacketUtils)
+            registerListener(TimerBalanceUtils)
+            registerListener(BPSUtils)
+            registerListener(Tower)
+            registerListener(WaitTickUtils)
+
+            // Get Repository GitHub
+            runBlocking {
+                getListsFromGitHub()
+            }
+
+            // Load client fonts
+            loadFonts()
+
+            // Load settings
+            loadSettings(false) {
+                LOGGER.info("Successfully loaded ${it.size} settings.")
+            }
+
+            // Register commands
+            registerCommands()
+            KeyBindManager
+
+            // Setup module manager and register modules
+            registerModules()
+
+            APIConnecter.checkStatus()
+            APIConnecter.checkChangelogs()
+            APIConnecter.checkBugs()
+            APIConnecter.loadPictures()
+            APIConnecter.loadDonors()
+
             runCatching {
-                    // Load languages
-                    loadLanguages()
+                // Remapper
+                loadSrg()
 
-                    // Register listeners
-                    registerListener(RotationUtils)
-                    registerListener(ClientFixes)
-
-                    registerListener(CapeService)
-                    registerListener(combatManager)
-                    registerListener(macroManager)
-                    registerListener(InventoryUtils)
-                    registerListener(MiniMapRegister)
-                    registerListener(TickedActions)
-                    registerListener(MovementUtils)
-                    registerListener(PacketUtils)
-                    registerListener(TimerBalanceUtils)
-                    registerListener(BPSUtils)
-                    registerListener(Tower)
-                    registerListener(WaitTickUtils)
-
-                    // Get Repository GitHub
-                    runBlocking {
-                        LOGGER.info("Connecting to GitHub.")
-                        getListsFromGitHub()
-                    }
-
-                    // Load client fonts
-                    loadFonts()
-
-                    // Load settings
-                    loadSettings(false) {
-                        LOGGER.info("Successfully loaded ${it.size} settings.")
-                    }
-
-                    // Register commands
-                    registerCommands()
-                    KeyBindManager
-
-                    // Setup module manager and register modules
-                    registerModules()
-
-                    APIConnecter.checkStatus()
-                    APIConnecter.checkChangelogs()
-                    APIConnecter.checkBugs()
-                    APIConnecter.loadPictures()
-                    APIConnecter.loadDonors()
-
-                    runCatching {
-                        // Remapper
-                        loadSrg()
-
-                        if (!Remapper.mappingsLoaded) {
-                            error("Failed to load SRG mappings.")
-                        }
-
-                        // ScriptManager
-                        loadScripts()
-                        enableScripts()
-                    }.onFailure {
-                        LOGGER.error("Failed to load scripts.", it)
-                    }
-
-                    // Load configs
-                    loadAllConfigs()
-
-                    // Update client window
-                    updateClientWindow()
-
-                    // Tabs (Only for Forge!)
-                    if (hasForge()) {
-                        BlocksTab()
-                        ExploitsTab()
-                        HeadsTab()
-                    }
-
-                    // Disable optifine fastrender
-                    disableFastRender()
-
-                    // Load alt generators
-                    loadActiveGenerators()
-
-                    // Load message of the day
-                    messageOfTheDay?.message?.let { LOGGER.info("Message of the day: $it") }
-
-                    // Setup Discord RPC
-                    if (ClientRPCStarted) {
-                        thread {
-                            try {
-                            DiscordRPC.setup()
-                            } catch (throwable: Throwable) {
-                            LOGGER.error("Failed to setup Discord RPC.", throwable)
-                        }
-                    }
+                if (!Remapper.mappingsLoaded) {
+                    error("Failed to load SRG mappings.")
                 }
 
-                    // init discord rpc
-                    discordRPC = DiscordRPC
-
-                    // Login into known token if not empty
-                    if (CapeService.knownToken.isNotBlank()) {
-                        runCatching {
-                            CapeService.login(CapeService.knownToken)
-                        }.onFailure {
-                            LOGGER.error("Failed to login into known cape token.", it)
-                        }.onSuccess {
-                            LOGGER.info("Successfully logged in into known cape token.")
-                        }
-                    }
-
-                    // Refresh cape service
-                    CapeService.refreshCapeCarriers {
-                        LOGGER.info("Successfully loaded ${CapeService.capeCarriers.size} cape carriers.")
-                    }
-
-                // Load background
-                FileManager.loadBackground()
-
+                // ScriptManager
+                loadScripts()
+                enableScripts()
             }.onFailure {
-                LOGGER.error("Failed to start client ${it.message}")
-            }.onSuccess {
-                // Set is starting status
-                isStarting = false
-
-                callEvent(StartupEvent())
-                LOGGER.info("Successfully started client")
-                tipSoundManager.startUpSound.asyncPlay(volume)
+                LOGGER.error("Failed to load scripts.", it)
             }
+
+            // Load configs
+            loadAllConfigs()
+
+            // Update client window
+            updateClientWindow()
+
+            // Tabs (Only for Forge!)
+            if (hasForge()) {
+                BlocksTab()
+                ExploitsTab()
+                HeadsTab()
+            }
+
+            // Disable optifine fastrender
+            disableFastRender()
+
+            // Load alt generators
+            loadActiveGenerators()
+
+            // Setup Discord RPC
+            if (ClientRPCStarted) {
+                thread {
+                    try {
+                        DiscordRPC.setup()
+                    } catch (throwable: Throwable) {
+                        LOGGER.error("Failed to setup Discord RPC.", throwable)
+                    }
+                }
+            }
+
+            // init discord rpc
+            discordRPC = DiscordRPC
+
+            // Login into known token if not empty
+            if (CapeService.knownToken.isNotBlank()) {
+                runCatching {
+                    CapeService.login(CapeService.knownToken)
+                }.onFailure {
+                    LOGGER.error("Failed to login into known cape token.", it)
+                }.onSuccess {
+                    LOGGER.info("Successfully logged in into known cape token.")
+                }
+            }
+
+            // Refresh cape service
+            CapeService.refreshCapeCarriers {
+                LOGGER.info("Successfully loaded ${CapeService.capeCarriers.size} cape carriers.")
+            }
+
+            // Load background
+            FileManager.loadBackground()
+
+        }.onFailure {
+            LOGGER.error("Failed to start client ${it.message}")
+        }.onSuccess {
+            // Set is starting status
+            isStarting = false
+
+            callEvent(StartupEvent())
+            LOGGER.info("Successfully started client")
+            tipSoundManager.startUpSound.asyncPlay(volume)
         }
+    }
 
     /**
      * Execute if client will be stopped

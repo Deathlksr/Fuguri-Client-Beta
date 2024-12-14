@@ -185,8 +185,8 @@ object JumpCircles : Module("JumpCircles", Category.VISUAL, hideModule = false) 
         var alphaPC = easeOutCirc(waveDelta.toDouble()).toFloat()
         if (deltaTime < 0.5f) alphaPC *= easeInOutExpo(alphaPC.toDouble()).toFloat()
 
-        val radius = ((if (deltaTime > 0.5f) easeOutElasticX((waveDelta * waveDelta).toDouble())
-        else easeOutBounce(waveDelta.toDouble())) * maxRadius).toFloat()
+        val radius = ((if (deltaTime > 0.5f) easeOutCirc((waveDelta * waveDelta).toDouble())
+        else easeOutCirc(waveDelta.toDouble())) * maxRadius).toFloat()
         val rotation = easeInOutElasticx(waveDelta.toDouble()) * 90.0 / (1.0 + waveDelta)
         val resource = jumpTexture(index, deltaTime)
 

@@ -1,12 +1,8 @@
 package net.ccbluex.liquidbounce.ui.client.clickgui.style
 
-import net.ccbluex.liquidbounce.FuguriBeta
-import net.ccbluex.liquidbounce.event.UpdateEvent
-import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule.volume
 import net.ccbluex.liquidbounce.ui.client.clickgui.Panel
 import net.ccbluex.liquidbounce.ui.client.clickgui.elements.ButtonElement
 import net.ccbluex.liquidbounce.ui.client.clickgui.elements.ModuleElement
-import net.ccbluex.liquidbounce.utils.ClientUtils.displayChatMessage
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
 import net.ccbluex.liquidbounce.value.Value
 import org.lwjgl.input.Mouse
@@ -25,8 +21,6 @@ abstract class Style : MinecraftInstance() {
     abstract fun drawHoverText(mouseX: Int, mouseY: Int, text: String)
     abstract fun drawButtonElement(mouseX: Int, mouseY: Int, buttonElement: ButtonElement)
     abstract fun drawModuleElementAndClick(mouseX: Int, mouseY: Int, moduleElement: ModuleElement, mouseButton: Int?): Boolean
-
-    fun showSettingsSound() = FuguriBeta.tipSoundManager.popSound.asyncPlay(volume)
 
     protected fun round(v: Float): Float {
         var bigDecimal = BigDecimal(v.toString())

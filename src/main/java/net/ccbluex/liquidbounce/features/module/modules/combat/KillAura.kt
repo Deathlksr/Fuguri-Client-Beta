@@ -74,7 +74,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
     private val simulateCooldown by BoolValue("SimulateCooldown", false)
     private val simulateDoubleClicking by BoolValue("SimulateDoubleClicking", false) { !simulateCooldown }
 
-    private val clickValue by ListValue("ClickMode", arrayOf("Delay", "HurtTime"), "Delay")
+    private val clickValue by ListValue("ClickMode", arrayOf("Delay", "HurtTime", "SmartDelay"), "Delay")
     private val attackMode by ListValue("AttackMode", arrayOf("Legit", "Rage"), "Rage")
 
     // CPS - Attack speed
@@ -105,6 +105,8 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
 
     private val minafterdelay by IntegerValue("MinAfterDelay", 9, 0..10) { !simulateCooldown && clickValue == "Delay" }
     private val maxafterdelay by IntegerValue("MaxAfterDelay", 9, 0..10) { !simulateCooldown && clickValue == "Delay" }
+
+    private val minHurtTimeToClick by IntegerValue("MinHurtTimePlayerToHit", 9, 0..9) { !simulateCooldown && clickValue == "SmartDelay" }
 
     private val SmartAttack by BoolValue("SmartClicking", false) { !simulateCooldown && clickValue == "HurtTime" }
 
@@ -541,6 +543,24 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
                         return
                     }
                 }
+            }
+            if (clickValue == "SmartDelay") {
+                if (afterdelay > 0) {
+                    afterdelay--
+                }
+                if (target?.hurtResistantTime!! <= 10 || afterdelay == 0 || mc.thePlayer.hurtTime > minHurtTimeToClick) {
+                    repeat(maxClicks) {
+                        val wasBlocking = blockStatus
+                        runAttack(it + 1 == maxClicks)
+
+                        if (wasBlocking && !blockStatus && (releaseAutoBlock && !ignoreTickRule || autoBlock == "Off")) {
+                            return
+                        }
+                    }
+                }
+                if (mc.thePlayer.hurtTime > minHurtTimeToClick)
+                    afterdelay = 0
+                clicks = 0
             }
         } else {
             renderBlocking = false

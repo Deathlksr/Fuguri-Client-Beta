@@ -7,40 +7,43 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.EntityUtils
-import net.ccbluex.liquidbounce.utils.render.ColorUtils
+import net.ccbluex.liquidbounce.utils.extensions.hurtPercent
+import net.ccbluex.liquidbounce.utils.extensions.skin
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.disableGlCap
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawImage
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawRect
-import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawRoundedRect
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.drawShadow
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.enableGlCap
+import net.ccbluex.liquidbounce.utils.render.RenderUtils.quickDrawHead
 import net.ccbluex.liquidbounce.utils.render.RenderUtils.resetCaps
 import net.ccbluex.liquidbounce.value.*
 import net.minecraft.client.renderer.GlStateManager.resetColor
 import net.minecraft.entity.EntityLivingBase
+import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
-import kotlin.math.roundToInt
 
 object TargetHUD : Module("TargetHUD", Category.VISUAL, hideModule = false) {
 
     private val zoomIn = BoolValue("ZoomIn", true)
-    private val zoomTicks = IntegerValue("ZoomInTicks", 4, 2..15) {zoomIn.get()}
-    private val modeValue = ListValue("Mode", arrayOf("Juul", "Jello", "Material", "Material2", "Arris", "FDP"), "Juul")
+    private val zoomTicks = IntegerValue("ZoomInTicks", 4, 2..15) { zoomIn.get() }
+    private val modeValue = ListValue("Mode", arrayOf("FDP", "Dilik_Penis", "Amogus", "Q1nny", "Vedma", "666Penis", "Markva", "Dicves"), "Markva")
     private val fontValue = FontValue("Font", Fonts.font40)
-    private val materialShadow = BoolValue("MaterialShadow", false) {modeValue.equals("Material") || modeValue.equals("Material2")}
-    private val fdpVertical = BoolValue("FDPVertical", false) {modeValue.equals("FDP")}
-    private val fdpText = BoolValue("FDPDrawText", true) {modeValue.equals("FDP") && !fdpVertical.get()}
-    private val fdpRed = BoolValue("FDPRed", false) {modeValue.equals("FDP")}
     private val smoothMove = BoolValue("SmoothHudMove", true)
     private val smoothValue = FloatValue("SmoothHudMoveValue", 5.2f, 1f..8f) { smoothMove.get() }
     private val smoothRot = BoolValue("SmoothHudRotations", true)
-    private val rotSmoothValue = FloatValue("SmothHudRotationValue", 2.1f, 1f..6f) {smoothRot.get() }
-    private val jelloColorValue = BoolValue("JelloHPColor", true) { modeValue.equals("Jello") }
-    private val jelloAlphaValue = IntegerValue("JelloAlpha", 170, 0..255) { modeValue.equals("Jello") }
-    private val scaleValue = FloatValue("Scale", 1F, 1F..4F)
+    private val fdpred by IntegerValue("FDPRed", 0, 0..255) { modeValue.get() == "FDP" }
+    private val fdpgreen by IntegerValue("FDPGreen", 0, 0..255) { modeValue.get() == "FDP" }
+    private val fdpblue by IntegerValue("FDPBlue", 0, 0..255) { modeValue.get() == "FDP" }
+    private val fdpalpha by IntegerValue("FDPAlpha", 0, 0..255) { modeValue.get() == "FDP" }
+
+    private val rotSmoothValue = FloatValue("SmothHudRotationValue", 2.1f, 1f..6f) { smoothRot.get() }
+    private val scaleValue = FloatValue("Scale", 1F, 0.1F..4F)
     private val staticScale = BoolValue("StaticScale", false)
-    private val translateY = FloatValue("TanslateY", 0.55F,-2F..2F)
-    private val translateX = FloatValue("TranslateX", 0F, -2F.. 2F)
+    private val ONLYONDELEKPENESNAHUI by BoolValue("OnlyOndilik_tot", false) { modeValue.get() == "Dilik_Penis" }
+    private val onlymark by BoolValue("Only-Whytrxng", false) { modeValue.get() == "Markva" }
+    private val translateY = FloatValue("TranslateY", 0.55F,-5F..5F)
+    private val translateX = FloatValue("TranslateX", 0F, -15F.. 5F)
     private var xChange = translateX.get() * 20
 
     private var targetTicks = 0
@@ -67,6 +70,12 @@ object TargetHUD : Module("TargetHUD", Category.VISUAL, hideModule = false) {
     private fun renderNameTag(entity: EntityLivingBase, tag: String) {
         xChange = translateX.get() * 20
 
+        if (modeValue.get() == "Dilik_Penis" && ONLYONDELEKPENESNAHUI && (entity.name.lowercase() != "dilik_tot") && entity.name.lowercase() != "bestattacking")
+            return
+
+        if (modeValue.get() == "Markva" && onlymark && (entity.name.lowercase() != "whytrxng") && entity.name.lowercase() != "det0xyc0deine")
+            return
+
         if (entity != KillAura.target && entity.name != entityKeep) {
             return
         } else if ( entity == KillAura.target) {
@@ -87,10 +96,6 @@ object TargetHUD : Module("TargetHUD", Category.VISUAL, hideModule = false) {
             return
         }
 
-        // Set fontrenderer local
-        val fontRenderer = fontValue.get()
-        val font = fontValue.get()
-
         // Push
         glPushMatrix()
 
@@ -99,10 +104,9 @@ object TargetHUD : Module("TargetHUD", Category.VISUAL, hideModule = false) {
         val timer = mc.timer
 
         if (smoothMove.get()) {
-            lastX += ((entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * timer.renderPartialTicks - renderManager.renderPosX).toDouble() - lastX) / smoothValue.get().toDouble()
-            lastY += ((entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * timer.renderPartialTicks - renderManager.renderPosY + entity.eyeHeight.toDouble() + translateY.get().toDouble()).toDouble() - lastY) / smoothValue.get().toDouble()
-            lastZ += ((entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * timer.renderPartialTicks - renderManager.renderPosZ).toDouble() - lastZ) / smoothValue.get().toDouble()
-
+            lastX += ((entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * timer.renderPartialTicks - renderManager.renderPosX) - lastX) / smoothValue.get().toDouble()
+            lastY += ((entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * timer.renderPartialTicks - renderManager.renderPosY + entity.eyeHeight.toDouble() + translateY.get().toDouble()) - lastY) / smoothValue.get().toDouble()
+            lastZ += ((entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * timer.renderPartialTicks - renderManager.renderPosZ) - lastZ) / smoothValue.get().toDouble()
             glTranslated( lastX, lastY, lastZ )
         } else {
             glTranslated( // Translate to player position with render pos and interpolate it
@@ -145,155 +149,89 @@ object TargetHUD : Module("TargetHUD", Category.VISUAL, hideModule = false) {
         enableGlCap(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        val name = entity.displayName.unformattedText
-        var healthPercent = entity.health / entity.maxHealth
-        // render hp bar
-        if (healthPercent> 1) {
-            healthPercent = 1F
-        }
-
         // Draw nametag
         when (modeValue.get().lowercase()) {
 
-
-            "juul" -> {
-
-                // render bg
+            "amogus" -> {
                 glScalef(-scale * 2, -scale * 2, scale * 2)
-                drawRoundedRect(-120f + xChange, -16f, -50f + xChange, 10f, 5f, Color(64, 64, 64, 255).rgb)
-                drawRoundedRect(-110f + xChange, 0f,   -20f + xChange, 35f, 5f, Color(96, 96, 96, 255).rgb)
-
-                // draw strings
-                fontRenderer.drawString("Attacking", -105 + xChange.toInt(), -13, Color.WHITE.rgb)
-                fontRenderer.drawString(tag, -106 + xChange.toInt() , 10, Color.WHITE.rgb)
-
-
-                val distanceString = "⤢" + ( ( ( mc.thePlayer.getDistanceToEntity(entity) * 10f ).toInt() ).toFloat() * 0.1f ).toString()
-                fontRenderer.drawString(distanceString, -25 - fontRenderer.getStringWidth(distanceString).toInt() + xChange.toInt(), 10, Color.WHITE.rgb)
-
-                // draw health bars
-                drawRoundedRect(-104f + xChange, 22f, -50f + xChange, 30f, 1f, Color(64, 64, 64, 255).rgb)
-                drawRoundedRect(-104f + xChange, 22f, -104f + (healthPercent * 54) + xChange, 30f, 1f, Color.WHITE.rgb)
-
+                val rl = ResourceLocation("fuguribeta/textures/augustus.png")
+                drawImage(rl, xChange.toInt(), 0, 250, 250)
             }
 
-            "material" -> {
+            "dilik_penis" -> {
                 glScalef(-scale * 2, -scale * 2, scale * 2)
-
-                // render bg
-                if (materialShadow.get()) {
-                    drawShadow(-40f + xChange, 0f, 40f + xChange, 29f)
-                    drawRect(-40f + xChange, 0f, 40f + xChange, 29f, Color(72, 72, 72, 250).rgb)
-                } else {
-                    drawRoundedRect(-40f + xChange, 0f, 40f + xChange, 29f, 5f, Color(72, 72, 72, 250).rgb)
-                }
-
-                // draw health bars
-                drawRoundedRect(-35f + xChange, 7f, -35f + (healthPercent * 70) + xChange, 12f, 2f, Color(10, 250, 10, 255).rgb)
-                drawRoundedRect(-35f + xChange, 17f, -35f + ((entity.totalArmorValue / 20F) * 70) + xChange, 22f, 2f, Color(10, 10, 250, 255).rgb)
-
+                val rl = ResourceLocation("fuguribeta/textures/dilikpenis.png")
+                drawImage(rl, xChange.toInt(), 0, 250, 250)
+                drawShadow(xChange, 0f, 250f, 250f)
             }
 
-            "material2" -> {
+            "vedma" -> {
                 glScalef(-scale * 2, -scale * 2, scale * 2)
-
-                // render bg
-                if (materialShadow.get()) {
-                    drawShadow(-40f + xChange, 0f, 40f + xChange, 15f)
-                    drawShadow(-40f + xChange, 0f, 20f + xChange, 35f)
-
-                    drawRect(-40f + xChange, 0f, 40f + xChange, 15f, Color(72, 72, 72, 250).rgb)
-                    drawRect(-40f + xChange, 20f, 40f + xChange, 35f, Color(72, 72, 72, 250).rgb)
-                } else {
-                    drawRoundedRect(-40f + xChange, 0f, 40f + xChange, 15f, 5f, Color(72, 72, 72, 250).rgb)
-                    drawRoundedRect(-40f + xChange, 20f, 40f + xChange, 35f, 5f, Color(72, 72, 72, 250).rgb)
-                }
-
-                // draw health bars
-                drawRoundedRect(-35f + xChange, 5f, -35f + (healthPercent * 70) + xChange, 10f, 2f, Color(10, 250, 10, 255).rgb)
-                drawRoundedRect(-35f + xChange, 25f, -35f + ((entity.totalArmorValue / 20F) * 70) + xChange, 30f, 2f, Color(10, 10, 250, 255).rgb)
-
+                val rl = ResourceLocation("fuguribeta/textures/mybitches.png")
+                drawImage(rl, xChange.toInt(), 0, 250, 250)
+                drawShadow(xChange, 0f, 250f, 250f)
             }
 
-            "arris" -> {
-
+            "q1nny" -> {
                 glScalef(-scale * 2, -scale * 2, scale * 2)
-                val hp = healthPercent
-                val additionalWidth = font.getStringWidth("${entity.name}  $hp hp").coerceAtLeast(75)
-                drawRoundedRect(xChange, 0f, 45f + additionalWidth + xChange, 40f, 7f, Color(0, 0, 0, 110).rgb)
+                val rl = ResourceLocation("fuguribeta/textures/q1nnyotsos.png")
+                drawImage(rl, xChange.toInt(), 0, 250, 250)
+                drawShadow(xChange, 0f, 250f, 250f)
+            }
 
-                // hp bar
-                val yPos = 5 + font.FONT_HEIGHT + 3f
-                drawRect(40f + xChange, yPos,     40 + xChange + (healthPercent) * additionalWidth, yPos + 4, Color.GREEN.rgb)
-                drawRect(40f + xChange, yPos + 9, 40 + xChange + (entity.totalArmorValue / 20F) * additionalWidth, yPos + 13, Color(77, 128, 255).rgb)
+            "666penis" -> {
+                glScalef(-scale * 2, -scale * 2, scale * 2)
+                val rl = ResourceLocation("fuguribeta/textures/666penis.png")
+                drawImage(rl, xChange.toInt(), 0, 250, 250)
+                drawShadow(xChange, 0f, 250f, 250f)
+            }
+
+            "markva" -> {
+                glScalef(-scale * 2, -scale * 2, scale * 2)
+                val rl = ResourceLocation("fuguribeta/textures/бостартпоссттаможня.png")
+                drawImage(rl, xChange.toInt(), 0, 250, 250)
+                drawShadow(xChange, 0f, 250f, 250f)
+            }
+
+            "dicves" -> {
+                glScalef(-scale * 2, -scale * 2, scale * 2)
+                val rl = ResourceLocation("fuguribeta/textures/disvisXyesosEbaniy.png")
+                drawImage(rl, xChange.toInt(), 0, 442, 126)
+                drawShadow(xChange, 0f, 442f, 126f)
             }
 
             "fdp" -> {
-
+                glScalef(-scale * 2, -scale * 2, scale * 2)
                 val font = fontValue.get()
-                glScalef(-scale * 2, -scale * 2, scale * 2)
+                val addedLen = (60 + font.getStringWidth(entity.name) * 1.60f)
 
-                if (!fdpVertical.get()) {
-                    var addedLen = (60 + font.getStringWidth(entity.name) * 1.60f).toFloat()
-                    if (!fdpText.get()) addedLen = 110f
+                drawRect(xChange, 0f, addedLen + xChange, 47f, Color(fdpred, fdpgreen, fdpblue, fdpalpha).rgb)
 
-                    if (fdpRed.get()) {
-                        drawRect(0f + xChange, 0f, addedLen + xChange, 47f, Color(212, 63, 63, 90).rgb)
-                        drawRoundedRect(0f + xChange, 0f, healthPercent * addedLen + xChange, 47f, 3f, Color(245, 52, 27, 90).rgb)
-                    } else {
-                        drawRect(0f + xChange, 0f, addedLen + xChange, 47f, Color(0, 0, 0, 120).rgb)
-                        drawRoundedRect(0f + xChange, 0f, healthPercent * addedLen + xChange, 47f, 3f, Color(0, 0, 0, 90).rgb)
-                    }
+                drawShadow(xChange, 0f, addedLen, 47f)
 
-                    drawShadow(0f, 0f, addedLen + xChange, 47f)
-
-                    if (fdpText.get()) {
-
-                        fontRenderer.drawString(entity.name, 45 + xChange.toInt(), 8, Color.WHITE.rgb)
-                        fontRenderer.drawString("Health ${entity.health.roundToInt()}", 45 + xChange.toInt(), 11 + (font.FONT_HEIGHT).toInt(), Color.WHITE.rgb)
-                    }
+                val hurtPercent = entity.hurtPercent
+                val scale = if (hurtPercent == 0f) { 1f } else if (hurtPercent < 0.5f) {
+                    1 - (0.1f * hurtPercent * 2)
                 } else {
-                    if (fdpRed.get()) {
-                        drawRect(0f + xChange, 0f, 47f + xChange, 120f + xChange, Color(212, 63, 63, 90).rgb)
-                        drawRoundedRect(healthPercent*120f + xChange, 0f, 47f + xChange, 0f, 3f, Color(245, 52, 27, 90).rgb)
-                    } else {
-                        drawRect(0f + xChange, 0f, 47f + xChange, 120f, Color(0, 0, 0, 120).rgb)
-                        drawRoundedRect(0f + xChange, 0f, 47f + xChange, healthPercent * 120f, 3f, Color(0, 0, 0, 90).rgb)
-                    }
+                    0.9f + (0.1f * (hurtPercent - 0.5f) * 2)
                 }
+                val size = 35
 
-            }
+                glPushMatrix()
+                glTranslatef(5f, 5f, 0f)
+                glScalef(scale, scale, scale)
+                glTranslatef(((size * 0.5f * (1 - scale)) / scale), ((size * 0.5f * (1 - scale)) / scale), 0f)
+                glColor4f(1f, 1 - hurtPercent, 1 - hurtPercent, 1f)
+                quickDrawHead(entity.skin, 0, 0, size, size)
+                glPopMatrix()
 
-            "jello" -> {
-                // colors
-                var hpBarColor = Color(255, 255, 255, jelloAlphaValue.get())
-                val name = entity.displayName.unformattedText
-                if (jelloColorValue.get() && name.startsWith("§")) {
-                    hpBarColor = ColorUtils.colorCode(name.substring(1, 2), jelloAlphaValue.get())
-                }
-                val bgColor = Color(50, 50, 50, jelloAlphaValue.get())
-                val width = fontRenderer.getStringWidth(tag)
-                val maxWidth = (width + 4F) - (-width - 4F)
-                var healthPercent = entity.health / entity.maxHealth
-
-                // render bg
-                glScalef(-scale * 2, -scale * 2, scale * 2)
-                drawRect(xChange, -fontRenderer.FONT_HEIGHT * 3F, width + 8F + xChange, -3F, bgColor)
-
-                // render hp bar
-                if (healthPercent> 1) {
-                    healthPercent = 1F
-                }
-
-                drawRect(xChange,                            -3F, maxWidth * healthPercent + xChange, 1F, hpBarColor)
-                drawRect(maxWidth * healthPercent + xChange, -3F, width + 8F + xChange,               1F, bgColor)
-
-                // string
-                fontRenderer.drawString(tag, 4 + xChange.toInt(), -fontRenderer.FONT_HEIGHT * 2 - 4, Color.WHITE.rgb)
-                glScalef(0.5F, 0.5F, 0.5F)
-                fontRenderer.drawString("Health: " + entity.health.toInt(), 4 + xChange.toInt(), -fontRenderer.FONT_HEIGHT * 2, Color.WHITE.rgb)
+                glPushMatrix()
+                glScalef(1.5f, 1.5f, 1.5f)
+                font.drawString(entity.name, 39, 8, Color.WHITE.rgb)
+                glPopMatrix()
             }
         }
+
         // Reset caps
         resetCaps()
 

@@ -30,9 +30,9 @@ import kotlin.math.sin
 
 object HitBubbles : Module("HitBubbles", Category.VISUAL, hideModule = false) {
 
-    private val followHit by BoolValue("Follow Hit", true)
+    private val followHit by BoolValue("FollowHit", true)
 
-    private val dynamicRotation by BoolValue("Dynamic Rotation", false)
+    private val dynamicRotation by BoolValue("DynamicRotation", false)
 
     private val lifeTime by IntegerValue("LifeTime", 1000, 1000..5000)
 

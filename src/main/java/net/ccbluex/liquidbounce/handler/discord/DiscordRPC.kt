@@ -66,7 +66,7 @@ object DiscordRPC : MinecraftInstance() {
                 // Set display info
                 if (mc.isIntegratedServerRunning || serverData == null) {
                     setDetails("Playing lonely in Singleplayer")
-                    setState("In game")
+                    setState("In-game")
                 } else {
                     setDetails("Maybe cheating on ${ServerUtils.hideSensitiveInformation(serverData.serverIP)}")
                     setState("Cheating")

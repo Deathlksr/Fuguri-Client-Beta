@@ -92,7 +92,7 @@ public abstract class MixinRendererLivingEntity extends MixinRender {
         String s = EnumChatFormatting.getTextWithoutFormattingCodes(p_rotateCorpse_1_.getName());
         if (s != null && (playerEdit.getRotatePlayer() && p_rotateCorpse_1_.equals(mc.thePlayer) && playerEdit.handleEvents()) && (!(p_rotateCorpse_1_ instanceof EntityPlayer) || ((EntityPlayer)p_rotateCorpse_1_).isWearing(EnumPlayerModelParts.CAPE))) {
             translate(0.0F, p_rotateCorpse_1_.height + 0.1F, 0.0F);
-            rotate(180.0F, 0.0F, 0.0F, 1.0F);
+            rotate((playerEdit.getRotateValue()), 0.0F, 0.0F, 1.0F);
         }
     }
 
@@ -181,10 +181,10 @@ public abstract class MixinRendererLivingEntity extends MixinRender {
             this.renderLivingAt(entity, x, y, z);
             float f8 = this.handleRotationFloat(entity, partialTicks);
             this.rotateCorpse(entity, f8, f, partialTicks);
-            GlStateManager.enableRescaleNormal();
-            GlStateManager.scale(-1.0F, -1.0F, 1.0F);
+            enableRescaleNormal();
+            scale(-1.0F, -1.0F, 1.0F);
             this.preRenderCallback(entity, partialTicks);
-            GlStateManager.translate(0.0F, -1.5078125F, 0.0F);
+            translate(0.0F, -1.5078125F, 0.0F);
             float f5 = entity.prevLimbSwingAmount + (entity.limbSwingAmount - entity.prevLimbSwingAmount) * partialTicks;
             float f6 = entity.limbSwing - entity.limbSwingAmount * (1.0F - partialTicks);
 
@@ -198,7 +198,7 @@ public abstract class MixinRendererLivingEntity extends MixinRender {
                 f5 = 1.0F;
             }
 
-            GlStateManager.enableAlpha();
+            enableAlpha();
             this.mainModel.setLivingAnimations(entity, f6, f5, partialTicks);
             this.mainModel.setRotationAngles(f6, f5, f8, f2, f7, 0.0625F, entity);
 
@@ -223,7 +223,7 @@ public abstract class MixinRendererLivingEntity extends MixinRender {
                     this.unsetBrightness();
                 }
 
-                GlStateManager.depthMask(true);
+                depthMask(true);
 
                 if (!(entity instanceof EntityPlayer) || !((EntityPlayer)entity).isSpectator())
                 {
@@ -257,7 +257,7 @@ public abstract class MixinRendererLivingEntity extends MixinRender {
                 glPopMatrix();
             }
 
-            GlStateManager.disableRescaleNormal();
+            disableRescaleNormal();
         }
         catch (Exception exception)
         {
@@ -319,7 +319,7 @@ public abstract class MixinRendererLivingEntity extends MixinRender {
                         glEnable(GL_LINE_SMOOTH);
                         glEnable(GL_BLEND);
                         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                        RenderUtils.INSTANCE.glColor(esp.getColor(entitylivingbaseIn));
+                        INSTANCE.glColor(esp.getColor(entitylivingbaseIn));
                         glLineWidth(esp.getWireframeWidth());
                         mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
                         glPopAttrib();

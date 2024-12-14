@@ -51,7 +51,6 @@ class ModuleElement(val module: Module) : ButtonElement(module.name, buttonActio
             1 -> {
                 if (module.values.isNotEmpty()) {
                     showSettings = !showSettings
-                    clickGui.style.showSettingsSound()
                 }
             }
         }

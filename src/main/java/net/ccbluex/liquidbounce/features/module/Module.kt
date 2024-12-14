@@ -8,6 +8,7 @@ package net.ccbluex.liquidbounce.features.module
 import net.ccbluex.liquidbounce.FuguriBeta
 import net.ccbluex.liquidbounce.FuguriBeta.isStarting
 import net.ccbluex.liquidbounce.event.Listenable
+import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule
 import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUIModule.volume
 import net.ccbluex.liquidbounce.features.module.modules.client.GameDetector
 import net.ccbluex.liquidbounce.file.FileManager.modulesConfig
@@ -97,7 +98,10 @@ open class Module(
 
             // Play sound and add notification
             if (!isStarting) {
-                if (value) FuguriBeta.tipSoundManager.enableSound.asyncPlay(volume) else FuguriBeta.tipSoundManager.disableSound.asyncPlay(volume)
+                when (ClickGUIModule.clickSound) {
+                    "Augustus" -> if (value) FuguriBeta.tipSoundManager.enableSound.asyncPlay(volume) else FuguriBeta.tipSoundManager.disableSound.asyncPlay(volume)
+                    "Rise" -> if (value) FuguriBeta.tipSoundManager.riseEnableSound.asyncPlay(volume) else FuguriBeta.tipSoundManager.riseDisableSound.asyncPlay(volume)
+                }
                 addNotification(Notification(name,"${if (value) "Enabled" else "Disabled"} §r$name", if (value) Type.SUCCESS else Type.ERROR, 1000))
             }
 

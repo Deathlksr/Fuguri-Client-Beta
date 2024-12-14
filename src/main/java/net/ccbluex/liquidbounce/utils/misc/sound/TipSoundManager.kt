@@ -15,6 +15,8 @@ class TipSoundManager {
     var buttonpressSound: TipSoundPlayer
     var fatalitySound: TipSoundPlayer
     var loginSuccessfulSound: TipSoundPlayer
+    var riseEnableSound: TipSoundPlayer
+    var riseDisableSound: TipSoundPlayer
 
     init {
         val enableSoundFile = File(FuguriBeta.fileManager.soundsDir, "enable.wav")
@@ -27,6 +29,9 @@ class TipSoundManager {
         val buttonpressSoundFile = File(FuguriBeta.fileManager.soundsDir, "buttonpress.wav")
         val fatalitySoundFile = File(FuguriBeta.fileManager.soundsDir, "fatality.wav")
         val loginSuccessfulSoundFile = File(FuguriBeta.fileManager.soundsDir, "loginSuccessful.wav")
+        val riseEnableSoundFile = File(FuguriBeta.fileManager.soundsDir, "riseenable.wav")
+        val riseDisableSoundFile = File(FuguriBeta.fileManager.soundsDir, "risedisable.wav")
+
 
         if (!enableSoundFile.exists())
             FileUtils.unpackFile(enableSoundFile, "assets/minecraft/fuguribeta/sound/enable.wav")
@@ -48,6 +53,10 @@ class TipSoundManager {
             FileUtils.unpackFile(fatalitySoundFile, "assets/minecraft/fuguribeta/sound/fatality.wav")
         if (!loginSuccessfulSoundFile.exists())
             FileUtils.unpackFile(loginSuccessfulSoundFile, "assets/minecraft/fuguribeta/sound/loginSuccessful.wav")
+        if (!riseEnableSoundFile.exists())
+            FileUtils.unpackFile(riseEnableSoundFile, "assets/minecraft/fuguribeta/sound/riseenable.wav")
+        if (!riseDisableSoundFile.exists())
+            FileUtils.unpackFile(riseDisableSoundFile, "assets/minecraft/fuguribeta/sound/risedisable.wav")
 
         enableSound = TipSoundPlayer(enableSoundFile)
         popSound = TipSoundPlayer(popSoundFile)
@@ -59,5 +68,7 @@ class TipSoundManager {
         buttonpressSound = TipSoundPlayer(buttonpressSoundFile)
         fatalitySound = TipSoundPlayer(fatalitySoundFile)
         loginSuccessfulSound = TipSoundPlayer(loginSuccessfulSoundFile)
+        riseEnableSound = TipSoundPlayer(riseEnableSoundFile)
+        riseDisableSound = TipSoundPlayer(riseDisableSoundFile)
     }
 }

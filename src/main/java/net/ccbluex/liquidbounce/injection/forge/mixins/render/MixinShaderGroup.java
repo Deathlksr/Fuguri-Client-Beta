@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ShaderGroup.class)
-public class ShaderGroupMixin {
+public class MixinShaderGroup {
 
     @Unique
     void invokeListShaders() {

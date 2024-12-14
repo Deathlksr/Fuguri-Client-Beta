@@ -4,6 +4,7 @@ import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacket
 import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
@@ -34,30 +35,32 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val delay by IntegerValue("Delay", 500, 0..1000) { !randomdelay }
     private val mindelay = IntegerValue("MinDelay", 500, 0..1000) { randomdelay }
     private val maxdelay = IntegerValue("MaxDelay", 520, 0..1000) { randomdelay }
-    private val recoildelay by IntegerValue("Recoil-Delay", 0, 0..1000)
-    private val ticksexxisted by BoolValue("Ticks-Existed", true)
-    private val minticksalive by IntegerValue("Max-Ticks-Existed", 15, 0..60) { ticksexxisted }
-    private val flushflag by BoolValue("Flush-Flag", true)
-    private val tickflag by IntegerValue("Ticks-Flag", 5, 0..60) { flushflag }
-    private val flushoninv by BoolValue("Flush-Inventory", true)
-    private val flushchat by BoolValue("Flush-Chat", true)
-    private val flushoncontainer by BoolValue("Flush-Container", false)
-    private val flushonattack by BoolValue("Flush-Attack", true)
-    private val flushblock by BoolValue("Flush-Blocking", true)
-    private val flushdamage by BoolValue("Flush Got-Damaged", false)
-    private val flushvelocity by BoolValue("Flush-Velocity", false)
-    private val flushuseitem by BoolValue("Flush-UsingItem", false)
-    private val flushback by BoolValue("Flush-Back", false)
-    private val flushclickgui by BoolValue("Flush-Click-Gui", false)
+    private val recoildelay by IntegerValue("RecoilDelay", 0, 0..1000)
+    private val ticksexxisted by BoolValue("TicksExisted", true)
+    private val minticksalive by IntegerValue("MaxTicksExisted", 15, 0..60) { ticksexxisted }
+    private val flushflag by BoolValue("FlushFlag", true)
+    private val tickflag by IntegerValue("TicksFlag", 5, 0..60) { flushflag }
+    private val flushoninv by BoolValue("FlushInventory", true)
+    private val flushchat by BoolValue("FlushChat", true)
+    private val flushoncontainer by BoolValue("FlushContainer", false)
+    private val flushonattack by BoolValue("FlushAttack", true)
+    private val flushusingitem by BoolValue("FlushUsingItem", true)
+    private val flushdamage by BoolValue("FlushGotDamaged", false)
+    private val flushvelocity by BoolValue("FlushVelocity", false)
+    private val flushblockplacement by BoolValue("FlushBlockPlacement", false)
+    private val flushback by BoolValue("FlushBack", false)
+    private val flushclickgui by BoolValue("FlushClickGui", false)
+    private val flushsprintreset by BoolValue("FlushSprintReset", false)
+    private val flushstand by BoolValue("FlushStandingStill", false)
     private val packetQueue = LinkedHashMap<Packet<*>, Long>()
     private val positions = LinkedHashMap<Vec3, Long>()
     private val resetTimer = MSTimer()
     private var ignoreWholeTick = false
-    private val line by BoolValue("Render", true, subjective = true)
-    private val thirdperson by BoolValue("Only-Third-Person", true) { line }
-    private val red by FloatValue("red", 1.0F, 0.0F..1.0F) { line }
-    private val green by FloatValue("green", 1.0F, 0.0F..1.0F) { line }
-    private val blue by FloatValue("blue", 1.0F, 0.0F..1.0F) { line }
+    private val line by BoolValue("Line", true, subjective = true)
+    private val thirdperson by BoolValue("OnlyThirdPerson", true) { line }
+    private val red by FloatValue("Red", 1.0F, 0.0F..1.0F) { line }
+    private val green by FloatValue("Green", 1.0F, 0.0F..1.0F) { line }
+    private val blue by FloatValue("Blue", 1.0F, 0.0F..1.0F) { line }
 
     private var ticksFlag = 0
     private var randomdelays = 0
@@ -79,6 +82,11 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
         if (mc.thePlayer == null || mc.thePlayer.isDead)
             return
+
+        if (MovementUtils.isMoving && !mc.thePlayer.isSprinting && flushsprintreset) {
+            blink()
+            return
+        }
 
         if (mc.isIntegratedServerRunning || serverData == null) {
             return
@@ -129,8 +137,8 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
                 }
             }
 
-            is C07PacketPlayerDigging, is C08PacketPlayerBlockPlacement -> {
-                if (flushuseitem) {
+            is C08PacketPlayerBlockPlacement -> {
+                if (flushblockplacement) {
                     blink()
                     return
                 }
@@ -176,26 +184,31 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
             }
         }
 
-        if (flushblock) {
+        if (flushusingitem) {
             if (mc.thePlayer.isUsingItem) {
                 blink()
                 return
             }
         }
 
-        if (mc.gameSettings.keyBindBack.pressed) {
-            if (flushback) {
+        if (flushback) {
+            if (mc.gameSettings.keyBindBack.pressed) {
                 blink()
                 return
             }
         }
-
-        if (mc.thePlayer.health < mc.thePlayer.maxHealth) {
-            if (mc.thePlayer.hurtTime != 0) {
-                if (flushdamage) {
+        if (flushdamage) {
+            if (mc.thePlayer.health < mc.thePlayer.maxHealth) {
+                if (mc.thePlayer.hurtTime != 0) {
                     blink()
                     return
                 }
+            }
+        }
+        if (flushstand) {
+            if (!MovementUtils.isMoving) {
+                blink()
+                return
             }
         }
 

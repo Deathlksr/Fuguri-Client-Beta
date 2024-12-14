@@ -1,6 +1,5 @@
 package net.ccbluex.liquidbounce.utils.render
 
-import akka.actor.Kill
 import com.jhlabs.image.GaussianFilter
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura
@@ -17,9 +16,8 @@ import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescol
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liescolorRedtwo
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesgreenhit
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.liesredhit
-import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.penislistcolor
+import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.colorValue
 import net.ccbluex.liquidbounce.features.module.modules.visual.TargetESP.speedcolorlies
-import net.ccbluex.liquidbounce.handler.combat.CombatManager
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
 import net.ccbluex.liquidbounce.utils.UIEffectRenderer.drawTexturedRect
@@ -58,11 +56,11 @@ object RenderUtils : MinecraftInstance() {
     private val glCapMap = mutableMapOf<Int, Boolean>()
     private val shadowCache: HashMap<Int, Int> = HashMap()
     private val DISPLAY_LISTS_2D = IntArray(4)
-    const val zLevel: Float = 0f
+    private const val zLevel: Float = 0f
     var deltaTime = 0
 
-    var startTime: Long = 0
-    var animationDuration: Int = 500
+    private var startTime: Long = 0
+    private var animationDuration: Int = 500
 
     init {
         for (i in DISPLAY_LISTS_2D.indices) {
@@ -93,24 +91,6 @@ object RenderUtils : MinecraftInstance() {
         quickDrawRect(4f, -20.3f, 7.3f, -20f)
         quickDrawRect(-7.3f, -20.3f, -4f, -20f)
         glEndList()
-    }
-
-    fun start3D() {
-        glDisable(GL_TEXTURE_2D)
-        glDisable(GL_DEPTH_TEST)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_BLEND)
-
-        glDepthMask(false)
-        GlStateManager.disableCull()
-    }
-
-    fun stop3D() {
-        GlStateManager.enableCull()
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_DEPTH_TEST)
-        glDepthMask(true)
-        glDisable(GL_BLEND)
     }
 
     fun drawBlockBox(blockPos: BlockPos, color: Color, outline: Boolean) {
@@ -254,28 +234,6 @@ object RenderUtils : MinecraftInstance() {
         val renderY = y - renderManager.renderPosY
         drawAxisAlignedBB(AxisAlignedBB.fromBounds(size, renderY + 0.02, size, -size, renderY, -size), color)
     }
-    
-
-    fun drawPlatformESP(entity: Entity, color: Color) {
-        val renderManager = mc.renderManager
-        val timer = mc.timer
-
-        val axisAlignedBB = entity.entityBoundingBox.offset(-entity.posX, -entity.posY, -entity.posZ).offset(
-            (entity.lastTickPosX + ((entity.posX - entity.lastTickPosX) * (timer.renderPartialTicks.toDouble()))) - renderManager.renderPosX,
-            (entity.lastTickPosY + ((entity.posY - entity.lastTickPosY) * (timer.renderPartialTicks.toDouble()))) - renderManager.renderPosY,
-            (entity.lastTickPosZ + ((entity.posZ - entity.lastTickPosZ) * (timer.renderPartialTicks.toDouble()))) - renderManager.renderPosZ
-        )
-       drawAxisAlignedBB(
-            AxisAlignedBB(
-                axisAlignedBB.minX,
-                axisAlignedBB.maxY - 0.5,
-                axisAlignedBB.minZ,
-                axisAlignedBB.maxX,
-                axisAlignedBB.maxY + 0.2,
-                axisAlignedBB.maxZ
-            ), color
-        )
-    }
 
     fun drawPlatform(entity: Entity, color: Color) {
         val renderManager = mc.renderManager
@@ -296,60 +254,6 @@ object RenderUtils : MinecraftInstance() {
                 axisAlignedBB.maxZ
             ), color
         )
-    }
-
-    fun enableSmoothLine(width: Float) {
-        glDisable(3008)
-        glEnable(3042)
-        glBlendFunc(770, 771)
-        glDisable(3553)
-        glDisable(2929)
-        glDepthMask(false)
-        glEnable(2884)
-        glEnable(2848)
-        glHint(3154, 4354)
-        glHint(3155, 4354)
-        glLineWidth(width)
-    }
-
-    /**
-     * Enables smooth line and polygon rendering.
-     * Adjusts the OpenGL settings to achieve smooth rendering effects.
-     */
-    fun startSmooth() {
-        glEnable(GL_LINE_SMOOTH)
-        glEnable(GL_POLYGON_SMOOTH)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
-        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-    }
-
-    /**
-     * Disables smooth line and polygon rendering.
-     * Restores the OpenGL settings after smooth rendering effects were applied.
-     */
-    fun endSmooth() {
-        glDisable(GL_LINE_SMOOTH)
-        glDisable(GL_POLYGON_SMOOTH)
-        glEnable(GL_BLEND)
-    }
-
-    /**
-     * Disables the smooth in line effect.
-     * Restores the OpenGL states to their defaults for regular rendering.
-     */
-    fun disableSmoothLine() {
-        glEnable(3553)
-        glEnable(2929)
-        glDisable(3042)
-        glEnable(3008)
-        glDepthMask(true)
-        glCullFace(1029)
-        glDisable(2848)
-        glHint(3154, 4352)
-        glHint(3155, 4352)
     }
 
     fun drawLies(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float) {
@@ -453,7 +357,7 @@ object RenderUtils : MinecraftInstance() {
             val gradientvalue = (cos(i * Math.PI / 180 * speedcolorlies) + 1) / 2
             val gradientColor = ColorUtils.mixColorse(color1, color2, gradientvalue.toFloat())
 
-            when (penislistcolor) {
+            when (colorValue) {
                 "Gradient" -> {
                     glColor4f(gradientColor.red / 255F, gradientColor.green / 255F, gradientColor.blue / 255F, liesalpha)
                     glVertex3d(x1, y1 + entity.height / 2, z1)

@@ -1,34 +1,32 @@
 package net.ccbluex.liquidbounce.features.module.modules.visual
 
 import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.IOException
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.Render3DEvent
-import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.Category
+import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.modules.client.AntiBot.isBot
-import net.ccbluex.liquidbounce.utils.ClientUtils.LOGGER
+import net.ccbluex.liquidbounce.features.module.modules.client.IRCModule
+import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.EntityUtils.isLookingOnEntities
 import net.ccbluex.liquidbounce.utils.EntityUtils.isSelected
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.extensions.isClientFriend
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
-import net.ccbluex.liquidbounce.utils.timing.TimeUtils
 import net.ccbluex.liquidbounce.value.*
 import net.minecraft.client.gui.Gui
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.Vec3
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.lwjgl.opengl.GL11.*
-import java.util.*
+import java.io.IOException
 import kotlin.math.pow
 
 object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
 
-    private val typeValue = ListValue("Mode", arrayOf("2DTag"), "2DTag")
     private val fontShadow by BoolValue("Shadow", true)
     private val background by BoolValue("Background", true)
     private val bot by BoolValue("Bots", true)
@@ -46,9 +44,9 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
 
     private const val GITHUBRAWURL = "https://raw.githubusercontent.com/VerLouF/Lists-Furugi/refs/heads/main"
 
-    private lateinit var ownerList: List<String>
-    private lateinit var bonanList: List<String>
-    private lateinit var userList: List<String>
+    lateinit var ownerList: List<String>
+    lateinit var bonanList: List<String>
+    lateinit var userList: List<String>
 
     private var maxRenderDistanceSq = 0.0
         set(value) {
@@ -60,9 +58,10 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         if (mc.theWorld == null || mc.thePlayer == null) return
 
         if (updateRepository) {
-            runBlocking {
+            runBlocking{
                 getListsFromGitHub()
             }
+
             updateRepository = false
         }
 
@@ -88,9 +87,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
             val distanceSquared = mc.thePlayer.getDistanceSqToEntity(entity)
 
             if (distanceSquared <= maxRenderDistanceSq) {
-                when (typeValue.get().lowercase(Locale.getDefault())) {
-                    "2dtag" -> renderNameTag2D(entity)
-                }
+               renderNameTag2D(entity)
             }
         }
 
@@ -105,14 +102,15 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
     }
 
     suspend fun getListsFromGitHub() {
+        ClientUtils.displayChatMessage("Connecting to GitHub!")
         withContext(Dispatchers.IO) {
             try {
                 ownerList = getListFromGitHub("$GITHUBRAWURL/ownerList.txt")
                 bonanList = getListFromGitHub("$GITHUBRAWURL/bonanList.txt")
                 userList = getListFromGitHub("$GITHUBRAWURL/userList.txt")
-                LOGGER.info("Successful connect to GitHub!")
+                ClientUtils.displayChatMessage("Successful connect to GitHub!")
             } catch (e: IOException) {
-                LOGGER.info("Ошибка при получении данных с GitHub: ${e.message}")
+                ClientUtils.displayChatMessage("Error connection to GitHud, Code: ${e.message}!")
                 ownerList = emptyList()
                 bonanList = emptyList()
                 userList = emptyList()
@@ -125,7 +123,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         val request = Request.Builder().url(url).build()
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) {
-                throw IOException("Ошибка: ${response.code}")
+                throw IOException("Error: ${response.code}")
             }
             return response.body?.string()?.lines()?.map { it.trim().lowercase() } ?: emptyList()
         }
@@ -142,45 +140,35 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
             (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * mc.timer.renderPartialTicks - mc.renderManager.renderPosZ).toFloat()
         )
 
-        var ownertext = ""
+        var ownerText = ""
         if (entity is EntityPlayer) {
             if (ownerList.contains(entity.displayNameString.lowercase())) {
-                ownertext = "§4Fuguri Owner "
+                ownerText = "§4[Fuguri Owner] "
             }
         }
 
-        var usertext = ""
+        var userText = ""
         if (entity is EntityPlayer) {
             if (userList.contains(entity.displayNameString.lowercase())) {
-                usertext = "§5Fuguri User "
+                userText = "§5[Fuguri User] "
             }
         }
 
-        var penisbaban = ""
+        var penisBonan = ""
         if (entity is EntityPlayer) {
             if (bonanList.contains(entity.displayNameString.lowercase())) {
-                penisbaban = "§6Bonan Entwickler "
+                penisBonan = "§6[Bonan Entwickler] "
             }
         }
 
-        var friendtext = "§2[Friend] "
+        var friendText = "§2[Friend] "
         if (entity is EntityPlayer) {
             val entityPlayer: EntityPlayer = entity
             if (!entityPlayer.isClientFriend()) {
-                friendtext = ""
+                friendText = ""
             }
         } else {
-            friendtext = ""
-        }
-
-        var friendtextcolor = "§a${entity.displayName.formattedText}"
-        if (entity is EntityPlayer) {
-            val entityPlayer: EntityPlayer = entity
-            if (!entityPlayer.isClientFriend()) {
-                friendtextcolor = entity.displayName.formattedText
-            }
-        } else {
-            friendtextcolor = entity.displayName.formattedText
+            friendText = ""
         }
 
         glNormal3f(0.0f, 1.0f, 0.0f)
@@ -191,7 +179,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         RenderUtils.setGLCap(GL_DEPTH_TEST, false)
         RenderUtils.setGLCap(GL_BLEND, true)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        val text = usertext + penisbaban + ownertext + friendtext + friendtextcolor
+        val text = if (IRCModule.state) { userText + penisBonan + ownerText + friendText + entity.displayName.formattedText } else { friendText + entity.displayName.formattedText }
         val stringWidth = fontRenderer.getStringWidth(text) / 2
         if (background) {
             Gui.drawRect((-stringWidth - 1), -14, (stringWidth + 1), -4, Integer.MIN_VALUE)

@@ -70,7 +70,6 @@ object Cosmetics : Module("Cosmetics", Category.VISUAL, hideModule = false) {
     }
 
     enum class CapeStyle(val location: ResourceLocation) {
-        NONE(APIConnecter.callImage("none", "cape")),
         FUGURIBETA(ResourceLocation("$capeLocate/classic.png")),
         AUGUSTUS(ResourceLocation("$capeLocate/Augustus.png")),
         AUGUSTUSAMETHYST(ResourceLocation("$capeLocate/AugustusAmethyst.png")),

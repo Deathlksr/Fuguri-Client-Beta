@@ -45,7 +45,7 @@ object Animations : Module("Animations", Category.VISUAL, gameDetecting = false,
         HeliumAnimation(),
         ArgonAnimation(),
         CesiumAnimation(),
-        SulfurAnimation()
+        SulfurAnimation(),
     )
 
     private val animationMode by ListValue("Mode", animations.map { it.name }.toTypedArray(), "Pushdown")

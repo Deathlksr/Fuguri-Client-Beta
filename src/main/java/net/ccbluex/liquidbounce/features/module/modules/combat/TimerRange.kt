@@ -271,9 +271,6 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
         return false
     }
 
-    override val tag
-        get() = "${maxTimeValue.get()} : $reverseTickTime"
-
     @JvmStatic
     fun freezeAnimation(): Boolean {
         if (freezeTicks != 0) {

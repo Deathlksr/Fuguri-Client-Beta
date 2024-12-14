@@ -142,7 +142,6 @@ abstract class Panel(val name: String, var x: Int, var y: Int, val width: Int, v
 
         if (mouseButton == 1 && isHovered(mouseX, mouseY)) {
             open = !open
-            clickGui.style.showSettingsSound()
             return true
         }
 

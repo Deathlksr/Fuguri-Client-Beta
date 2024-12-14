@@ -352,7 +352,7 @@ public class MixinModelPlayerFix extends ModelBiped {
 
         final PlayerEdit playerEdit = PlayerEdit.INSTANCE;
         GlStateManager.pushMatrix();
-        if (playerEdit.getState() && playerEdit.getMode().contains("Rabbit")) {
+        if (playerEdit.getState() && playerEdit.getEditPlayerModel().get() && playerEdit.getMode().contains("Rabbit")) {
             GlStateManager.pushMatrix();
             GlStateManager.scale(1.25D, 1.25D, 1.25D);
             GlStateManager.translate(0.0D, -0.3D, 0.0D);
@@ -373,7 +373,7 @@ public class MixinModelPlayerFix extends ModelBiped {
             this.rabbitLleg.rotateAngleZ = this.bipedLeftLeg.rotateAngleZ;
             this.rabbitBone.render(scale);
             GlStateManager.popMatrix();
-        } else if (playerEdit.getState() && playerEdit.getMode().contains("Freddy")) {
+        } else if (playerEdit.getState() && playerEdit.getEditPlayerModel().get() && playerEdit.getMode().contains("Freddy")) {
             this.fredhead.rotateAngleX = this.bipedHead.rotateAngleX;
             this.fredhead.rotateAngleY = this.bipedHead.rotateAngleY;
             this.fredhead.rotateAngleZ = this.bipedHead.rotateAngleZ;
@@ -394,7 +394,7 @@ public class MixinModelPlayerFix extends ModelBiped {
             GlStateManager.translate(0.0, 0.85, 0.0);
             this.fredbody.render(scale);
             GlStateManager.popMatrix();
-        } else if (playerEdit.getState() && playerEdit.getMode().contains("Imposter")) {
+        } else if (playerEdit.getState() && playerEdit.getEditPlayerModel().get() && playerEdit.getMode().contains("Imposter")) {
             this.bipedHead.rotateAngleY = netHeadYaw * 0.017453292F;
             this.bipedHead.rotateAngleX = headPitch * 0.017453292F;
             this.bipedBody.rotateAngleY = 0.0F;

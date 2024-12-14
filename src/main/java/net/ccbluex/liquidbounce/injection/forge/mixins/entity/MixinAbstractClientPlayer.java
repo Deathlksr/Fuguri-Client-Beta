@@ -53,7 +53,7 @@ public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer {
         final CustomFOV fovModule = CustomFOV.INSTANCE;
 
         if (fovModule.handleEvents()) {
-            float newFOV = fovModule.getFov();
+            float newFOV = fovModule.getFov() / 100f;
 
             if (!isUsingItem()) {
                 callbackInfoReturnable.setReturnValue(newFOV);

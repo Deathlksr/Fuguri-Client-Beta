@@ -214,6 +214,7 @@ object Flight : Module("Fly", Category.MOVEMENT, Keyboard.KEY_F, hideModule = fa
         thePlayer.speedInAir = 0.02f
         thePlayer.stopXZ()
         thePlayer.stopY()
+        mc.thePlayer.capabilities.flySpeed = 0.05F
         mc.thePlayer.capabilities.isFlying = false
 
         modeModule.onDisable()

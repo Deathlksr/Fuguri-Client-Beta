@@ -1,8 +1,3 @@
-/*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/SkidderMC/FDPClient/
- */
 package net.ccbluex.liquidbounce.features.module.modules.visual
 
 import net.ccbluex.liquidbounce.event.EventTarget
@@ -20,9 +15,9 @@ import java.util.*
 
 object Breadcrumbs : Module("Breadcrumbs", Category.VISUAL, hideModule = false) {
     val colorRainbow by BoolValue("Rainbow", false)
-        val colorRed by IntegerValue("R", 255, 0..255) { !colorRainbow }
-        val colorGreen by IntegerValue("G", 179, 0..255) { !colorRainbow }
-        val colorBlue by IntegerValue("B", 72, 0..255) { !colorRainbow }
+    val colorRed by IntegerValue("R", 255, 0..255) { !colorRainbow }
+    val colorGreen by IntegerValue("G", 179, 0..255) { !colorRainbow }
+    val colorBlue by IntegerValue("B", 72, 0..255) { !colorRainbow }
 
     private val positions = LinkedList<DoubleArray>()
 

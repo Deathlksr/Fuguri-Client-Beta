@@ -33,6 +33,7 @@ object ClickGUIModule : Module("ClickGUI", Category.CLIENT, Keyboard.KEY_RSHIFT,
     val scrolls by BoolValue("Scrolls", true)
     val spacedModules by BoolValue("SpacedModules", false)
     val panelsForcedInBoundaries by BoolValue("PanelsForcedInBoundaries", false)
+    val clickSound by ListValue("ClickSound", arrayOf("Augustus", "Rise"), "Augustus")
 
     val volume by FloatValue("Volume", 1F, 0F..1F)
 

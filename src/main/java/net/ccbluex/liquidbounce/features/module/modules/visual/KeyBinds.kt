@@ -28,6 +28,11 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL, hideModule = false) {
     private val posx by IntegerValue("PosX", 0, -2000..2000)
     private val posy by IntegerValue("PosY", 0, -2000..2000)
 
+    private val red by IntegerValue("Red", 0, 0..255)
+    private val green by IntegerValue("Green", 0, 0..255)
+    private val blue by IntegerValue("Blue", 0, 0..255)
+    private val alpha by IntegerValue("Alpha", 0, 0..255)
+
     private val animation = Animation2DUtils(0F, 0F, 0F, 0F)
 
     @EventTarget
@@ -61,8 +66,14 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL, hideModule = false) {
             sc.scaledWidth / 2F + 50 + penisotstup + animation.x,
             sc.scaledHeight / 2F + penisotstup + animation.y,
             radiuspenis,
-            Color(15, 15, 15, 100).rgb,
+            Color(red, green, blue, alpha).rgb,
             false
+        )
+        RenderUtils.drawShadow(
+            sc.scaledWidth / 2F + 50 - penisotstup,
+            sc.scaledHeight / 2F - penisotstup,
+            sc.scaledWidth / 2F + 50 + penisotstup + animation.x -304,
+            sc.scaledHeight / 2F + penisotstup + animation.y -190,
         )
         var peniseblan = 0
         font.drawString(

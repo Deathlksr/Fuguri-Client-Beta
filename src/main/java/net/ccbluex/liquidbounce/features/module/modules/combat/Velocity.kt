@@ -24,17 +24,14 @@ object Velocity : Module("Velocity", Category.COMBAT, hideModule = false) {
     )
 
     private val hurtTime by IntegerValue("HurtTime", 6, 0..10) { mode in arrayOf("IntaveReduce") }
-    private val Motionxz by FloatValue("XZ-SprintHit", 0.6F, 0F..1F) { mode in arrayOf("Intave") }
+    private val Motionxz by FloatValue("XZ-SprintHit", 0.6F, 0F..1F, true) { mode in arrayOf("Intave") }
     private val MotionnotSprintxz by FloatValue("XZ-Hit", 1.0F, 0F..1F) { mode in arrayOf("Intave", "IntaveReduce") }
     private val falsesprint by BoolValue("FalseClientSprint", true) { mode in arrayOf("Intave") }
     private val intavejump by BoolValue("Jump", false) { mode in arrayOf("Intave", "IntaveReduce") }
     private val chance by IntegerValue("Chance", 100, 0..100) { intavejump }
-    private val jumpCooldownMode by ListValue("JumpCooldownMode", arrayOf("Ticks", "ReceivedHits"), "Ticks")
-    { intavejump }
-    private val ticksUntilJump by IntegerValue("TicksUntilJump", 4, 0..20)
-    { jumpCooldownMode == "Ticks" && intavejump }
-    private val hitsUntilJump by IntegerValue("ReceivedHitsUntilJump", 2, 0..5)
-    { jumpCooldownMode == "ReceivedHits" && intavejump }
+    private val jumpCooldownMode by ListValue("JumpCooldownMode", arrayOf("Ticks", "ReceivedHits"), "Ticks") { intavejump }
+    private val ticksUntilJump by IntegerValue("TicksUntilJump", 4, 0..20) { jumpCooldownMode == "Ticks" && intavejump }
+    private val hitsUntilJump by IntegerValue("ReceivedHitsUntilJump", 2, 0..5) { jumpCooldownMode == "ReceivedHits" && intavejump }
 
     // Intave Jump
     private var limitUntilJump = 0

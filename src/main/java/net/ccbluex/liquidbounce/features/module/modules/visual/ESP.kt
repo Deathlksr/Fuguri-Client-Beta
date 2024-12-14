@@ -249,12 +249,6 @@ object ESP : Module("ESP", Category.VISUAL, hideModule = false) {
     fun getColor(entity: Entity? = null): Color {
         run {
             if (entity != null && entity is EntityLivingBase) {
-                if (entity.hurtTime > 0)
-                    return Color.RED
-
-                if (entity is EntityPlayer && entity.isClientFriend())
-                    return Color.BLUE
-
                 if (colorTeam) {
                     val chars = (entity.displayName ?: return@run).formattedText.toCharArray()
                     var color = Int.MAX_VALUE

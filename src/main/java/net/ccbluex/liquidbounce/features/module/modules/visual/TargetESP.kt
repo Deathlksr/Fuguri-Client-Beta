@@ -24,31 +24,31 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     }
 
     // Mark - TargetESP
-    private val markValue by ListValue("TargetMode", arrayOf("None", "Lies", "New"), "New")
+    private val markValue by ListValue("EspMode", arrayOf("None", "Lies", "New"), "New")
 
     override val tag
         get() = markValue
 
-    private val onlykillauratargetesp by BoolValue("Only-KillAura", false)
+    private val onlyKillAura by BoolValue("OnlyKillAura", false)
 
-    val penislistcolor by ListValue("ColorType", arrayOf("Gradient", "Custom"), "Gradient") { markValue in arrayOf("New") }
-    val hitcolorvalue by BoolValue("HitColorChange", false) { penislistcolor in arrayOf("Custom") }
-    val liesredhit by FloatValue("HitRed", 1F, 0F..1F) { markValue in arrayOf("New") && penislistcolor in arrayOf("Custom") && hitcolorvalue }
-    val liesgreenhit by FloatValue("HitGreen", 0F, 0F..1F) { markValue in arrayOf("New") && penislistcolor in arrayOf("Custom") && hitcolorvalue }
-    val liesbluehit by FloatValue("HitBlue", 0F, 0F..1F) { markValue in arrayOf("New") && penislistcolor in arrayOf("Custom") && hitcolorvalue }
-    val liescolorRed by FloatValue("Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
-    val liescolorGreen by FloatValue("Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
-    val liescolorBlue by FloatValue("Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
-    val liesalpha by FloatValue("Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
-    val liescolorRedtwo by FloatValue("Red2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient") }
-    val liescolorGreentwo by FloatValue("Green2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient") }
-    val liescolorBluetwo by FloatValue("Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient") }
-    val liesalphatwo by FloatValue("Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies", "New") && penislistcolor in arrayOf("Gradient", "Custom") }
+    var colorValue by ListValue("ColorType", arrayOf("Gradient", "Custom"), "Gradient") { markValue in arrayOf("New") }
+    val hitcolorvalue by BoolValue("HitColorChange", false) { colorValue in arrayOf("Custom") }
+    val liesredhit by FloatValue("HitRed", 1F, 0F..1F) { markValue in arrayOf("New") && colorValue in arrayOf("Custom") && hitcolorvalue }
+    val liesgreenhit by FloatValue("HitGreen", 0F, 0F..1F) { markValue in arrayOf("New") && colorValue in arrayOf("Custom") && hitcolorvalue }
+    val liesbluehit by FloatValue("HitBlue", 0F, 0F..1F) { markValue in arrayOf("New") && colorValue in arrayOf("Custom") && hitcolorvalue }
+    val liescolorRed by FloatValue("Red", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && colorValue in arrayOf("Gradient", "Custom") }
+    val liescolorGreen by FloatValue("Green", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && colorValue in arrayOf("Gradient", "Custom") }
+    val liescolorBlue by FloatValue("Blue", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && colorValue in arrayOf("Gradient", "Custom") }
+    var liesalpha by FloatValue("Alpha", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && colorValue in arrayOf("Gradient", "Custom") }
+    val liescolorRedtwo by FloatValue("Red2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && colorValue in arrayOf("Gradient") }
+    val liescolorGreentwo by FloatValue("Green2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && colorValue in arrayOf("Gradient") }
+    val liescolorBluetwo by FloatValue("Blue2", 1F, 0F..1F) { markValue in arrayOf("Lies", "New") && colorValue in arrayOf("Gradient") }
+    var liesalphatwo by FloatValue("Alpha2", 0F, 0F..1F) { markValue in arrayOf("Lies", "New") && colorValue in arrayOf("Gradient", "Custom") }
     private val speedlies by FloatValue("Speed", 1.0F, 0.5F..3.0F) { markValue in arrayOf("Lies", "New") }
     private val lenghtlies by FloatValue("Length", 1.0F, 0F..1F) { markValue in arrayOf("Lies", "New") }
     private val radiuslies by FloatValue("Radius", 0.5F, 0.0F..3.0F) { markValue in arrayOf("Lies") }
-    val speedcolorlies by IntegerValue("Color-Value", 9, 1..9) { markValue in arrayOf("New") && penislistcolor in arrayOf("Gradient") }
-    private val liesstepvalue by IntegerValue("Step-Value", 10, 10..180) { markValue in arrayOf("New") }
+    val speedcolorlies by IntegerValue("ColorValue", 3, 1..9) { markValue in arrayOf("New") && colorValue in arrayOf("Gradient") }
+    private val liesstepvalue by IntegerValue("StepValue", 10, 10..180) { markValue in arrayOf("New") }
     val heihgtlies by BoolValue("HeightFixUseOnlyAnimationLinear", false) { markValue in arrayOf("Lies") }
 
     // fake sharp
@@ -62,8 +62,8 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
 
     // variables
     private val targetList = HashMap<EntityLivingBase, Long>()
-    private val combat = CombatManager
-    private val killaura = KillAura
+    private val cm = CombatManager
+    private val ka = KillAura
     var random = Random()
     var start = 0.0
 
@@ -75,10 +75,10 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         val renderManager = mc.renderManager
-        val entityLivingBase = if (onlykillauratargetesp) {
-            killaura.target ?: return
+        val entityLivingBase = if (onlyKillAura) {
+            ka.target ?: return
         } else {
-            combat.target ?: return
+            cm.target ?: return
         }
         (entityLivingBase.lastTickPosX + (entityLivingBase.posX - entityLivingBase.lastTickPosX) * mc.timer.renderPartialTicks
                 - renderManager.renderPosX)
@@ -110,11 +110,13 @@ object TargetESP : Module("TargetESP", Category.VISUAL, hideModule = false, subj
         attackEntity(target)
     }
 
-
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        if (combat.target?.hurtTime == 10) {
+        if (cm.target?.hurtTime == 10) {
             doSound()
+        }
+        if (markValue == "Lies") {
+            colorValue = "Gradient"
         }
     }
 

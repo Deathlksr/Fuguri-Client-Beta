@@ -9,7 +9,7 @@ import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.ui.client.hud.designer.GuiHudDesigner
 
-object HudDesigner : Module("HudDesigner", Category.CLIENT, canBeEnabled = false) {
+object HUDDesigner : Module("HUDDesigner", Category.CLIENT, canBeEnabled = false) {
     override fun onEnable() {
         mc.displayGuiScreen(GuiHudDesigner())
     }
