@@ -35,7 +35,8 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
     private val delay by IntegerValue("Delay", 500, 0..1000) { !randomdelay }
     private val mindelay = IntegerValue("MinDelay", 500, 0..1000) { randomdelay }
     private val maxdelay = IntegerValue("MaxDelay", 520, 0..1000) { randomdelay }
-    private val recoildelay by IntegerValue("RecoilDelay", 0, 0..1000)
+    private val minrecoildelay by IntegerValue("MinRecoilDelay", 0, 0..1000)
+    private val maxrecoildelay by IntegerValue("ManRecoilDelay", 0, 0..1000)
     private val ticksexxisted by BoolValue("TicksExisted", true)
     private val minticksalive by IntegerValue("MaxTicksExisted", 15, 0..60) { ticksexxisted }
     private val flushflag by BoolValue("FlushFlag", true)
@@ -64,6 +65,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
 
     private var ticksFlag = 0
     private var randomdelays = 0
+    private var recoil = 0
 
     override fun onDisable() {
         if (mc.thePlayer == null) {
@@ -213,7 +215,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         }
 
         // Passed time
-        if (!resetTimer.hasTimePassed(recoildelay))
+        if (!resetTimer.hasTimePassed(recoil))
             return
 
         if (event.eventType == EventState.SEND) {
@@ -253,7 +255,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         if (!randomdelay)
             randomdelays = delay
 
-        if (!resetTimer.hasTimePassed(recoildelay))
+        if (!resetTimer.hasTimePassed(recoil))
             return
 
         handlePackets()
@@ -310,6 +312,7 @@ object Ping : Module("Ping", Category.COMBAT, gameDetecting = false, hideModule 
         positions.clear()
         ignoreWholeTick = true
         if (randomdelay) randomdelays = RandomUtils.nextInt(mindelay.get(), maxdelay.get())
+        recoil = RandomUtils.nextInt(minrecoildelay, maxrecoildelay)
     }
 
     private fun handlePackets() {

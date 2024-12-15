@@ -513,54 +513,61 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
 
             val maxClicks = clicks + extraClicks
 
-            if (clickValue == "Delay") {
-                if (afterdelay > 0) {
-                    afterdelay--
+            when (clickValue) {
+                "Delay" -> {
+                    if (afterdelay > 0) {
+                        afterdelay--
+                    }
+                    if (target?.hurtResistantTime!! <= 10 || afterdelay == 0 || mc.thePlayer.hurtTime != 0) {
+                        repeat(maxClicks) {
+                            val wasBlocking = blockStatus
+                            runAttack(it + 1 == maxClicks)
+
+                            if (wasBlocking && !blockStatus && (releaseAutoBlock && !ignoreTickRule || autoBlock == "Off")) {
+                                return
+                            }
+                        }
+                    }
+                    if (mc.thePlayer.hurtTime != 0)
+                        afterdelay = 0
+                    clicks = 0
                 }
-                if (target?.hurtResistantTime!! <= 10 || afterdelay == 0 || mc.thePlayer.hurtTime != 0) {
+
+                "HurtTime" -> {
                     repeat(maxClicks) {
                         val wasBlocking = blockStatus
+
                         runAttack(it + 1 == maxClicks)
+                        clicks--
 
                         if (wasBlocking && !blockStatus && (releaseAutoBlock && !ignoreTickRule || autoBlock == "Off")) {
                             return
                         }
                     }
                 }
-                if (mc.thePlayer.hurtTime != 0)
-                    afterdelay = 0
-                clicks = 0
-            }
 
-            if (clickValue == "HurtTime") {
-                repeat(maxClicks) {
-                    val wasBlocking = blockStatus
-
-                    runAttack(it + 1 == maxClicks)
-                    clicks--
-
-                    if (wasBlocking && !blockStatus && (releaseAutoBlock && !ignoreTickRule || autoBlock == "Off")) {
-                        return
+                "SmartDelay" -> {
+                    if (target?.hurtTime == 0) {
+                        afterdelay = 0
                     }
-                }
-            }
-            if (clickValue == "SmartDelay") {
-                if (afterdelay > 0) {
-                    afterdelay--
-                }
-                if (target?.hurtResistantTime!! <= 10 || afterdelay == 0 || mc.thePlayer.hurtTime > minHurtTimeToClick) {
-                    repeat(maxClicks) {
-                        val wasBlocking = blockStatus
-                        runAttack(it + 1 == maxClicks)
+                    if (afterdelay > 0) {
+                        afterdelay--
+                    }
+                    if (target?.hurtTime!! == 0 || afterdelay == 0 || mc.thePlayer.hurtTime > minHurtTimeToClick) {
+                        repeat(maxClicks) {
+                            val wasBlocking = blockStatus
+                            runAttack(it + 1 == maxClicks)
 
-                        if (wasBlocking && !blockStatus && (releaseAutoBlock && !ignoreTickRule || autoBlock == "Off")) {
-                            return
+                            if (wasBlocking && !blockStatus && (releaseAutoBlock && !ignoreTickRule || autoBlock == "Off")) {
+                                return
+                            }
                         }
                     }
+                    if (mc.thePlayer.hurtTime > minHurtTimeToClick) {
+                        afterdelay = 0
+                    }
+                    clicks = 0
                 }
-                if (mc.thePlayer.hurtTime > minHurtTimeToClick)
-                    afterdelay = 0
-                clicks = 0
             }
         } else {
             renderBlocking = false

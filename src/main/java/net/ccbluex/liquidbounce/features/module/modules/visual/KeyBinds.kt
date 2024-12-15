@@ -5,92 +5,97 @@ import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.Render2DEvent
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
-import net.ccbluex.liquidbounce.utils.render.RenderUtils
-import net.minecraft.client.gui.ScaledResolution
-import net.ccbluex.liquidbounce.value.FontValue
 import net.ccbluex.liquidbounce.ui.font.Fonts
-import net.ccbluex.liquidbounce.utils.render.animation.Animation2DUtils
-import net.ccbluex.liquidbounce.value.FloatValue
-import net.ccbluex.liquidbounce.value.IntegerValue
-import net.ccbluex.liquidbounce.value.TextValue
+import net.ccbluex.liquidbounce.utils.render.RenderUtils
+import net.ccbluex.liquidbounce.utils.render.animation.Animations2DUtilsNew
+import net.ccbluex.liquidbounce.value.*
 import org.lwjgl.input.Keyboard
-import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.glTranslated
 import java.awt.Color
 
-object KeyBinds : Module("KeyBinds", Category.VISUAL, hideModule = false) {
+object KeyBinds : Module("KeyBinds", Category.VISUAL) {
 
-    private val penis = arrayListOf<String>()
-
+    private val posx by IntegerValue("X", 0, 0..1000)
+    private val posy by IntegerValue("Y", 0, 0..1000)
+    private val margin by FloatValue("Margin", 2f, 0f..5f)
     private val font by FontValue("Font", Fonts.font40)
-    private val textkey by TextValue("Text", "KeyBinds")
-    private val radiuspenis by FloatValue("BorderRadius", 0f, 0f..15f)
-
-    private val posx by IntegerValue("PosX", 0, -2000..2000)
-    private val posy by IntegerValue("PosY", 0, -2000..2000)
-
-    private val red by IntegerValue("Red", 0, 0..255)
-    private val green by IntegerValue("Green", 0, 0..255)
-    private val blue by IntegerValue("Blue", 0, 0..255)
-    private val alpha by IntegerValue("Alpha", 0, 0..255)
-
-    private val animation = Animation2DUtils(0F, 0F, 0F, 0F)
+    private val text by TextValue("Text", "KeyBinds")
+    private val dropShadow by BoolValue("Shadow", true)
+    private val borderRadius by FloatValue("BorderRadius", 0f, 0f..15f)
+    private val red by FloatValue("Red", 0f, 0f..1f)
+    private val green by FloatValue("Green", 0f, 0f..1f)
+    private val blue by FloatValue("Blue", 0f, 0f..1f)
+    private val alpha by FloatValue("Alpha", 0.5f, 0f..1f)
+    private val tred by FloatValue("TextRed", 1f, 0f..1f)
+    private val tgreen by FloatValue("TextGreen", 1f, 0f..1f)
+    private val tblue by FloatValue("TextBlue", 1f, 0f..1f)
+    private val talpha by FloatValue("TextAlpha", 1f, 0f..1f)
+    private val smoothSpeed by FloatValue("SmoothSpeed", 1f, 0f..10f)
+    private val list = arrayListOf<String>()
+    private val animation = Animations2DUtilsNew(0f,0f,0f,0f)
 
     @EventTarget
     fun onRender2D(event: Render2DEvent) {
-        penis.clear()
-        for (module in moduleManager.modules) {
-            if (module.state && module.keyBind != 0) {
-                penis.add(module.getName(true) + " [${Keyboard.getKeyName(module.keyBind)}]")
+        updateList()
+        val textColor = Color(tred, tgreen, tblue, talpha).rgb
+        var width = 50
+        var height = 30
+        var tempHeight = font.FONT_HEIGHT + 3
+        for (string in list) {
+            tempHeight += font.FONT_HEIGHT + 2
+            val stingWidth = font.getStringWidth(string)
+            if (stingWidth > width) {
+                width = stingWidth
             }
         }
-        var peniswight = 50
-        val penisotstup = 2
-        val sc = ScaledResolution(mc)
-        var penisheight = 20
-        for (st in penis) {
-            penisheight += font.FONT_HEIGHT + 2
-            if (font.getStringWidth(st) > peniswight) {
-                peniswight = font.getStringWidth(st)
-            }
-        }
-
-        animation.endX = peniswight.toFloat()
-        animation.endY = penisheight.toFloat()
-        animation.update(0.02f)
-
-        GL11.glTranslated(posx.toDouble(), posy.toDouble(), 0.0)
-
+        if (tempHeight > height) height = tempHeight
+        animation.endX = width.toFloat()
+        animation.endY = height.toFloat()
+        animation.update(smoothSpeed * 0.005f)
+        glTranslated(posx.toDouble(), posy.toDouble(), 0.0)
         RenderUtils.drawRoundedRect(
-            sc.scaledWidth / 2F + 50 - penisotstup,
-            sc.scaledHeight / 2F - penisotstup,
-            sc.scaledWidth / 2F + 50 + penisotstup + animation.x,
-            sc.scaledHeight / 2F + penisotstup + animation.y,
-            radiuspenis,
+            -margin,
+            -margin,
+            animation.x + margin * 2,
+            animation.y + margin * 2,
+            borderRadius,
             Color(red, green, blue, alpha).rgb,
             false
         )
-        RenderUtils.drawShadow(
-            sc.scaledWidth / 2F + 50 - penisotstup,
-            sc.scaledHeight / 2F - penisotstup,
-            sc.scaledWidth / 2F + 50 + penisotstup + animation.x -304,
-            sc.scaledHeight / 2F + penisotstup + animation.y -190,
-        )
-        var peniseblan = 0
-        font.drawString(
-            textkey,
-            sc.scaledWidth / 2 + 50,
-            sc.scaledHeight / 2,
-            -1
-        )
-        for (st in penis) {
-            font.drawString(
-            st,
-            sc.scaledWidth / 2 + 50,
-            sc.scaledHeight / 2 + 15 + peniseblan * 12,
-            -1
+        if (dropShadow) {
+            RenderUtils.drawShadow(
+                -margin * 2,
+                -margin * 2,
+                animation.x + margin * 4,
+                animation.y + margin * 4,
             )
-            peniseblan++
         }
-        GL11.glTranslated(-posx.toDouble(), -posy.toDouble(), 0.0)
+        font.drawString(
+            text,
+            0f,
+            0f,
+            textColor,
+            false
+        )
+        var offset: Float = font.FONT_HEIGHT + 3f
+        for (string in list) {
+            font.drawString(
+                string,
+                0,
+                offset.toInt(),
+                textColor
+            )
+            offset += font.FONT_HEIGHT + 2f
+        }
+        glTranslated(-posx.toDouble(), -posy.toDouble(), 0.0)
+    }
+
+    private fun updateList() {
+        list.clear()
+        for (module in moduleManager.modules) {
+            if (module.state && module.keyBind != 0) {
+                list.add(module.getName(true) + " [${Keyboard.getKeyName(module.keyBind)}]")
+            }
+        }
     }
 }
