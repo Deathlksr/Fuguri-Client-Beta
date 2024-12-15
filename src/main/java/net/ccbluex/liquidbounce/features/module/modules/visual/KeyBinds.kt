@@ -64,10 +64,10 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL) {
         )
         if (dropShadow) {
             RenderUtils.drawShadow(
-                -margin * 2,
-                -margin * 2,
-                animation.x + margin * 4,
-                animation.y + margin * 4,
+                -margin,
+                -margin,
+                animation.x + margin * 2,
+                animation.y + margin * 2,
             )
         }
         font.drawString(
