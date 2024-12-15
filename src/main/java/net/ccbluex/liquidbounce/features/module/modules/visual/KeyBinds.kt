@@ -18,6 +18,8 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL) {
     private val posx by IntegerValue("X", 0, 0..1000)
     private val posy by IntegerValue("Y", 0, 0..1000)
     private val margin by FloatValue("Margin", 2f, 0f..5f)
+    private val width by IntegerValue("Width", 50, 20..80)
+    private val height by IntegerValue("Height", 20, 10..40)
     private val font by FontValue("Font", Fonts.font40)
     private val text by TextValue("Text", "KeyBinds")
     private val dropShadow by BoolValue("Shadow", true)
@@ -26,10 +28,11 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL) {
     private val green by FloatValue("Green", 0f, 0f..1f)
     private val blue by FloatValue("Blue", 0f, 0f..1f)
     private val alpha by FloatValue("Alpha", 0.5f, 0f..1f)
-    private val tred by FloatValue("TextRed", 1f, 0f..1f)
-    private val tgreen by FloatValue("TextGreen", 1f, 0f..1f)
-    private val tblue by FloatValue("TextBlue", 1f, 0f..1f)
-    private val talpha by FloatValue("TextAlpha", 1f, 0f..1f)
+    private val textRed by FloatValue("TextRed", 1f, 0f..1f)
+    private val textGreen by FloatValue("TextGreen", 1f, 0f..1f)
+    private val textBlue by FloatValue("TextBlue", 1f, 0f..1f)
+    private val textAlpha by FloatValue("TextAlpha", 1f, 0f..1f)
+    private val dropShadowText by BoolValue("TextShadow", false)
     private val smoothSpeed by FloatValue("SmoothSpeed", 1f, 0f..10f)
     private val list = arrayListOf<String>()
     private val animation = Animations2DUtilsNew(0f,0f,0f,0f)
@@ -37,9 +40,10 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL) {
     @EventTarget
     fun onRender2D(event: Render2DEvent) {
         updateList()
-        val textColor = Color(tred, tgreen, tblue, talpha).rgb
-        var width = 50
-        var height = 30
+        val textColor = Color(textRed, textGreen, textBlue, textAlpha).rgb
+        val color = Color(red, green, blue, alpha).rgb
+        var width = width
+        var height = height
         var tempHeight = font.FONT_HEIGHT + 3
         for (string in list) {
             tempHeight += font.FONT_HEIGHT + 2
@@ -59,15 +63,15 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL) {
             animation.x + margin * 2,
             animation.y + margin * 2,
             borderRadius,
-            Color(red, green, blue, alpha).rgb,
+            color,
             false
         )
         if (dropShadow) {
             RenderUtils.drawShadow(
                 -margin,
                 -margin,
-                animation.x + margin * 2,
-                animation.y + margin * 2,
+                animation.x + margin * 3,
+                animation.y + margin * 3,
             )
         }
         font.drawString(
@@ -75,7 +79,7 @@ object KeyBinds : Module("KeyBinds", Category.VISUAL) {
             0f,
             0f,
             textColor,
-            false
+            dropShadowText
         )
         var offset: Float = font.FONT_HEIGHT + 3f
         for (string in list) {

@@ -3,6 +3,7 @@ package net.ccbluex.liquidbounce.features.module.modules.combat
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacket
 import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
@@ -11,6 +12,7 @@ import net.ccbluex.liquidbounce.utils.render.RenderUtils.glColor
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
+import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.network.Packet
 import net.minecraft.network.handshake.client.C00Handshake
 import net.minecraft.network.play.client.*
@@ -32,13 +34,15 @@ object TestPing : Module("TestPing", Category.COMBAT) {
     private val attackrecoil by IntegerValue("AttackFlushConditionTime", 100, 0..500)
     private val flagrecoil by IntegerValue("FlagFlushConditionTime", 100, 0..500)
     private val velocityrecoil by IntegerValue("VelocityFlushConditionTime", 0, 0..500)
+    private val inventoryrecoil by IntegerValue("InventoryFlushConditionTime", 0, 0..500)
+    private val useitemrecoil by IntegerValue("UseItemFlushConditionTime", 0, 0..500)
+    private val sprintresetrecoil by IntegerValue("SprintResetFlushConditionTime", 0, 0..500)
+
     private val line by BoolValue("Line", true, subjective = true)
     private val thirdperson by BoolValue("OnlyThirdPerson", true) { line }
     private val red by FloatValue("Red", 1.0F, 0.0F..1.0F) { line }
     private val green by FloatValue("Green", 1.0F, 0.0F..1.0F) { line }
     private val blue by FloatValue("Blue", 1.0F, 0.0F..1.0F) { line }
-
-    private val scale by FloatValue("Scale", 5.0F, 5.0F..500.0F) { line }
 
     private var lastMS = 0L
     private val packetQueue = LinkedHashMap<Packet<*>, Long>()
@@ -61,6 +65,10 @@ object TestPing : Module("TestPing", Category.COMBAT) {
         if (event.isCancelled)
             return
 
+        if (MovementUtils.isMoving && !mc.thePlayer.isSprinting) {
+            recoiltime = sprintresetrecoil
+        }
+
         when (packet) {
             is C00Handshake, is C00PacketServerQuery, is C01PacketPing, is C01PacketChatMessage, is S01PacketPong -> {
                 return
@@ -81,10 +89,21 @@ object TestPing : Module("TestPing", Category.COMBAT) {
             }
         }
 
+        val screen = mc.currentScreen
+
+        if (screen is GuiInventory) {
+            recoiltime = inventoryrecoil
+        }
+
+        if (mc.thePlayer.isUsingItem) {
+            recoiltime = useitemrecoil
+        }
+
         if (recoiltime > 0) {
             resetPackets()
             return
         }
+
         if (event.eventType == EventState.SEND) {
             event.cancelEvent()
             if (packet is C03PacketPlayer && packet.isMoving) {
@@ -143,9 +162,8 @@ object TestPing : Module("TestPing", Category.COMBAT) {
             glEnable(GL_BLEND)
             glDisable(GL_DEPTH_TEST)
             mc.entityRenderer.disableLightmap()
-            glBegin(GL_POINTS)
+            glBegin(GL_LINE_STRIP)
             glColor(color)
-            glPointSize(scale)
 
             val renderPosX = mc.renderManager.viewerPosX
             val renderPosY = mc.renderManager.viewerPosY
@@ -155,7 +173,6 @@ object TestPing : Module("TestPing", Category.COMBAT) {
                 glVertex3d(pos.xCoord - renderPosX, pos.yCoord - renderPosY, pos.zCoord - renderPosZ)
 
             glColor4d(1.0, 1.0, 1.0, 1.0)
-            glPointSize(1F)
             glEnd()
             glEnable(GL_DEPTH_TEST)
             glDisable(GL_LINE_SMOOTH)
