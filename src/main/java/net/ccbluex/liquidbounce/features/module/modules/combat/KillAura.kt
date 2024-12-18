@@ -168,7 +168,7 @@ object KillAura : Module("KillAura", Category.COMBAT, Keyboard.KEY_R, hideModule
     private val releaseAutoBlock by BoolValue("ReleaseAutoBlock", true)
     { autoBlock !in arrayOf("Off", "Fake") }
     var forceBlockRender by BoolValue("ForceBlockRender", true)
-    { autoBlock !in arrayOf("Off", "Fake") && releaseAutoBlock }
+    { autoBlock in arrayOf("Off", "Fake") }
     private val ignoreTickRule by BoolValue("IgnoreTickRule", false)
     { autoBlock !in arrayOf("Off", "Fake") && releaseAutoBlock }
     private val blockRate by IntegerValue("BlockRate", 100, 1..100)

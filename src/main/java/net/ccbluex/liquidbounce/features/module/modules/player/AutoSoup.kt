@@ -6,6 +6,7 @@
 package net.ccbluex.liquidbounce.features.module.modules.player
 
 import net.ccbluex.liquidbounce.event.EventTarget
+import net.ccbluex.liquidbounce.event.GameLoopEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
@@ -49,7 +50,7 @@ object AutoSoup : Module("AutoSoup", Category.PLAYER, hideModule = false) {
     private var canCloseInventory = false
 
     @EventTarget
-    fun onUpdate(event: UpdateEvent) {
+    fun onGameLoop(event: GameLoopEvent) {
         val thePlayer = mc.thePlayer ?: return
 
         if (!timer.hasTimePassed(delay))

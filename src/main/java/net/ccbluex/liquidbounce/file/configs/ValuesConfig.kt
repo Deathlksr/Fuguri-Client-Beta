@@ -30,7 +30,7 @@ import net.ccbluex.liquidbounce.handler.lang.LanguageManager.overrideLanguage
 import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration.Companion.altsLength
 import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration.Companion.enabledClientTitle
 import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration.Companion.enabledCustomBackground
-import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration.Companion.particles
+import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration.Companion.particless
 import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration.Companion.stylisedAlts
 import net.ccbluex.liquidbounce.ui.client.gui.GuiClientConfiguration.Companion.unformattedAlts
 import java.io.*
@@ -84,7 +84,7 @@ class ValuesConfig(file: File) : FileConfig(file) {
                     val jsonValue = value as JsonObject
                     if (jsonValue.has("EnabledClientTitle")) enabledClientTitle = jsonValue["EnabledClientTitle"].asBoolean
                     if (jsonValue.has("EnabledBackground")) enabledCustomBackground = jsonValue["EnabledBackground"].asBoolean
-                    if (jsonValue.has("Particles")) particles = jsonValue["Particles"].asBoolean
+                    if (jsonValue.has("Particles")) particless = jsonValue["Particles"].asBoolean
                     if (jsonValue.has("StylisedAlts")) stylisedAlts = jsonValue["StylisedAlts"].asBoolean
                     if (jsonValue.has("AltsLength")) altsLength = jsonValue["AltsLength"].asInt
                     if (jsonValue.has("CleanAlts")) unformattedAlts = jsonValue["CleanAlts"].asBoolean
@@ -93,7 +93,7 @@ class ValuesConfig(file: File) : FileConfig(file) {
                 key.equals("background", true) -> { // Compatibility with old versions
                     val jsonValue = value as JsonObject
                     if (jsonValue.has("Enabled")) enabledCustomBackground = jsonValue["Enabled"].asBoolean
-                    if (jsonValue.has("Particles")) particles = jsonValue["Particles"].asBoolean
+                    if (jsonValue.has("Particles")) particless = jsonValue["Particles"].asBoolean
                 }
                 else -> {
                     val module = moduleManager[key] ?: continue
@@ -154,7 +154,7 @@ class ValuesConfig(file: File) : FileConfig(file) {
         clientObject.run {
             addProperty("EnabledClientTitle", enabledClientTitle)
             addProperty("EnabledBackground", enabledCustomBackground)
-            addProperty("Particles", particles)
+            addProperty("Particless", particless)
             addProperty("StylisedAlts", stylisedAlts)
             addProperty("AltsLength", altsLength)
             addProperty("CleanAlts", unformattedAlts)

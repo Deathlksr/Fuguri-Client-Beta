@@ -26,7 +26,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
     private lateinit var btnQuit: QuitButton
 
     override fun initGui() {
-        logo = ResourceLocation("fuguribeta/mainmenu/logo.png")
+        logo = ResourceLocation("fuguribeta/mainmenu/logomr.png")
         val yPos = height - 20
         val buttonWidth = 133
         val buttonHeight = 20

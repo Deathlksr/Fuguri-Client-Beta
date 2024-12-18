@@ -7,6 +7,7 @@ import net.ccbluex.liquidbounce.features.module.Category
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.modules.client.AntiBot.isBot
 import net.ccbluex.liquidbounce.features.module.modules.client.IRCModule
+import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.EntityUtils.isLookingOnEntities
 import net.ccbluex.liquidbounce.utils.EntityUtils.isSelected
@@ -14,7 +15,6 @@ import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.extensions.isClientFriend
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
 import net.ccbluex.liquidbounce.value.*
-import net.minecraft.client.gui.Gui
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
@@ -22,15 +22,23 @@ import net.minecraft.util.Vec3
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.lwjgl.opengl.GL11.*
+import java.awt.Color
 import java.io.IOException
 import kotlin.math.pow
 
 object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
 
-    private val fontShadow by BoolValue("Shadow", true)
+    private val fontShadow by BoolValue("FontShadow", true)
+    private val shadow by BoolValue("Shadow", true)
     private val background by BoolValue("Background", true)
+    private val red by IntegerValue("Red", 10, 0..255) { background }
+    private val green by IntegerValue("Green", 10, 0..255) { background }
+    private val blue by IntegerValue("Blue", 10, 0..255) { background }
+    private val alpha by IntegerValue("Alpha", 100, 0..255) { background }
+    private val radius by FloatValue("BorderRadius", 0f, 0f..5f) { background }
+
     private val bot by BoolValue("Bots", true)
-    private val maxRenderDistance by object : IntegerValue("MaxRenderDistance", 100, 1..200) {
+    private val maxRenderDistance by object : IntegerValue("MaxRenderDistance", 200, 1..200) {
         override fun onUpdate(value: Int) {
             maxRenderDistanceSq = value.toDouble().pow(2.0)
         }
@@ -181,8 +189,12 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         val text = if (IRCModule.state) { userText + penisBonan + ownerText + friendText + entity.displayName.formattedText } else { friendText + entity.displayName.formattedText }
         val stringWidth = fontRenderer.getStringWidth(text) / 2
+        val color = Color(red, green, blue, alpha).rgb
         if (background) {
-            Gui.drawRect((-stringWidth - 1), -14, (stringWidth + 1), -4, Integer.MIN_VALUE)
+            RenderUtils.drawRoundedRectInt((-stringWidth - 1), -14, (stringWidth + 1), -4, color, radius)
+        }
+        if (shadow) {
+            RenderUtils.drawShadow((-stringWidth - 1f), -14f, (stringWidth * 2f) + 1f, 10f)
         }
         fontRenderer.drawString(
             text,
@@ -192,7 +204,7 @@ object NameTags : Module("NameTags", Category.VISUAL, hideModule = false) {
             fontShadow
         )
         RenderUtils.revertAllCaps()
-        glColor4f(1f, 0f, 0f, 1f)
+        glColor4f(1f, 1f, 1f, 1f)
         glPopMatrix()
     }
 

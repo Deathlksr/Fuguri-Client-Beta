@@ -25,7 +25,7 @@ import net.minecraft.util.Vec3
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 
-object TestPing : Module("TestPing", Category.COMBAT) {
+object PingV2 : Module("PingV2", Category.COMBAT) {
 
     private val randomdelay by BoolValue("RandomDelay", false)
     private val delay by IntegerValue("Delay", 500, 0..1000) { !randomdelay }
@@ -37,6 +37,7 @@ object TestPing : Module("TestPing", Category.COMBAT) {
     private val inventoryrecoil by IntegerValue("InventoryFlushConditionTime", 0, 0..500)
     private val useitemrecoil by IntegerValue("UseItemFlushConditionTime", 0, 0..500)
     private val sprintresetrecoil by IntegerValue("SprintResetFlushConditionTime", 0, 0..500)
+    private val ticksexistedrecoil by IntegerValue("ExistedFlushConditionTime", 0, 0..1000)
 
     private val line by BoolValue("Line", true, subjective = true)
     private val thirdperson by BoolValue("OnlyThirdPerson", true) { line }
@@ -64,6 +65,9 @@ object TestPing : Module("TestPing", Category.COMBAT) {
 
         if (event.isCancelled)
             return
+
+        if (mc.thePlayer.ticksExisted < 0)
+            recoiltime = ticksexistedrecoil
 
         if (MovementUtils.isMoving && !mc.thePlayer.isSprinting) {
             recoiltime = sprintresetrecoil

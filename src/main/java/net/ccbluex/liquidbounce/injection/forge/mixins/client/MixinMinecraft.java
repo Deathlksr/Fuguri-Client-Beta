@@ -7,6 +7,7 @@ package net.ccbluex.liquidbounce.injection.forge.mixins.client;
 
 import net.ccbluex.liquidbounce.FuguriBeta;
 import net.ccbluex.liquidbounce.features.module.modules.combat.TimerRange;
+import net.ccbluex.liquidbounce.features.module.modules.combat.TimerRangeV2;
 import net.ccbluex.liquidbounce.injection.forge.SplashProgressLock;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -161,6 +162,7 @@ public abstract class MixinMinecraft {
     private void skipTicksCheck(Minecraft instance) {
         FuguriBeta.INSTANCE.getModuleManager().getModule(TimerRange.class);
         if (TimerRange.handleTick()) return;
+        if (TimerRangeV2.handleTick()) return;
         this.runTick();
     }
 

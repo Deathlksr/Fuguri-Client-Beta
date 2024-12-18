@@ -62,7 +62,7 @@ object FuguriBeta {
     const val CLIENT_AUTHOR = "Deathlksr"
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
     const val CLIENT_WEBSITE = "fuguri.top"
-    const val CLIENT_VERSION = "B3.8"
+    const val CLIENT_VERSION = "B3.9"
 
     val clientVersionText = gitInfo["git.build.version"]?.toString() ?: "unknown"
     val clientVersionNumber = clientVersionText.substring(1).toIntOrNull() ?: 0 // version format: "b<VERSION>" on legacy
@@ -113,9 +113,10 @@ object FuguriBeta {
         // Init SoundManager
         tipSoundManager = TipSoundManager()
 
+        // Load languages
+        loadLanguages()
+
         runCatching {
-            // Load languages
-            loadLanguages()
 
             // Register listeners
             registerListener(RotationUtils)

@@ -29,7 +29,7 @@ class GuiClientConfiguration(val prevGui: GuiScreen) : GuiScreen() {
     companion object {
         var enabledClientTitle = true
         var enabledCustomBackground = true
-        var particles = true
+        var particless = true
         var stylisedAlts = true
         var unformattedAlts = false
         var altsLength = 16
@@ -74,7 +74,7 @@ class GuiClientConfiguration(val prevGui: GuiScreen) : GuiScreen() {
             // Background configuration buttons
             // Button location > 2nd row
             add(GuiButton(1, width / 2 - 100, height / 4 + 25 + 75, "Enabled background (${if (enabledCustomBackground) "On" else "Off"})").also { backgroundButton = it })
-            add(GuiButton(2, width / 2 - 100, height / 4 + 25 + 75 + 25, "Particles (${if (particles) "On" else "Off"})").also { particlesButton = it })
+            add(GuiButton(2, width / 2 - 100, height / 4 + 25 + 75 + 25, "Particle (${if (particless) "On" else "Off"})").also { particlesButton = it })
             add(GuiButton(3, width / 2 - 100, height / 4 + 25 + 75 + 25 * 2, 98, 20, "Change wallpaper"))
             add(GuiButton(4, width / 2 + 2, height / 4 + 25 + 75 + 25 * 2, 98, 20, "Reset wallpaper"))
 
@@ -101,8 +101,8 @@ class GuiClientConfiguration(val prevGui: GuiScreen) : GuiScreen() {
                 backgroundButton.displayString = "Enabled (${if (enabledCustomBackground) "On" else "Off"})"
             }
             2 -> {
-                particles = !particles
-                particlesButton.displayString = "Particles (${if (particles) "On" else "Off"})"
+                particless = !particless
+                particlesButton.displayString = "Particle (${if (particless) "On" else "Off"})"
             }
             5 -> {
                 enabledClientTitle = !enabledClientTitle

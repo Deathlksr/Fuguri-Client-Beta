@@ -31,11 +31,11 @@ object HUDModule : Module("HUD", Category.CLIENT, defaultInArray = false, gameDe
     // UI EFFECT
     val uiEffectValue by BoolValue("UIEffect", true)
     val buttonShadowValue by BoolValue("ShadowButton", true){ uiEffectValue }
-    val UiShadowValue by ListValue("UIEffectMode", arrayOf("Shadow", "Glow", "None"), "Shadow") { uiEffectValue }
+    val UiShadowValue by ListValue("UIEffectMode", arrayOf("Shadow", "Glow", "None"), "Glow") { uiEffectValue }
 
     private val blur by BoolValue("Blur", false)
 
-    val inventoryParticle by BoolValue("InventoryParticle", false)
+    val inventoryParticle by BoolValue("InventoryParticles", true)
 
     // UI
     private val intefaceColor by BoolValue("Interface Color", false)

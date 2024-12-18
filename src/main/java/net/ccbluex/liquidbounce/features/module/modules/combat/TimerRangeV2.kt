@@ -25,7 +25,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
 import kotlin.math.min
 
-object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
+object TimerRangeV2 : Module("TimerRangeV2", Category.COMBAT, hideModule = false) {
 
     private val minDistance: FloatValue = object : FloatValue("MinDistance", 3F, 2F..3F) {
         override fun onChanged(oldValue: Float, newValue: Float) {
@@ -61,7 +61,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
     private var reverseAuraClicks = BoolValue("ReverseClick",  true)
     private val reverseAuraClick = ListValue("ReverseMode", arrayOf("BeforeTeleport", "AfterTeleport"), "BeforeTeleport") { reverseAuraClicks.get() }
 
-    private val killAura: KillAura? = KillAura
+    private val killAura: KillAura = KillAura
 
     @JvmStatic
     private var working = false
@@ -98,7 +98,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
     }
 
     @EventTarget
-    fun onMotion(event: MotionEvent) {
+    fun onMotion(event: GameLoopEvent) {
         val screen = mc.currentScreen
         if (flag1) return
         if (screen is GuiInventory) return
@@ -109,9 +109,8 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
         if (!MovementUtils.isMoving) return
         if (Scaffold.state) return
         Blink.state = blink.get()
-        if (event.eventState == EventState.PRE) return // post event mean player's tick is done
         val thePlayer = mc.thePlayer ?: return
-        if (onlyKillAura.get() && !killAura?.state!!) return
+        if (onlyKillAura.get() && !killAura.state) return
         if (mode.get() == "RayCast") {
             val entity =
                 RaycastTimerRange.raycastEntity(maxDistance.get() + 1.0, object : RaycastTimerRange.IEntityFilter {
@@ -232,7 +231,7 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
         }
         if (debug.get()) ClientUtils.displayChatMessage("Teleported: $freezeTicks ticks")
         if (auraClick) {
-            if (killAura?.target?.canAttackWithItem() == true) killAura.clicks += 1
+            if (killAura.target?.canAttackWithItem() == true) killAura.clicks += 1
             ++freezeTicks
             mc.runTick()
         }
@@ -257,11 +256,11 @@ object TimerRange : Module("TimerRange", Category.COMBAT, hideModule = false) {
             }
             if (debug.get()) ClientUtils.displayChatMessage("Teleported: $freezeTicks ticks")
             if (reverseAuraClicks.get()) {
-                if (killAura?.target?.canAttackWithItem() == true && reverseAuraClick.get() == "BeforeTeleport") killAura.clicks += 1
+                if (killAura.target?.canAttackWithItem() == true &&reverseAuraClick.get() == "BeforeTeleport") killAura.clicks += 1
                 ++freezeTicks
                 mc.runTick()
             }
-            if (killAura?.target?.canAttackWithItem() == true && reverseAuraClick.get() == "AfterTeleport") killAura.clicks += 1
+            if (killAura.target?.canAttackWithItem() == true && reverseAuraClick.get() == "AfterTeleport") killAura.clicks += 1
             reverseFreeze = true
             working = false
             cooldown = reverseDelay.get()

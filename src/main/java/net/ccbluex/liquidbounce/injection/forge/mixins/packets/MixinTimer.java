@@ -1,6 +1,7 @@
 package net.ccbluex.liquidbounce.injection.forge.mixins.packets;
 
 import net.ccbluex.liquidbounce.features.module.modules.combat.TimerRange;
+import net.ccbluex.liquidbounce.features.module.modules.combat.TimerRangeV2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Timer;
@@ -79,6 +80,11 @@ public class MixinTimer {
         }
         if (!TimerRange.INSTANCE.getFreezeAnim()) {
             if (!TimerRange.freezeAnimation()) this.renderPartialTicks = this.elapsedPartialTicks;
+        } else {
+            this.renderPartialTicks = this.elapsedPartialTicks;
+        }
+        if (!TimerRangeV2.INSTANCE.getFreezeAnim()) {
+            if (!TimerRangeV2.freezeAnimation()) this.renderPartialTicks = this.elapsedPartialTicks;
         } else {
             this.renderPartialTicks = this.elapsedPartialTicks;
         }

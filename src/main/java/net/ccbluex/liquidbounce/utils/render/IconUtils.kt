@@ -20,9 +20,9 @@ object IconUtils {
     fun getFavicon() =
         IconUtils::class.java.runCatching {
             arrayOf(
-                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME.lowercase()}/32.png")),
-                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME.lowercase()}/32.png")),
-                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME.lowercase()}/64.png"))
+                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME.lowercase()}/32mr.png")),
+                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME.lowercase()}/32mr.png")),
+                readImageToBuffer(getResourceAsStream("/assets/minecraft/${CLIENT_NAME.lowercase()}/64mr.png"))
             )
         }.onFailure {
             it.printStackTrace()

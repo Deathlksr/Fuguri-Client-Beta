@@ -142,6 +142,10 @@ object Flight : Module("Fly", Category.MOVEMENT, Keyboard.KEY_F, hideModule = fa
         override fun isSupported() = rotations && keepRotation && mode == "Fireball"
     }
 
+    init {
+        state = false
+    }
+
     val simulateShortStop by BoolValue("SimulateShortStop", false) {  rotations && mode == "Fireball" }
     val startFirstRotationSlow by BoolValue("StartFirstRotationSlow", false) { rotations && mode == "Fireball" }
 

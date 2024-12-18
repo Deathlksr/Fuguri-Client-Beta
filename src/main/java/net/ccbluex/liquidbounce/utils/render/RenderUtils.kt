@@ -257,13 +257,11 @@ object RenderUtils : MinecraftInstance() {
     }
 
     fun drawLies(entity: EntityLivingBase, event: Render3DEvent, speedMultiplier: Double, trailLengthMultiplier: Double, radiuslies: Float) {
-
     val baseTime = 3000.0
     val everyTime = baseTime / speedMultiplier
     val drawTime = (System.currentTimeMillis() % everyTime).toInt()
     val drawMode = drawTime > (everyTime / 2)
     var drawPercent = drawTime / (everyTime / 2.0)
-
         if (!drawMode) {
             drawPercent = 1 - drawPercent
         } else {

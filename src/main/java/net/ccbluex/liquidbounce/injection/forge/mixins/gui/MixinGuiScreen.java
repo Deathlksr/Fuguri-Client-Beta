@@ -111,7 +111,7 @@ public abstract class MixinGuiScreen {
                 background.drawBackground(width, height);
             }
 
-            if (GuiClientConfiguration.Companion.getParticles()) {
+            if (GuiClientConfiguration.Companion.getParticless()) {
                 ParticleUtils.INSTANCE.drawParticles(Mouse.getX() * width / mc.displayWidth, height - Mouse.getY() * height / mc.displayHeight - 1);
             }
 
@@ -121,7 +121,7 @@ public abstract class MixinGuiScreen {
 
     @Inject(method = "drawBackground", at = @At("RETURN"))
     private void drawParticles(final CallbackInfo callbackInfo) {
-        if (GuiClientConfiguration.Companion.getParticles())
+        if (GuiClientConfiguration.Companion.getParticless())
             ParticleUtils.INSTANCE.drawParticles(Mouse.getX() * width / mc.displayWidth, height - Mouse.getY() * height / mc.displayHeight - 1);
     }
 
