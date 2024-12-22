@@ -1,6 +1,6 @@
 package net.vitox.particle.util;
 
-import net.ccbluex.liquidbounce.utils.extensions.MathExtensionsKt;
+import net.deathlksr.fuguribeta.utils.extensions.MathExtensionsKt;
 
 import static org.lwjgl.opengl.GL11.*;
 

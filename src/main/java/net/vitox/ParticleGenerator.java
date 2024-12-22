@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static net.ccbluex.liquidbounce.utils.MinecraftInstance.mc;
+import static net.deathlksr.fuguribeta.utils.MinecraftInstance.mc;
 import static net.vitox.particle.util.RenderUtils.drawCircle;
 
 /**

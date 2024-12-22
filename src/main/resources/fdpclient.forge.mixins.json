@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "net.ccbluex.liquidbounce.injection.forge.mixins",
+  "package": "net.deathlksr.fuguribeta.injection.forge.mixins",
   "refmap": "fdpclient.mixins.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [

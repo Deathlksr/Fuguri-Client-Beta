@@ -36,7 +36,7 @@ minecraft {
     runDir = "run"
     mappings = "stable_22"
     makeObfSourceJar = false
-    clientJvmArgs += ["-Dfml.coreMods.load=net.ccbluex.liquidbounce.injection.forge.MixinLoader", "-Xmx1024m", "-Xms1024m", "-Ddev-mode"]
+    clientJvmArgs += ["-Dfml.coreMods.load=net.deathlksr.fuguribeta.injection.forge.MixinLoader", "-Xmx1024m", "-Xms1024m", "-Ddev-mode"]
 }
 
 configurations {
@@ -117,7 +117,7 @@ processResources {
     rename "(.+_at.cfg)", "META-INF/\$1"
 }
 
-task moveResources {
+tasks.register('moveResources') {
     doLast {
         ant.move file: "${buildDir}/resources/main",
                 todir: "${buildDir}/classes/java"
@@ -129,7 +129,7 @@ classes.dependsOn(moveResources)
 
 jar {
     manifest.attributes(
-            "FMLCorePlugin": "net.ccbluex.liquidbounce.injection.forge.MixinLoader",
+            "FMLCorePlugin": "net.deathlksr.fuguribeta.injection.forge.MixinLoader",
             "FMLCorePluginContainsFMLMod": true,
             "ForceLoadAsMod": true,
             "MixinConfigs": "fdpclient.forge.mixins.json",
